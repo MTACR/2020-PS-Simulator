@@ -7,7 +7,7 @@ public class Main {
     }
 
     private static void testData() {
-        File file = new File("input/program2");
+        File file = new File("input/program1");
 
         if (file.exists()) {
             TestOnly test = new TestOnly();

@@ -112,10 +112,8 @@ public class TestOnly {
         } else if (f1) {
             //TODO: indireto
             acum = memory[s + offset];
-            pc++;
         } else {
             acum = memory[s];
-            pc++;
         }
 
         System.out.println(acum);
