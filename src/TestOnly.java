@@ -147,15 +147,14 @@ public class TestOnly {
     // f1 diz se é direto ou indireto e f3 diz se é imediato
     private short loadWord(boolean f1, boolean f3) {
         short s = memory[pc++];
-        short offset = 0; //TODO
 
         System.out.println(s);
 
         if (f3) {
             return s;
         } else if (f1) {
-            //TODO: indireto
-            return memory[s + offset];
+            int contentsAddress = memory[s];
+            return memory[contentsAddress];
         } else {
             return memory[s];
         }
