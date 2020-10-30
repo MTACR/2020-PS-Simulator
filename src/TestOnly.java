@@ -68,19 +68,23 @@ public class TestOnly {
     private void parseOpCode(OPCODE opcode, boolean f1, boolean f2, boolean f3) {
         switch (opcode) {
             case BR:
+                branch(f1);
                 break;
             case BRPOS:
+                branchPos(f1);
                 break;
             case ADD:
                 add(f1, f3);
-                System.out.println("= " + acc);
+                //System.out.println("= " + acc);
                 break;
             case LOAD:
                 load(f1, f3);
                 break;
             case BRZERO:
+                branchZero(f1);
                 break;
             case BRNEG:
+                branchNeg(f1);
                 break;
             case SUB:
                 sub(f1, f3);
@@ -90,8 +94,10 @@ public class TestOnly {
                 store(f1, f3);
                 break;
             case WRITE:
+                //write(f1, f3);
                 break;
             case RET:
+                //ret();
                 break;
             case DIVIDE:
                 divide(f1, f3);
@@ -113,6 +119,28 @@ public class TestOnly {
         }
 
         nextInstruction();
+    }
+
+    private void branch(boolean f1){
+        pc = loadWord(f1);
+    }
+
+    private void branchNeg(boolean f1){
+        if (acc < 0){
+            branch(f1);
+        }
+    }
+
+    private void branchPos(boolean f1){
+        if (acc > 0){
+            branch(f1);
+        }
+    }
+
+    private void branchZero(boolean f1){
+        if (acc == 0){
+            branch(f1);
+        }
     }
 
     private void add(boolean f1, boolean f3) {
@@ -146,6 +174,10 @@ public class TestOnly {
 
     // carrega um valor da memória dependendo do modo de endereçamento
     // f1 diz se é direto ou indireto e f3 diz se é imediato
+    private short loadWord(boolean f1) {
+        return loadWord(f1, false);
+    }
+
     private short loadWord(boolean f1, boolean f3) {
         short s = memory[pc++];
 
