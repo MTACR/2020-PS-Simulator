@@ -59,7 +59,7 @@ public class TestOnly {
         boolean f3 = (word & 0x200) >> 9  != 0;
 
         OPCODE opcode = OPCODE.values()[ri];
-        System.out.println(opcode);
+        System.out.print(opcode + " ");
 
         parseOpCode(opcode, f1, f2, f3);
     }
@@ -72,6 +72,8 @@ public class TestOnly {
             case BRPOS:
                 break;
             case ADD:
+                add(f1, f3);
+                System.out.println("= " + acc);
                 break;
             case LOAD:
                 load(f1, f3);
@@ -106,26 +108,37 @@ public class TestOnly {
         nextInstruction();
     }
 
+    // função add
+    private void add(boolean f1, boolean f3) {
+        acc += loadWord(f1, f3);
+    }
+
     // função load
     private void load(boolean f1, boolean f3) {
-        short s = memory[pc++];
-        short offset = 0; //TODO
-
-        if (f3) {
-            acc = s;
-        } else if (f1) {
-            //TODO: indireto
-            acc = memory[s + offset];
-        } else {
-            acc = memory[s];
-        }
-
-        System.out.println(acc);
+        acc = loadWord(f1, f3);
     }
 
     // função stop
     private void stop() {
         pc = 1024;
+    }
+
+    // carrega um valor da memória dependendo do modo de endereçamento
+    // f1 diz se é direto ou indireto e f3 diz se é imediato
+    private short loadWord(boolean f1, boolean f3) {
+        short s = memory[pc++];
+        short offset = 0; //TODO
+
+        System.out.println(s);
+
+        if (f3) {
+            return s;
+        } else if (f1) {
+            //TODO: indireto
+            return memory[s + offset];
+        } else {
+            return memory[s];
+        }
     }
 
     // carrega o arquivo passado por parâmetro para a memória a partir da posição zero
