@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class TestOnly {
@@ -241,7 +242,81 @@ public class TestOnly {
             return s;
         }
     }
-
+    
+    // Carrega o arquivo passado por parâmetro para a memória a partir da última posição ocupada pela pilha.
+    // Faz as correções necessárias de endereçamento.
+    public void loadFileToMemory(File file) {
+        
+         // Vetor com os modos de endereçamento de cada instrução, índice = opcode
+        int[] opMode = new int[] {1,1,2,2,1,1,2,1,2,0,2,0,1,3,2,1};
+        // Modos de endereçamento:
+        // 0 = Sem operando / Nenhum endereço.
+        // 1 = Direto ou Indireto
+        // 2 = Direto, Indireto ou Imediato.
+        // 3 = Dois operandos, usado somente pelo COPY.
+        
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line;
+            int i = 0;
+            
+            //short stackSize = (short) (memory[2] + 3); // valor armazenado + espaços livres no inicio
+            //-----------------------------------
+            short stackSize = (short) 3; //MUDAR DEPOIS DE PILHA PRONTA!
+            //-----------------------------------
+            pc = (short) (stackSize);
+            
+            while ((line = reader.readLine()) != null){
+                short word = (short) Integer.parseInt(line, 2);
+                int opCode = (word & 0xF000) >> 12;
+                int mode = opMode[opCode];
+                boolean immediate = (word & 0x200) >> 9  != 0; 
+                
+                memory[i + stackSize] = word;   // Endereço = Tamanho da pilha + contador de palavra
+                switch (mode) {
+                    case 0: // Sem operador
+                        // do nothing
+                        break;
+                    case 1: // Direto, Indireto
+                        i++;
+                        memory[i + stackSize] = (short) (getNextWord(reader) + stackSize);
+                        break;
+                    case 2: // Direto, Indireto, Imediato
+                        i++;
+                        if (immediate){
+                            memory[i + stackSize] = getNextWord(reader);
+                        } else {
+                            memory[i + stackSize] = (short) (getNextWord(reader) + stackSize);
+                        }   break;
+                    case 3: // COPY -> 2 operandos
+                        i++;
+                        memory[i + stackSize] = (short) (getNextWord(reader) + stackSize); // op1 Direto, Indireto
+                        i++;
+                        if (immediate){ // op2 pode ser imediato, nesse caso não corrije endereço
+                            memory[i + stackSize] = getNextWord(reader); // op2 Imediato
+                        } else {
+                            memory[i + stackSize] = (short) (getNextWord(reader) + stackSize); // op2 Direto, Indireto
+                        }   break;
+                    default:
+                        break;
+                }
+                i++;
+            }
+            reader.close();
+        } catch (IOException | NumberFormatException e) {
+            System.err.format("Exception occurred trying to read '%s'.", file);
+        }
+    }
+	
+    private short getNextWord(BufferedReader reader) throws IOException {
+        String line;
+        line = reader.readLine();
+        return (short) Integer.parseInt(line,2);
+    }
+    
+    // Versão antiga do loadfile comentada abaixo
+    
+    /*
     // carrega o arquivo passado por parâmetro para a memória a partir da posição zero
     public void loadFileToMemory(File file) {
         try {
@@ -258,7 +333,7 @@ public class TestOnly {
             System.err.format("Exception occurred trying to read '%s'.", file);
             e.printStackTrace();
         }
-    }
+    }*/
 
     // imprime o conteudo da memória
     public void dumpMemory() {
