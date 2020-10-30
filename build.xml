@@ -56,7 +56,7 @@
       -javadoc-build:           Javadoc generation
       test-report:              JUnit report generation
 
-    An example of overriding the target for project execution could look like this:
+    An data of overriding the target for project execution could look like this:
 
         <target name="run" depends="PS-1-impl.jar">
             <exec dir="bin" executable="launcher.exe">
