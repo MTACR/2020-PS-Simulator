@@ -37,12 +37,12 @@ public class TestOnly {
 
     // vetor que representa a memória
     private final short[] memory = new short[1024];
-    private int pc = 0;
-    private int sp = 0;
-    private int ri = 0;
-    private int re = 0;
-    private int acc = 0;
-    private int mop = 0;
+    private short pc = 0;
+    private short sp = 0;
+    private short ri = 0;
+    private short re = 0;
+    private short acc = 0;
+    private byte mop = 0;
 
     // carrega uma palavra e extrai seu opcode. Essa função é responsável apenas por opcodes, não deve ler operandos.
     // o operando deve ser tratado na função parseOpCode
@@ -52,7 +52,7 @@ public class TestOnly {
 
         short word = memory[pc++];
 
-        ri = (word & 0xF000) >> 12;
+        ri = (short) ((word & 0xF000) >> 12);
 
         boolean f1 = (word & 0x800) >> 11 != 0;
         boolean f2 = (word & 0x400) >> 10 != 0;
@@ -83,14 +83,19 @@ public class TestOnly {
             case BRNEG:
                 break;
             case SUB:
+                sub(f1, f3);
+                System.out.println("= " + acc);
                 break;
             case STORE:
+                store(f1, f3);
                 break;
             case WRITE:
                 break;
             case RET:
                 break;
             case DIVIDE:
+                divide(f1, f3);
+                System.out.println("= " + acc);
                 break;
             case STOP:
                 stop();
@@ -100,6 +105,8 @@ public class TestOnly {
             case COPY:
                 break;
             case MULT:
+                mult(f1, f3);
+                System.out.println("= " + acc);
                 break;
             case CALL:
                 break;
@@ -108,17 +115,30 @@ public class TestOnly {
         nextInstruction();
     }
 
-    // função add
     private void add(boolean f1, boolean f3) {
         acc += loadWord(f1, f3);
     }
 
-    // função load
+    private void divide(boolean f1, boolean f3) {
+        acc /= loadWord(f1, f3);
+    }
+
     private void load(boolean f1, boolean f3) {
         acc = loadWord(f1, f3);
     }
 
-    // função stop
+    private void mult(boolean f1, boolean f3) {
+        acc *= loadWord(f1, f3);
+    }
+
+    private void sub(boolean f1, boolean f3) {
+        acc -= loadWord(f1, f3);
+    }
+
+    private void store(boolean f1, boolean f3) {
+        //TODO
+    }
+
     private void stop() {
         pc = 1024;
     }
