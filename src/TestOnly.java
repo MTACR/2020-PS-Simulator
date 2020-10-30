@@ -4,9 +4,6 @@ import java.io.FileReader;
 
 public class TestOnly {
 
-    // organização do código 0000  |000  |00000000000000000
-    //                       opcode|flags|operands
-
     // enumerador para os trabalhar com os códigos por nome, ao invés de número
     public enum OPCODE {
         BR(0),
@@ -42,15 +39,22 @@ public class TestOnly {
     private final short[] memory = new short[1024];
     private int pc = 0;
 
-    // executa um passo. No momento apenas extrai os opcode
-    public void doStep() {
+    // carrega uma palavra e extrai seu opcode. Essa função é responsável apenas por opcodes, não deve ler operandos.
+    // o operando deve ser tratado na função parseOpCode
+    public void nextInstruction() {
         short word = memory[pc++];
-        OPCODE op = OPCODE.values()[(word & 0xF000) >> 12];
-        System.out.println(op);
+
+        OPCODE opcode = OPCODE.values()[(word & 0xF000) >> 12];
+
+        boolean f1 = (word & 0x800) >> 11 != 0;
+        boolean f2 = (word & 0x400) >> 10 != 0;
+        boolean f3 = (word & 0x200) >> 9  != 0;
+
+        parseOpCode(opcode, f1, f2, f3);
     }
 
-    // seleciona qual código a ser processado
-    private void parseOpCode(OPCODE opcode) {
+    // seleciona qual código a ser processado e lida com a quantidade de palavras a ser lida pros operandos
+    private void parseOpCode(OPCODE opcode, boolean f1, boolean f2, boolean f3) {
         switch (opcode) {
             case BR:
                 break;
