@@ -27,6 +27,9 @@ public class TestOnly {
 
     private short[] memory = new short[1024];
 
+
+    // organização do código 0000  |000  |00000000000000000
+    //                       opcode|flags|operands
     private void dummy(OPCODE opcode) {
         switch (opcode) {
             case ADD:
