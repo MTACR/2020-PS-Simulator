@@ -42,6 +42,9 @@ public class TestOnly {
     // carrega uma palavra e extrai seu opcode. Essa função é responsável apenas por opcodes, não deve ler operandos.
     // o operando deve ser tratado na função parseOpCode
     public void nextInstruction() {
+        if (pc >= 1024)
+            return;
+
         short word = memory[pc++];
 
         OPCODE opcode = OPCODE.values()[(word & 0xF000) >> 12];
@@ -49,6 +52,8 @@ public class TestOnly {
         boolean f1 = (word & 0x800) >> 11 != 0;
         boolean f2 = (word & 0x400) >> 10 != 0;
         boolean f3 = (word & 0x200) >> 9  != 0;
+
+        System.out.println(opcode);
 
         parseOpCode(opcode, f1, f2, f3);
     }
@@ -63,6 +68,7 @@ public class TestOnly {
             case ADD:
                 break;
             case LOAD:
+                load(f1, f3);
                 break;
             case BRZERO:
                 break;
@@ -79,6 +85,7 @@ public class TestOnly {
             case DIVIDE:
                 break;
             case STOP:
+                stop();
                 break;
             case READ:
                 break;
@@ -89,6 +96,34 @@ public class TestOnly {
             case CALL:
                 break;
         }
+
+        nextInstruction();
+    }
+
+    private int acum;
+
+    // função load
+    private void load(boolean f1, boolean f3) {
+        short s = memory[pc++];
+        short offset = 0; //TODO
+
+        if (f3) {
+            acum = s;
+        } else if (f1) {
+            //TODO: indireto
+            acum = memory[s + offset];
+            pc++;
+        } else {
+            acum = memory[s];
+            pc++;
+        }
+
+        System.out.println(acum);
+    }
+
+    // função stop
+    private void stop() {
+        pc = 1024;
     }
 
     // carrega o arquivo passado por parâmetro para a memória a partir da posição zero

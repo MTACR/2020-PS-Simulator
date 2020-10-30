@@ -3,17 +3,18 @@ import java.io.File;
 public class Main {
 
     public static void main(String[] args) {
-        testFlags();
+        testData();
     }
 
     private static void testData() {
-        File file = new File("input/data");
+        File file = new File("input/program2");
 
         if (file.exists()) {
             TestOnly test = new TestOnly();
 
             test.loadFileToMemory(file);
-            test.dumpMemory();
+            //test.dumpMemory();
+            test.nextInstruction();
         }
     }
 
@@ -24,22 +25,6 @@ public class Main {
             TestOnly test = new TestOnly();
 
             test.loadFileToMemory(file);
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
-            test.doStep();
         }
     }
 
@@ -50,9 +35,6 @@ public class Main {
             TestOnly test = new TestOnly();
 
             test.loadFileToMemory(file);
-            test.doStep();
-            test.doStep();
-            test.doStep();
         }
     }
 
