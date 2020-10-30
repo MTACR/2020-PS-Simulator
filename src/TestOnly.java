@@ -38,6 +38,11 @@ public class TestOnly {
     // vetor que representa a memória
     private final short[] memory = new short[1024];
     private int pc = 0;
+    private int sp = 0;
+    private int ri = 0;
+    private int re = 0;
+    private int acc = 0;
+    private int mop = 0;
 
     // carrega uma palavra e extrai seu opcode. Essa função é responsável apenas por opcodes, não deve ler operandos.
     // o operando deve ser tratado na função parseOpCode
@@ -47,12 +52,13 @@ public class TestOnly {
 
         short word = memory[pc++];
 
-        OPCODE opcode = OPCODE.values()[(word & 0xF000) >> 12];
+        ri = (word & 0xF000) >> 12;
 
         boolean f1 = (word & 0x800) >> 11 != 0;
         boolean f2 = (word & 0x400) >> 10 != 0;
         boolean f3 = (word & 0x200) >> 9  != 0;
 
+        OPCODE opcode = OPCODE.values()[ri];
         System.out.println(opcode);
 
         parseOpCode(opcode, f1, f2, f3);
@@ -100,23 +106,21 @@ public class TestOnly {
         nextInstruction();
     }
 
-    private int acum;
-
     // função load
     private void load(boolean f1, boolean f3) {
         short s = memory[pc++];
         short offset = 0; //TODO
 
         if (f3) {
-            acum = s;
+            acc = s;
         } else if (f1) {
             //TODO: indireto
-            acum = memory[s + offset];
+            acc = memory[s + offset];
         } else {
-            acum = memory[s];
+            acc = memory[s];
         }
 
-        System.out.println(acum);
+        System.out.println(acc);
     }
 
     // função stop
