@@ -136,7 +136,8 @@ public class TestOnly {
     }
 
     private void store(boolean f1, boolean f3) {
-        //TODO
+        short storeAddress = loadWord(f1, f3);
+        memory[storeAddress] = acc;
     }
 
     private void stop() {
@@ -153,7 +154,7 @@ public class TestOnly {
         if (f3) {
             return s;
         } else if (f1) {
-            int contentsAddress = memory[s];
+            short contentsAddress = memory[s];
             return memory[contentsAddress];
         } else {
             return memory[s];
