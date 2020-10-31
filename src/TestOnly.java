@@ -147,11 +147,15 @@ public class TestOnly {
     }
 
     private void copy(boolean f1, boolean f2, boolean f3){
-        short opd1 = loadWord(f1);
         short opd2 = loadWord(f2, f3);
 
-        memory[opd1] = opd2; //talvez memory[opd2], to confuso, sei lá, pode tudo estar errado, vou checar no livro
-        //TODO?
+        short s = memory[pc++];
+        if (f1) {
+            short contentsAddress = memory[s];
+            memory[contentsAddress] = opd2;
+        } else {
+            memory[s] = opd2;
+        }
     }
 
     private void call(boolean f1){
