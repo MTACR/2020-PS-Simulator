@@ -267,14 +267,27 @@ public class TestOnly {
             //-----------------------------------
             short stackSize = (short) 3; //MUDAR DEPOIS DE PILHA PRONTA!
             //-----------------------------------
-            pc = (short) (stackSize);
-            
-            while ((line = reader.readLine()) != null){
+            pc = (short) (stackSize + 1);
+
+            //primeira word é o endereço da memória de dados
+            if ((line = reader.readLine()) != null) {
+                short word = (short) (Integer.parseInt(line, 2) + stackSize);
+                memory[i + stackSize] = word;
+                re = word;
+                i++;
+            }
+
+            //System.out.println(re);
+
+            //lê até acabar memória de dados
+            while ((line = reader.readLine()) != null && (i + stackSize) < re) {
                 short word = (short) Integer.parseInt(line, 2);
                 int opCode = (word & 0xF000) >> 12;
                 int mode = opMode[opCode];
-                boolean immediate = (word & 0x200) >> 9  != 0; 
-                
+                boolean immediate = (word & 0x200) >> 9  != 0;
+
+                //System.out.println(OPCODE.values()[opCode]);
+
                 memory[i + stackSize] = word;   // Endereço = Tamanho da pilha + contador de palavra
                 switch (mode) {
                     case 0: // Sem operador
@@ -305,9 +318,18 @@ public class TestOnly {
                 }
                 i++;
             }
+
+            //lê até o fim do arquivo apenas dados
+            while (line != null) {
+                memory[i + stackSize] = (short) Integer.parseInt(line, 2);
+                i++;
+
+                line = reader.readLine();
+                //System.out.println(memory[i + stackSize]);
+            }
+
             reader.close();
         } catch (IOException | NumberFormatException e) {
-            System.err.format("Exception occurred trying to read '%s'.", file);
             e.printStackTrace();
         }
     }
