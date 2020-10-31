@@ -92,7 +92,7 @@ public class TestOnly {
                 System.out.println("= " + acc);
                 break;
             case STORE:
-                store(f1, f3);
+                store(f1);
                 break;
             case WRITE:
                 write(f1, f3);
@@ -198,8 +198,8 @@ public class TestOnly {
         acc -= loadWord(f1, f3);
     }
 
-    private void store(boolean f1, boolean f3) {
-        storeWordAtAddress(loadWord(f1, f3), acc);
+    private void store(boolean f1) {
+        storeWordAtAddress(getAddress(f1), acc);
         //short storeAddress = loadWord(f1, f3);
         //memory[storeAddress] = acc;
     }
