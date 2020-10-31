@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Scanner;
 
 public class TestOnly {
 
@@ -125,7 +126,10 @@ public class TestOnly {
     }
 
     private void write(boolean f1, boolean f3){
-        //TODO
+        //Placeholder?
+        short word = loadWord(f1, f3);
+        System.out.println("Output: " + word);
+        //TODO?
     }
 
     private void ret(){
@@ -133,15 +137,25 @@ public class TestOnly {
     }
 
     private void read(boolean f1){
-        //TODO
+        //Placeholder?
+        Scanner inputScanner = new Scanner(System.in);
+        short input = inputScanner.nextByte();
+
+        short storeAddress = loadWord(f1);
+        memory[storeAddress] = input;
+        //TODO?
     }
 
     private void copy(boolean f1, boolean f2, boolean f3){
-        //TODO
+        short opd1 = loadWord(f1);
+        short opd2 = loadWord(f2, f3);
+
+        memory[opd1] = memory[opd2];
     }
 
     private void call(boolean f1){
         //TODO
+        pc = loadWord(f1);
     }
 
     private void branch(boolean f1){
