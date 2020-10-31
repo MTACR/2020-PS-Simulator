@@ -39,6 +39,7 @@ public class TestOnly {
 
     // vetor que representa a memória
     private final short[] memory = new short[1024];
+    private boolean[] debug = new boolean[1024]; // usado pra identificar se é opcode ou dado
     private short pc = 0;
     private short sp = 0;
     private short ri = 0;
@@ -52,6 +53,7 @@ public class TestOnly {
         if (pc >= 1024)
             return;
 
+        debug[pc] = true;
         short word = memory[pc++];
 
         ri = (short) ((word & 0xF000) >> 12);
@@ -61,7 +63,7 @@ public class TestOnly {
         boolean f3 = (word & 0x200) >> 9  != 0;
 
         OPCODE opcode = OPCODE.values()[ri];
-        System.out.print(opcode + " ");
+        System.out.print("\n" + opcode);
 
         parseOpCode(opcode, f1, f2, f3);
     }
@@ -107,6 +109,7 @@ public class TestOnly {
                 break;
             case STOP:
                 stop();
+                System.out.println("\n");
                 break;
             case READ:
                 read(f1);
@@ -218,7 +221,7 @@ public class TestOnly {
     private short loadWord(boolean f1, boolean f3) {
         short s = memory[pc++];
 
-        System.out.println(s);
+        System.out.print(" " + s);
 
         if (f3) {
             return s;
@@ -305,6 +308,7 @@ public class TestOnly {
             reader.close();
         } catch (IOException | NumberFormatException e) {
             System.err.format("Exception occurred trying to read '%s'.", file);
+            e.printStackTrace();
         }
     }
 	
@@ -337,8 +341,13 @@ public class TestOnly {
 
     // imprime o conteudo da memória
     public void dumpMemory() {
-        for (short s : memory)
-            System.out.println(s);
+        System.out.println("---DUMP---");
+
+        for (int j = 0; j < 10; j++)
+            if (debug[j] )
+                System.out.println(j + " - " + OPCODE.values()[(short) ((memory[j] & 0xF000) >> 12)]);
+            else
+                System.out.println(j + " - " + memory[j]);
     }
 
 }
