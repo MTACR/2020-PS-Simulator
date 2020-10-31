@@ -141,21 +141,14 @@ public class TestOnly {
         Scanner inputScanner = new Scanner(System.in);
         short input = inputScanner.nextByte();
 
-        short storeAddress = loadWord(f1);
-        memory[storeAddress] = input;
-        //TODO?
+        short address = getAddress(f1);
+        storeWordAtAddress(input, address);
     }
 
     private void copy(boolean f1, boolean f2, boolean f3){
-        short opd2 = loadWord(f2, f3);
-
-        short s = memory[pc++];
-        if (f1) {
-            short contentsAddress = memory[s];
-            memory[contentsAddress] = opd2;
-        } else {
-            memory[s] = opd2;
-        }
+        short address = getAddress(f1);
+        short word = loadWord(f2, f3);
+        storeWordAtAddress(word, address);
     }
 
     private void call(boolean f1){
@@ -206,8 +199,9 @@ public class TestOnly {
     }
 
     private void store(boolean f1, boolean f3) {
-        short storeAddress = loadWord(f1, f3);
-        memory[storeAddress] = acc;
+        storeWordAtAddress(loadWord(f1, f3), acc);
+        //short storeAddress = loadWord(f1, f3);
+        //memory[storeAddress] = acc;
     }
 
     private void stop() {
@@ -232,6 +226,19 @@ public class TestOnly {
             return memory[contentsAddress];
         } else {
             return memory[s];
+        }
+    }
+
+    private void storeWordAtAddress(short word, short address){
+        memory[address] = word;
+    }
+
+    private short getAddress(boolean f1){
+        short s = memory[pc++];
+        if (f1) {
+            return memory[s];
+        } else {
+            return s;
         }
     }
 
