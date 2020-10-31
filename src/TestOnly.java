@@ -150,7 +150,8 @@ public class TestOnly {
         short opd1 = loadWord(f1);
         short opd2 = loadWord(f2, f3);
 
-        memory[opd1] = memory[opd2];
+        memory[opd1] = opd2; //talvez memory[opd2], to confuso, sei lá, pode tudo estar errado, vou checar no livro
+        //TODO?
     }
 
     private void call(boolean f1){
