@@ -79,7 +79,7 @@ public class TestOnly {
                 break;
             case ADD:
                 add(f1, f3);
-                //System.out.println("= " + acc);
+                System.out.println("\n= " + acc);
                 break;
             case LOAD:
                 load(f1, f3);
@@ -203,8 +203,8 @@ public class TestOnly {
     }
 
     private void store(boolean f1) {
-        storeWordAtAddress(getAddress(f1), acc);
-        //short storeAddress = loadWord(f1, f3);
+        storeWordAtAddress(acc, getAddress(f1));
+        //short storeAddress = loadWord(f1, false);
         //memory[storeAddress] = acc;
     }
 
@@ -365,7 +365,7 @@ public class TestOnly {
     public void dumpMemory() {
         System.out.println("---DUMP---");
 
-        for (int j = 0; j < 10; j++)
+        for (int j = 0; j < 20; j++)
             if (debug[j] )
                 System.out.println(j + " - " + OPCODE.values()[(short) ((memory[j] & 0xF000) >> 12)]);
             else
