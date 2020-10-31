@@ -94,10 +94,10 @@ public class TestOnly {
                 store(f1, f3);
                 break;
             case WRITE:
-                //write(f1, f3);
+                write(f1, f3);
                 break;
             case RET:
-                //ret();
+                ret();
                 break;
             case DIVIDE:
                 divide(f1, f3);
@@ -107,18 +107,41 @@ public class TestOnly {
                 stop();
                 break;
             case READ:
+                read(f1);
                 break;
             case COPY:
+                copy(f1, f2, f3);
                 break;
             case MULT:
                 mult(f1, f3);
                 System.out.println("= " + acc);
                 break;
             case CALL:
+                call(f1);
                 break;
         }
 
         nextInstruction();
+    }
+
+    private void write(boolean f1, boolean f3){
+        //TODO
+    }
+
+    private void ret(){
+        //TODO
+    }
+
+    private void read(boolean f1){
+        //TODO
+    }
+
+    private void copy(boolean f1, boolean f2, boolean f3){
+        //TODO
+    }
+
+    private void call(boolean f1){
+        //TODO
     }
 
     private void branch(boolean f1){
