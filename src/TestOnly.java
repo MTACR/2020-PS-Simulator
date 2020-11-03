@@ -49,9 +49,9 @@ public class TestOnly {
 
     // carrega uma palavra e extrai seu opcode. Essa função é responsável apenas por opcodes, não deve ler operandos.
     // o operando deve ser tratado na função parseOpCode
-    public void nextInstruction() {
-        if (pc >= 1024)
-            return;
+    public void nextInstruction() throws Exception {
+        if (pc >= re)
+            throw new Exception("Program counter cannot access data memory");
 
         debug[pc] = true;
         short word = memory[pc++];
@@ -70,6 +70,8 @@ public class TestOnly {
 
     // seleciona qual código a ser processado e lida com a quantidade de palavras a ser lida pros operandos
     private void parseOpCode(OPCODE opcode, boolean f1, boolean f2, boolean f3) {
+        boolean stop = false;
+
         switch (opcode) {
             case BR:
                 branch(f1);
@@ -108,7 +110,8 @@ public class TestOnly {
                 System.out.println("= " + acc);
                 break;
             case STOP:
-                stop();
+                //stop();
+                stop = true;
                 System.out.println("\n");
                 break;
             case READ:
@@ -126,7 +129,12 @@ public class TestOnly {
                 break;
         }
 
-        nextInstruction();
+        if (!stop)
+            try {
+                nextInstruction();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 
     private void write(boolean f1, boolean f3){
@@ -209,7 +217,7 @@ public class TestOnly {
     }
 
     private void stop() {
-        pc = 1024;
+        //NaN
     }
 
     // carrega um valor da memória dependendo do modo de endereçamento
