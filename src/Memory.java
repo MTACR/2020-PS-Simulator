@@ -15,6 +15,7 @@ public class Memory {
 
     // Carrega o arquivo passado por parâmetro para a memória a partir da última posição ocupada pela pilha.
     // Faz as correções necessárias de endereçamento.
+    // Retorna a posição da área de dados (0 se der erro)
     public short loadFileToMemory(File file) {
         short re = 0;
         // Vetor com os modos de endereçamento de cada instrução, índice = opcode

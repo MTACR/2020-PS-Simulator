@@ -20,16 +20,15 @@ public class Processor {
         //-----------------------------------
         pc = (short) (stackSize + 1);
 
-        try {
-            nextInstruction();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        nextInstruction();
     }
 
-    public void nextInstruction() throws Exception {
+    public void nextInstruction() {
+        if (pc == 0)
+            System.err.println("Stack overflow");
+
         if (pc >= re)
-            throw new Exception("Program counter cannot access data memory");
+            System.err.println("Program counter cannot access data memory");
 
         memory.setDebug(pc);
 
