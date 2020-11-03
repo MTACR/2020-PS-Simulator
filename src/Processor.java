@@ -16,19 +16,31 @@ public class Processor {
         memory = new Memory(1024);
         re = memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
 
-        short stackSize = (short) 3; //MUDAR DEPOIS DE PILHA PRONTA!
+        short stackSize = (short) 3; //TODO: MUDAR DEPOIS DE PILHA PRONTA!
         //-----------------------------------
         pc = (short) (stackSize + 1);
 
-        nextInstruction();
+        //TODO: alterar de acordo com modo de operação
+        while (nextInstruction());
     }
 
-    public void nextInstruction() {
-        if (pc == 0)
+    private boolean nextInstruction() {
+        if (pc == 0) {
             System.err.println("Stack overflow");
+            return false;
+        }
 
-        if (pc >= re)
+        if (pc >= re) {
             System.err.println("Program counter cannot access data memory");
+            return false;
+        }
+
+        //TODO: MUDAR DEPOIS DE PILHA PRONTA!
+
+        /*if (pc > 0 && pc < 3) {
+            System.err.println("Program counter cannot access stack address");
+            return false;
+        }*/
 
         memory.setDebug(pc);
 
@@ -43,11 +55,11 @@ public class Processor {
         TestOnly.OPCODE opcode = TestOnly.OPCODE.values()[ri];
         System.out.print("\n" + opcode);
 
-        parseOpCode(opcode, f1, f2, f3);
+        return parseOpCode(opcode, f1, f2, f3);
     }
 
     // seleciona qual código a ser processado e lida com a quantidade de palavras a ser lida pros operandos
-    private void parseOpCode(TestOnly.OPCODE opcode, boolean f1, boolean f2, boolean f3) {
+    private boolean parseOpCode(TestOnly.OPCODE opcode, boolean f1, boolean f2, boolean f3) {
         boolean stop = false;
 
         switch (opcode) {
@@ -89,9 +101,8 @@ public class Processor {
                 break;
             case STOP:
                 //stop();
-                stop = true;
                 System.out.println("\n");
-                break;
+                return false;
             case READ:
                 read(f1);
                 break;
@@ -107,12 +118,7 @@ public class Processor {
                 break;
         }
 
-        if (!stop)
-            try {
-                nextInstruction();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        return true;
     }
 
     private void write(boolean f1, boolean f3){
