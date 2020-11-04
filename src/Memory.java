@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Stack;
 
 public class Memory {
 
@@ -25,22 +26,27 @@ public class Memory {
         // 1 = Direto ou Indireto
         // 2 = Direto, Indireto ou Imediato.
         // 3 = Dois operandos, usado somente pelo COPY.
-
+        
+        // Pilha para endereços de operadores indiretos, para corrigir depois de todo o arquivo lido
+        Stack indStack = new Stack<Short>(); 
+        
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line;
-            int i = 0;
 
             //short stackSize = (short) (memory[2] + 3); // valor armazenado + espaços livres no inicio
             //-----------------------------------
             short stackSize = (short) 3; //TODO: MUDAR DEPOIS DE PILHA PRONTA!
             //-----------------------------------
             //pc = (short) (stackSize + 1);
-
+            
+            int i = stackSize;
+            
+            
             //primeira word é o endereço da memória de dados
             if ((line = reader.readLine()) != null) {
                 short word = (short) (Integer.parseInt(line, 2) + stackSize);
-                memory[i + stackSize] = word;
+                memory[i] = word;
                 re = word;
                 i++;
             }
@@ -48,38 +54,45 @@ public class Memory {
             //System.out.println(re);
 
             //lê até acabar memória de dados
-            while ((line = reader.readLine()) != null && (i + stackSize) < re) {
+            while ((line = reader.readLine()) != null && (i) < re) {
                 short word = (short) Integer.parseInt(line, 2);
                 int opCode = (word & 0xF000) >> 12;
                 int mode = opMode[opCode];
                 boolean immediate = (word & 0x200) >> 9  != 0;
+                boolean op1Ind = (word & 0x800) >> 11 != 0;
+                boolean op2Ind = (word & 0x400) >> 10 != 0;
+
 
                 //System.out.println(OPCODE.values()[opCode]);
 
-                memory[i + stackSize] = word;   // Endereço = Tamanho da pilha + contador de palavra
+                memory[i] = word;   // Endereço = Tamanho da pilha + contador de palavra
                 switch (mode) {
                     case 0: // Sem operador
                         // do nothing
                         break;
                     case 1: // Direto, Indireto
                         i++;
-                        memory[i + stackSize] = (short) (getNextWord(reader) + stackSize);
+                        memory[i] = (short) (getNextWord(reader) + stackSize);
+                        if (op1Ind) indStack.push(memory[i]);
                         break;
                     case 2: // Direto, Indireto, Imediato
                         i++;
                         if (immediate){
-                            memory[i + stackSize] = getNextWord(reader);
+                            memory[i] = getNextWord(reader);
                         } else {
-                            memory[i + stackSize] = (short) (getNextWord(reader) + stackSize);
+                            memory[i] = (short) (getNextWord(reader) + stackSize);
+                            if (op1Ind) indStack.push(memory[i]); // Se o operador for indireto, é necessario corrigir o endereço o qual foi apontado também;
                         }   break;
                     case 3: // COPY -> 2 operandos
                         i++;
-                        memory[i + stackSize] = (short) (getNextWord(reader) + stackSize); // op1 Direto, Indireto
+                        memory[i] = (short) (getNextWord(reader) + stackSize); // op1 Direto, Indireto
+                        if (op1Ind) indStack.push(memory[i]);
                         i++;
                         if (immediate){ // op2 pode ser imediato, nesse caso não corrije endereço
-                            memory[i + stackSize] = getNextWord(reader); // op2 Imediato
+                            memory[i] = getNextWord(reader); // op2 Imediato
                         } else {
-                            memory[i + stackSize] = (short) (getNextWord(reader) + stackSize); // op2 Direto, Indireto
+                            memory[i] = (short) (getNextWord(reader) + stackSize); // op2 Direto, Indireto
+                            if (op2Ind) indStack.push(memory[i]);
                         }   break;
                     default:
                         break;
@@ -89,14 +102,19 @@ public class Memory {
 
             //lê até o fim do arquivo apenas dados
             while (line != null) {
-                memory[i + stackSize] = (short) Integer.parseInt(line, 2);
+                memory[i] = (short) Integer.parseInt(line, 2);
                 i++;
 
                 line = reader.readLine();
                 //System.out.println(memory[i + stackSize]);
             }
-
             reader.close();
+            
+            while (!indStack.empty()){ // Acessa a pilha com os endereços indiretos e corrige com o tamanho da pilha da máquina
+                short address = (short) indStack.pop();
+                short value = memory[address];
+                if (value != 0)  memory[address] = (short) (value + stackSize);
+            }
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
         }
@@ -148,9 +166,9 @@ public class Memory {
 
         for (int j = 0; j < 20; j++)
             if (debug[j] )
-                System.out.println(j + " - " + TestOnly.OPCODE.values()[(short) ((memory[j] & 0xF000) >> 12)]);
+                System.out.println(j + " -\t" + TestOnly.OPCODE.values()[(short) ((memory[j] & 0xF000) >> 12)]);
             else
-                System.out.println(j + " - " + memory[j]);
+                System.out.println(j + " -\t" + memory[j]);
     }
 
     public void setDebug(int pos) {
