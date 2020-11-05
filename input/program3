@@ -1,0 +1,4 @@
+LOAD 5
+ADD 7
+STORE $8
+STOP
