@@ -8,10 +8,12 @@ public class Memory {
 
     private final short[] memory;
     private final boolean[] debug; // usado pra identificar se é opcode ou dado
+    private final int size;
 
     public Memory(int size) {
         memory = new short[size];
         debug = new boolean[size];
+        this.size = size;
     }
 
     // Carrega o arquivo passado por parâmetro para a memória a partir da última posição ocupada pela pilha.
@@ -163,17 +165,21 @@ public class Memory {
 
     // imprime o conteudo da memória
     public void dumpMemory() {
-        System.out.println("---DUMP---");
+        //System.out.println("---DUMP---");
 
         for (int j = 0; j < 20; j++)
             if (debug[j] )
-                System.out.println(j + " -\t" + TestOnly.OPCODE.values()[(short) ((memory[j] & 0xF000) >> 12)]);
+                System.out.println("0x" + j + " -\t" + TestOnly.OPCODE.values()[(short) ((memory[j] & 0xF000) >> 12)]);
             else
-                System.out.println(j + " -\t" + memory[j]);
+                System.out.println("0x" + j + " -\t" + memory[j]);
     }
 
     public void setDebug(int pos) {
         debug[pos] = true;
+    }
+
+    public int size() {
+        return size;
     }
 
 }

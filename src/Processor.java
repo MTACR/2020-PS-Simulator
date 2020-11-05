@@ -35,6 +35,11 @@ public class Processor {
             return false;
         }
 
+        if (pc > memory.size()) {
+            System.err.println("Program counter out of memory bounds");
+            return false;
+        }
+
         //TODO: MUDAR DEPOIS DE PILHA PRONTA!
 
         /*if (pc > 0 && pc < 3) {
@@ -42,7 +47,7 @@ public class Processor {
             return false;
         }*/
 
-        //memory.setDebug(pc);
+        memory.setDebug(pc);
 
         short word = memory.getWord(pc++, false, true);
 
@@ -230,7 +235,10 @@ public class Processor {
     }
 
     public void dump() {
-        System.out.println("ACC - " + acc);
+        System.out.println("ACC -\t" + acc);
+        System.out.println("RE -\t" + re);
+        System.out.println("PC -\t" + pc);
+        System.out.println("------------");
         memory.dumpMemory();
     }
 
