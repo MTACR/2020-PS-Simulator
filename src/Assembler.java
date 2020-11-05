@@ -102,6 +102,15 @@ public class Assembler {
 		else return numBinary + aux;
 	}
 	
+	private static String dataToBinary(String data) {
+		int dataInt = Integer.parseInt(data);
+		String strBin = Integer.toBinaryString(dataInt);
+		
+		strBin = fillBinary(strBin, 16, 'l');
+		
+		return strBin + "\n";
+	}
+	
 	public static File convert(File fileAssembly) {
 		File fileBinary;
 		String binaryOut = "";
@@ -114,19 +123,23 @@ public class Assembler {
 			int addrOpd1, addrOpd2;
 			// String[] lineArr = new String[3];
 					
-            while ((line = reader.readLine()) != null) {
-                numWords++;
-				
+            while ((line = reader.readLine()) != null) {				
 				opcode = "";
 				opd1 = "";
 				opd2 = ""; 
 				addrOpd1 = -1;
 				addrOpd2 = -1;
 				
-				String[] lineArr = line.split(" ");
-                //System.out.println(OPCODE.values()[opCode]);
-				
+				String[] lineArr = line.split(" ");			
 				opcode = lineArr[0];
+				
+				if (getOpcode(opcode) == -1) {
+					binaryOut += dataToBinary(opcode);
+					continue;
+				} else {
+					numWords++;
+				}
+				
 				if (lineArr.length > 1) {
 					numWords++;
 					opd1 = lineArr[1];
