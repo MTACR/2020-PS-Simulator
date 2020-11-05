@@ -16,7 +16,7 @@ public class Processor {
         memory = new Memory(1024);
         re = memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
 
-        short stackSize = (short) 3; //TODO: MUDAR DEPOIS DE PILHA PRONTA!
+        short stackSize = (short) 0; //TODO: MUDAR DEPOIS DE PILHA PRONTA!
         //-----------------------------------
         pc = (short) (stackSize + 1);
 
@@ -42,7 +42,7 @@ public class Processor {
             return false;
         }*/
 
-        memory.setDebug(pc);
+        //memory.setDebug(pc);
 
         short word = memory.getWord(pc++, false, true);
 
@@ -94,7 +94,7 @@ public class Processor {
                 break;
             case STOP:
                 //stop();
-                System.out.println("\n");
+                //System.out.println("\n");
                 return false;
             case READ:
                 read(f1);
@@ -132,7 +132,7 @@ public class Processor {
         short address = memory.getAddress(pc++, f1);
 
         if (address < re) {
-            System.err.println("Cannot read from program memory");
+            System.err.println("Cannot \"read\" (save) in program memory");
             return false;
         } else {
             memory.storeWord(address, input);
@@ -165,7 +165,7 @@ public class Processor {
             System.err.println("Cannot branch to data memory");
             return false;
         } else {
-            pc = memory.getWord(pc++, f1, false);
+            pc = address;
             return true;
         }
     }
@@ -173,22 +173,28 @@ public class Processor {
     private boolean branchNeg(boolean f1) {
         if (acc < 0)
             return branch(f1);
-        else
+        else {
+            pc++;
             return true;
+        }
     }
 
     private boolean branchPos(boolean f1) {
         if (acc > 0)
             return branch(f1);
-        else
+        else {
+            pc++;
             return true;
+        }
     }
 
     private boolean branchZero(boolean f1) {
         if (acc == 0)
             return branch(f1);
-        else
+        else {
+            pc++;
             return true;
+        }
     }
 
     private void add(boolean f1, boolean f3) {
@@ -221,15 +227,10 @@ public class Processor {
             memory.storeWord(address, acc);
             return true;
         }
-        //short storeAddress = loadWord(f1, false);
-        //memory[storeAddress] = acc;
-    }
-
-    private void stop() {
-        //NaN
     }
 
     public void dump() {
+        System.out.println("ACC - " + acc);
         memory.dumpMemory();
     }
 

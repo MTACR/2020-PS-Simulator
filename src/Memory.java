@@ -36,7 +36,7 @@ public class Memory {
 
             //short stackSize = (short) (memory[2] + 3); // valor armazenado + espaços livres no inicio
             //-----------------------------------
-            short stackSize = (short) 3; //TODO: MUDAR DEPOIS DE PILHA PRONTA!
+            short stackSize = (short) 0; //TODO: MUDAR DEPOIS DE PILHA PRONTA!
             //-----------------------------------
             //pc = (short) (stackSize + 1);
             

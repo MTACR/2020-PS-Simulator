@@ -1,10 +1,14 @@
+
 ADD
 9999
 BRNEG
-$4
+$11
 STORE
-$7
+$13
 STOP
 STORE
-$6
+$12
 STOP
+8
+13
+12
