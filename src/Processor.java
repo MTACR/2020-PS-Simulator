@@ -161,8 +161,8 @@ public class Processor {
     private boolean branch(boolean f1) {
         short address = memory.getAddress(pc++, f1);
 
-        if (address < re) {
-            System.err.println("Cannot branch to program memory");
+        if (address >= re) {
+            System.err.println("Cannot branch to data memory");
             return false;
         } else {
             pc = memory.getWord(pc++, f1, false);
