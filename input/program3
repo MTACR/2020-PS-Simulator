@@ -1,4 +1,5 @@
 LOAD 5
 ADD 7
-STORE $8
+STORE $7
 STOP
+8

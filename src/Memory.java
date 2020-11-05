@@ -136,6 +136,7 @@ public class Memory {
     // f1 diz se é direto ou indireto
     public short getAddress(int pos, boolean f1) {
         short s = memory[pos];
+
         if (f1) {
             return memory[s];
         } else {
@@ -148,7 +149,7 @@ public class Memory {
     public short getWord(int pos, boolean f1, boolean f3) {
         short s = memory[pos];
 
-        System.out.print(" " + s);
+        //System.out.print(" " + s);
 
         if (f3) {
             return s;

@@ -9,10 +9,9 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class Assembler {
-	File file;
 	
 	//transforma o opcode de String pra inteiro
-	private int getOpcode(String opcode) {
+	private static int getOpcode(String opcode) {
 		switch (opcode.toLowerCase()) {
 			case "br":
 				return 0;
@@ -53,14 +52,14 @@ public class Assembler {
 	
 	//retorna o modo de endereçamento (0 p/ direto, 1 p/ indireto ou 2 p/ imediato)
 	//no assembly, direto é '$' antes da posição; indireto é '*' antes da posição; imediato é só o numero.
-	private int getAddrMode(String opd) {
+	private static int getAddrMode(String opd) {
 		if (opd.charAt(0) == '$') return 0; //endereçamento direto
 		else if (opd.charAt(0) == '*') return 1; //indireto
 		else return 2; //imediato
 	}
 	
 	//recebe o numero da operação, retorna o binário
-	private String opcodeBinary(int opcode, int addrOpd1, int addrOpd2) {
+	private static String opcodeBinary(int opcode, int addrOpd1, int addrOpd2) {
 		String opcodeBin = Integer.toBinaryString(opcode);
 		opcodeBin = fillBinary(opcodeBin, 4, 'l');
 		
@@ -82,7 +81,7 @@ public class Assembler {
 	}
 	
 	//recebe o operando (incluindo o char de tipo de endereçamento) e retorna o binário
-	private String opdBinary(String opd) {
+	private static String opdBinary(String opd) {
 		if (opd.charAt(0) == '$' || opd.charAt(0) == '*') opd = opd.substring(1);
 		
 		String opdBin = Integer.toBinaryString(Integer.parseInt(opd));
@@ -93,7 +92,7 @@ public class Assembler {
 	
 	// size = num bits final; 
 	//fill = qual lado adicionar os 0's; 'l' pra inicio, 'r' pra fim
-	private String fillBinary(String numBinary, int size, char fill) {
+	private static String fillBinary(String numBinary, int size, char fill) {
 		String aux = "";
 		
 		while (numBinary.length() + aux.length() < size) aux += '0';
@@ -103,7 +102,7 @@ public class Assembler {
 		else return numBinary + aux;
 	}
 	
-	public File convert(File fileAssembly) {
+	public static File convert(File fileAssembly) {
 		File fileBinary;
 		String binaryOut = "";
 		int numWords = 0;
