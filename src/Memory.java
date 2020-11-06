@@ -9,12 +9,46 @@ public class Memory {
     private final short[] memory;
     private final boolean[] debug; // usado pra identificar se é opcode ou dado
     private final int size;
+    private final short stackLimit; //tamanho maximo da pilha
 
     public Memory(int size) {
         memory = new short[size];
         debug = new boolean[size];
         this.size = size;
+        stackLimit = 10;
+        memory[2]=stackLimit;
     }
+    
+    //Pilha
+    public int stackCounter=2; //contador da pilha
+    
+    public void push(short sp){ //insere na pilha
+        if(isFull()){
+            sp=memory[2];
+            throw new RuntimeException("Stack Overflow");
+        }
+        stackCounter++;
+        memory[stackCounter]=sp;
+    }
+    
+    public short pop(){ //retira da pilha
+        if(isEmpty()){
+            throw new RuntimeException("Stack Empty");
+        }
+        short pop;
+        pop=memory[stackCounter];
+        stackCounter--;
+        return pop;
+    }
+    
+    public boolean isFull(){ //confere se pilha cheia
+        return (stackCounter==12);
+    }
+    
+    public boolean isEmpty(){ //confere se pilha vazia
+        return (stackCounter==2);
+    }
+    //Fim pilha
 
     // Carrega o arquivo passado por parâmetro para a memória a partir da última posição ocupada pela pilha.
     // Faz as correções necessárias de endereçamento.
