@@ -126,6 +126,7 @@ public class Processor {
     }
 
     private void ret(){
+        pc=memory.pop();
         //TODO
     }
 
@@ -159,8 +160,11 @@ public class Processor {
     }
 
     private void call(boolean f1){
+        sp=pc;
+        memory.push(sp);
+        pc = memory.getWord(pc++, f1, false);
         //TODO
-        //pc = memory.getWord(pc++, f1, false);
+        
     }
 
     private boolean branch(boolean f1) {
