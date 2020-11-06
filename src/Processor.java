@@ -3,22 +3,22 @@ import java.util.Scanner;
 
 public class Processor {
 
-    private final short re;
     private short pc;
-    private short acc = 0;
-    private short sp = 0;
-    private short ri = 0;
-    private byte mop = 0;
+    private short acc;
+    private short sp;
+    private short ri;
+    private short re;
+    private byte mop;
 
     private final Memory memory;
 
     public Processor(File file) {
         memory = new Memory(1024);
-        re = memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
+        memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
 
         short stackSize = (short) 0; //TODO: MUDAR DEPOIS DE PILHA PRONTA!
         //-----------------------------------
-        pc = (short) (stackSize + 1);
+        pc = stackSize;
 
         //TODO: alterar de acordo com modo de operação
         while (nextInstruction());
@@ -27,11 +27,6 @@ public class Processor {
     private boolean nextInstruction() {
         if (pc == 0) {
             System.err.println("Stack overflow");
-            return false;
-        }
-
-        if (pc >= re) {
-            System.err.println("Program counter cannot access data memory");
             return false;
         }
 
@@ -51,11 +46,17 @@ public class Processor {
 
         short word = memory.getWord(pc++, false, true);
 
-        ri = (short) ((word & 0xF000) >> 12);
+        /*ri = (short) ((word & 0xF000) >> 12);
 
         boolean f1 = (word & 0x800) >> 11 != 0;
         boolean f2 = (word & 0x400) >> 10 != 0;
-        boolean f3 = (word & 0x200) >> 9  != 0;
+        boolean f3 = (word & 0x200) >> 9  != 0;*/
+
+        ri = (short) (word & 15);
+
+        boolean f1 = (word & 32)  != 0;
+        boolean f2 = (word & 64)  != 0;
+        boolean f3 = (word & 128) != 0;
 
         TestOnly.OPCODE opcode = TestOnly.OPCODE.values()[ri];
         //System.out.print("\n" + opcode);
@@ -67,9 +68,11 @@ public class Processor {
     private boolean parseOpCode(TestOnly.OPCODE opcode, boolean f1, boolean f2, boolean f3) {
         switch (opcode) {
             case BR:
-                return branch(f1);
+                branch(f1);
+                break;
             case BRPOS:
-                return branchPos(f1);
+                branchPos(f1);
+                break;
             case ADD:
                 add(f1, f3);
                 //System.out.println("\n= " + acc);
@@ -78,15 +81,18 @@ public class Processor {
                 load(f1, f3);
                 break;
             case BRZERO:
-                return branchZero(f1);
+                branchZero(f1);
+                break;
             case BRNEG:
-                return branchNeg(f1);
+                branchNeg(f1);
+                break;
             case SUB:
                 sub(f1, f3);
                 //System.out.println("= " + acc);
                 break;
             case STORE:
-                return store(f1);
+                store(f1);
+                break;
             case WRITE:
                 write(f1, f3);
                 break;
@@ -105,7 +111,8 @@ public class Processor {
                 read(f1);
                 break;
             case COPY:
-                return copy(f1, f2, f3);
+                copy(f1, f2, f3);
+                break;
             case MULT:
                 mult(f1, f3);
                 //System.out.println("= " + acc);
@@ -120,6 +127,7 @@ public class Processor {
 
     private void write(boolean f1, boolean f3){
         //Placeholder?
+        re = pc;
         short word = memory.getWord(pc++, f1, f3);
         System.out.println("Output: " + word);
         //TODO?
@@ -130,112 +138,88 @@ public class Processor {
         //TODO
     }
 
-    private boolean read(boolean f1){
+    private void read(boolean f1) {
         //Placeholder?
         Scanner inputScanner = new Scanner(System.in);
         short input = inputScanner.nextByte();
 
+        re = pc;
         short address = memory.getAddress(pc++, f1);
-
-        if (address < re) {
-            System.err.println("Cannot \"read\" (save) in program memory");
-            return false;
-        } else {
-            memory.storeWord(address, input);
-            return true;
-        }
+        memory.storeWord(address, input);
     }
 
-    private boolean copy(boolean f1, boolean f2, boolean f3){
+    private void copy(boolean f1, boolean f2, boolean f3) {
+        re = pc;
         short address = memory.getAddress(pc++, f1);
-
-        if (address < re) {
-            System.err.println("Cannot copy from program memory");
-            return false;
-        } else {
-            short word = memory.getWord(pc++, f2, f3);
-            memory.storeWord(address, word);
-            return true;
-        }
+        re = pc;
+        short word = memory.getWord(pc++, f2, f3);
+        memory.storeWord(address, word);
     }
 
-    private void call(boolean f1){
+    private void call(boolean f1) {
         sp=pc;
         memory.push(sp);
+        re = pc;
         pc = memory.getWord(pc++, f1, false);
         //TODO
         
     }
 
-    private boolean branch(boolean f1) {
-        short address = memory.getAddress(pc++, f1);
-
-        if (address >= re) {
-            System.err.println("Cannot branch to data memory");
-            return false;
-        } else {
-            pc = address;
-            return true;
-        }
+    private void branch(boolean f1) {
+        re = pc;
+        pc = memory.getAddress(pc++, f1);
     }
 
-    private boolean branchNeg(boolean f1) {
+    private void branchNeg(boolean f1) {
         if (acc < 0)
-            return branch(f1);
-        else {
+            branch(f1);
+        else
             pc++;
-            return true;
-        }
     }
 
-    private boolean branchPos(boolean f1) {
+    private void branchPos(boolean f1) {
         if (acc > 0)
-            return branch(f1);
-        else {
+            branch(f1);
+        else
             pc++;
-            return true;
-        }
     }
 
-    private boolean branchZero(boolean f1) {
+    private void branchZero(boolean f1) {
         if (acc == 0)
-            return branch(f1);
-        else {
+            branch(f1);
+        else
             pc++;
-            return true;
-        }
     }
 
     private void add(boolean f1, boolean f3) {
+        re = pc;
         acc += memory.getWord(pc++, f1, f3);
     }
 
     private void divide(boolean f1, boolean f3) {
+        re = pc;
         acc /= memory.getWord(pc++, f1, f3);
     }
 
     private void load(boolean f1, boolean f3) {
+        re = pc;
         acc = memory.getWord(pc++, f1, f3);
     }
 
     private void mult(boolean f1, boolean f3) {
+        re = pc;
         acc *= memory.getWord(pc++, f1, f3);
     }
 
     private void sub(boolean f1, boolean f3) {
+        re = pc;
         acc -= memory.getWord(pc++, f1, f3);
     }
 
-    private boolean store(boolean f1) {
+    private void store(boolean f1) {
+        re = pc;
         short address = memory.getAddress(pc++, f1);
-
-        if (address < re) {
-            System.err.println("Cannot store in program memory");
-            return false;
-        } else {
-            memory.storeWord(address, acc);
-            return true;
-        }
+        memory.storeWord(address, acc);
     }
 
     public void dump() {

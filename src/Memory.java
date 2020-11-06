@@ -31,7 +31,7 @@ public class Memory {
         memory[stackCounter]=sp;
     }
     
-    public short pop(){ //retira da pilha
+    public short pop() { //retira da pilha
         if(isEmpty()){
             throw new RuntimeException("Stack Empty");
         }
@@ -53,8 +53,7 @@ public class Memory {
     // Carrega o arquivo passado por parâmetro para a memória a partir da última posição ocupada pela pilha.
     // Faz as correções necessárias de endereçamento.
     // Retorna a posição da área de dados (0 se der erro)
-    public short loadFileToMemory(File file) {
-        short re = 0;
+    public void loadFileToMemory(File file) {
         // Vetor com os modos de endereçamento de cada instrução, índice = opcode
         int[] opMode = new int[] {1,1,2,2,1,1,2,1,2,0,2,0,1,3,2,1};
         // Modos de endereçamento:
@@ -83,14 +82,13 @@ public class Memory {
             if ((line = reader.readLine()) != null) {
                 short word = (short) (Integer.parseInt(line, 2) + stackSize);
                 memory[i] = word;
-                re = word;
                 i++;
             }
 
             //System.out.println(re);
 
             //lê até acabar memória de dados
-            while ((line = reader.readLine()) != null && (i) < re) {
+            while ((line = reader.readLine()) != null) {
                 short word = (short) Integer.parseInt(line, 2);
                 int opCode = (word & 0xF000) >> 12;
                 int mode = opMode[opCode];
@@ -154,8 +152,6 @@ public class Memory {
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
         }
-
-        return re;
     }
 
     private short getNextWord(BufferedReader reader) throws IOException {
@@ -171,6 +167,9 @@ public class Memory {
     // retorna um endereço da memória dependendo do modo de endereçamento
     // f1 diz se é direto ou indireto
     public short getAddress(int pos, boolean f1) {
+        if (pos > size)
+            throw new RuntimeException("Out of bounds");
+
         short s = memory[pos];
 
         if (f1) {
@@ -183,6 +182,9 @@ public class Memory {
     // retorna um valor da memória dependendo do modo de endereçamento
     // f1 diz se é direto ou indireto e f3 diz se é imediato
     public short getWord(int pos, boolean f1, boolean f3) {
+        if (pos > size)
+            throw new RuntimeException("Out of bounds");
+
         short s = memory[pos];
 
         //System.out.print(" " + s);
