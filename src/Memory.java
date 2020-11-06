@@ -10,8 +10,8 @@ public class Memory {
     private final boolean[] debug; // usado pra identificar se é opcode ou dado
     private int sp; //stackpointer
 
-    private final int stackZero = 2; //posição anterior ao inicio da pilha //definidos assim pra facilitar possiveis modificações
-    private final short stackSize = 10; //tamanho maximo da pilha
+    private static final int stackZero = 2; //posição anterior ao inicio da pilha //definidos assim pra facilitar possiveis modificações
+    private static final short stackSize = 10; //tamanho maximo da pilha
 
     public Memory(int size) {
         memory = new short[size];
@@ -22,24 +22,29 @@ public class Memory {
 
     //Pilha
 
-    public void push(short word){ //insere na pilha
+    public boolean push(short word) {  //insere na pilha
         sp++;
-        if(sp > memory[2]){ //verifica se a pilha está cheia
-            System.out.println("Stack overflow");
+
+        if (sp > memory[2]) { //verifica se a pilha está cheia
+            System.err.println("Stack overflow");
             sp = 0; //"causando um desvio para o endereço 0 (zero)"
+            return false;
+        } else {
+            memory[sp] = word;
+            return true;
         }
-        memory[sp] = word;
     }
 
     public short pop() { //retira da pilha
-        if(sp <= stackZero){ //verifica se a pilha está vazia
-            System.out.println("Stack underflow");
+        if (sp <= stackZero) { //verifica se a pilha está vazia
+            System.err.println("Stack underflow");
             sp = memory[2];
-        }
-        return memory[sp--];
+            return -1;
+        } else
+            return memory[sp--];
     }
 
-    public short getPcStart(){
+    public short firstPosition() {
         return (short) (memory[2] + 1);
     }
 
@@ -56,7 +61,7 @@ public class Memory {
     // Carrega o arquivo passado por parâmetro para a memória a partir da última posição ocupada pela pilha.
     // Faz as correções necessárias de endereçamento.
     // Retorna a posição da área de dados (0 se der erro)
-    public void loadFileToMemory(File file) {
+    /*public void loadFileToMemory(File file) {
         // Vetor com os modos de endereçamento de cada instrução, índice = opcode
         int[] opMode = new int[] {1,1,2,2,1,1,2,1,2,0,2,0,1,3,2,1};
         // Modos de endereçamento:
@@ -161,6 +166,22 @@ public class Memory {
         String line;
         line = reader.readLine();
         return (short) Integer.parseInt(line,2);
+    }*/
+
+    public void loadFileToMemory(File file) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+
+            String line;
+            int i = 0;
+
+            while ((line = reader.readLine()) != null)
+                memory[i++] = (short) Integer.parseInt(line, 2);
+
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void storeWord(short pos, short word) {
@@ -170,7 +191,7 @@ public class Memory {
     // retorna um endereço da memória dependendo do modo de endereçamento
     // f1 diz se é direto ou indireto
     public short getAddress(int pos, boolean f1) {
-        if (pos > memory.length)
+        if (pos > memory.length || pos < 0)
             throw new RuntimeException("Out of bounds");
 
         short s = memory[pos];
@@ -185,12 +206,10 @@ public class Memory {
     // retorna um valor da memória dependendo do modo de endereçamento
     // f1 diz se é direto ou indireto e f3 diz se é imediato
     public short getWord(int pos, boolean f1, boolean f3) {
-        if (pos > memory.length)
+        if (pos > memory.length || pos < 0)
             throw new RuntimeException("Out of bounds");
 
         short s = memory[pos];
-
-        //System.out.print(" " + s);
 
         if (f3) {
             return s;

@@ -16,11 +16,7 @@ public class Processor {
         memory = new Memory(1024);
         memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
 
-        short stackSize = (short) 0; //TODO: MUDAR DEPOIS DE PILHA PRONTA!
-        //-----------------------------------
-        pc = stackSize;
-
-        //pc = memory.getPcStart(); não sei se já deveria mudar o PC
+        pc = memory.firstPosition();
 
         //TODO: alterar de acordo com modo de operação
         while (nextInstruction());
@@ -32,27 +28,19 @@ public class Processor {
             return false;
         }
 
-        if (pc > memory.size()) {
+        if (pc > memory.size() || pc < 0) {
             System.err.println("Program counter out of memory bounds");
             return false;
         }
 
-        //TODO: MUDAR DEPOIS DE PILHA PRONTA!
-
-        /*if (pc > 0 && pc < 3) {
-            System.err.println("Program counter cannot access stack address");
+        if (pc > 0 && pc < memory.firstPosition()) {
+            System.err.println("Program counter cannot access stack area");
             return false;
-        }*/
+        }
 
         memory.setDebug(pc);
 
         short word = memory.getWord(pc++, false, true);
-
-        /*ri = (short) ((word & 0xF000) >> 12);
-
-        boolean f1 = (word & 0x800) >> 11 != 0;
-        boolean f2 = (word & 0x400) >> 10 != 0;
-        boolean f3 = (word & 0x200) >> 9  != 0;*/
 
         ri = (short) (word & 15);
 
@@ -77,7 +65,6 @@ public class Processor {
                 break;
             case ADD:
                 add(f1, f3);
-                //System.out.println("\n= " + acc);
                 break;
             case LOAD:
                 load(f1, f3);
@@ -90,7 +77,6 @@ public class Processor {
                 break;
             case SUB:
                 sub(f1, f3);
-                //System.out.println("= " + acc);
                 break;
             case STORE:
                 store(f1);
@@ -99,15 +85,11 @@ public class Processor {
                 write(f1, f3);
                 break;
             case RET:
-                ret();
-                break;
+                return ret();
             case DIVIDE:
                 divide(f1, f3);
-                //System.out.println("= " + acc);
                 break;
             case STOP:
-                //stop();
-                //System.out.println("\n");
                 return false;
             case READ:
                 read(f1);
@@ -117,11 +99,12 @@ public class Processor {
                 break;
             case MULT:
                 mult(f1, f3);
-                //System.out.println("= " + acc);
                 break;
             case CALL:
-                call(f1);
-                break;
+                return call(f1);
+            default:
+                System.err.println("Invalid opcode");
+                return false;
         }
 
         return true;
@@ -153,13 +136,22 @@ public class Processor {
         memory.storeWord(address, word);
     }
 
-    private void call(boolean f1) {
-        memory.push(pc);
-        pc = memory.getWord(pc++, f1, false);
+    private boolean call(boolean f1) {
+        if (memory.push(pc)) {
+            pc = memory.getWord(pc++, f1, false);
+            return true;
+        } else
+            return false;
     }
 
-    private void ret(){
-        pc = memory.pop();
+    private boolean ret() {
+        short pop = memory.pop();
+
+        if (pop >= 0) {
+            pc = pop;
+            return true;
+        } else
+            return false;
     }
 
     private void branch(boolean f1) {
@@ -222,6 +214,7 @@ public class Processor {
     public void dump() {
         System.out.println("ACC -\t" + acc);
         System.out.println("RE -\t" + re);
+        System.out.println("RI -\t" + ri);
         System.out.println("PC -\t" + pc);
         System.out.println("------------");
         memory.dumpMemory();
