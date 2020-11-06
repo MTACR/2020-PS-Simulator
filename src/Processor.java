@@ -5,7 +5,7 @@ public class Processor {
 
     private short pc;
     private short acc;
-    private short sp;
+    //private short sp; //implementado na memoria
     private short ri;
     private short re;
     private byte mop;
@@ -19,6 +19,8 @@ public class Processor {
         short stackSize = (short) 0; //TODO: MUDAR DEPOIS DE PILHA PRONTA!
         //-----------------------------------
         pc = stackSize;
+
+        //pc = memory.getPcStart(); não sei se já deveria mudar o PC
 
         //TODO: alterar de acordo com modo de operação
         while (nextInstruction());
@@ -133,11 +135,6 @@ public class Processor {
         //TODO?
     }
 
-    private void ret(){
-        pc=memory.pop();
-        //TODO
-    }
-
     private void read(boolean f1) {
         //Placeholder?
         Scanner inputScanner = new Scanner(System.in);
@@ -157,12 +154,12 @@ public class Processor {
     }
 
     private void call(boolean f1) {
-        sp=pc;
-        memory.push(sp);
-        re = pc;
+        memory.push(pc);
         pc = memory.getWord(pc++, f1, false);
-        //TODO
-        
+    }
+
+    private void ret(){
+        pc = memory.pop();
     }
 
     private void branch(boolean f1) {

@@ -8,46 +8,49 @@ public class Memory {
 
     private final short[] memory;
     private final boolean[] debug; // usado pra identificar se é opcode ou dado
-    private final int size;
-    private final short stackLimit; //tamanho maximo da pilha
+    private int sp; //stackpointer
+
+    private final int stackZero = 2; //posição anterior ao inicio da pilha //definidos assim pra facilitar possiveis modificações
+    private final short stackSize = 10; //tamanho maximo da pilha
 
     public Memory(int size) {
         memory = new short[size];
         debug = new boolean[size];
-        this.size = size;
-        stackLimit = 10;
-        memory[2]=stackLimit;
+        sp = stackZero;
+        memory[stackZero] = stackZero + stackSize; //usar memory[2] para obter o endereço limite da pilha
     }
-    
+
     //Pilha
-    public int stackCounter=2; //contador da pilha
-    
-    public void push(short sp){ //insere na pilha
-        if(isFull()){
-            sp=memory[2];
-            throw new RuntimeException("Stack Overflow");
+
+    public void push(short word){ //insere na pilha
+        sp++;
+        if(sp > memory[2]){ //verifica se a pilha está cheia
+            System.out.println("Stack overflow");
+            sp = 0; //"causando um desvio para o endereço 0 (zero)"
         }
-        stackCounter++;
-        memory[stackCounter]=sp;
+        memory[sp] = word;
     }
-    
+
     public short pop() { //retira da pilha
-        if(isEmpty()){
-            throw new RuntimeException("Stack Empty");
+        if(sp <= stackZero){ //verifica se a pilha está vazia
+            System.out.println("Stack underflow");
+            sp = memory[2];
         }
-        short pop;
-        pop=memory[stackCounter];
-        stackCounter--;
-        return pop;
+        return memory[sp--];
     }
-    
-    public boolean isFull(){ //confere se pilha cheia
-        return (stackCounter==12);
+
+    public short getPcStart(){
+        return (short) (memory[2] + 1);
     }
-    
+
+    /*public boolean isFull(){ //confere se pilha cheia
+        return (sp==12);
+    }
+
     public boolean isEmpty(){ //confere se pilha vazia
-        return (stackCounter==2);
-    }
+        return (sp==2);
+    }*/
+
     //Fim pilha
 
     // Carrega o arquivo passado por parâmetro para a memória a partir da última posição ocupada pela pilha.
@@ -167,7 +170,7 @@ public class Memory {
     // retorna um endereço da memória dependendo do modo de endereçamento
     // f1 diz se é direto ou indireto
     public short getAddress(int pos, boolean f1) {
-        if (pos > size)
+        if (pos > memory.length)
             throw new RuntimeException("Out of bounds");
 
         short s = memory[pos];
@@ -182,7 +185,7 @@ public class Memory {
     // retorna um valor da memória dependendo do modo de endereçamento
     // f1 diz se é direto ou indireto e f3 diz se é imediato
     public short getWord(int pos, boolean f1, boolean f3) {
-        if (pos > size)
+        if (pos > memory.length)
             throw new RuntimeException("Out of bounds");
 
         short s = memory[pos];
@@ -204,7 +207,7 @@ public class Memory {
         //System.out.println("---DUMP---");
 
         for (int j = 0; j < 20; j++)
-            if (debug[j] )
+            if (debug[j])
                 System.out.println("0x" + j + " -\t" + TestOnly.OPCODE.values()[(short) ((memory[j] & 0xF000) >> 12)]);
             else
                 System.out.println("0x" + j + " -\t" + memory[j]);
@@ -215,7 +218,7 @@ public class Memory {
     }
 
     public int size() {
-        return size;
+        return memory.length;
     }
 
 }
