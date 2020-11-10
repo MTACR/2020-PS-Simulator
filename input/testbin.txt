@@ -1,0 +1,12 @@
+0	
+0
+2 // tamanho da pilha (endereço 3)
+0	//pilha
+0	//pilha
+ADD IMED
+6
+ADD IMED
+9
+STORE
+14
+STOP

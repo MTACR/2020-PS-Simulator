@@ -13,16 +13,16 @@ public class Processor {
     private final Memory memory;
 
     public Processor(File file) {
-        memory = new Memory(1024);
+        memory = new Memory(64);
         memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
 
         pc = memory.firstPosition();
 
         //TODO: alterar de acordo com modo de operação
-        while (nextInstruction());
+        //while (nextInstruction());
     }
 
-    private boolean nextInstruction() {
+    public boolean nextInstruction() {
         if (pc == 0) {
             System.err.println("Stack overflow");
             return false;
@@ -32,11 +32,11 @@ public class Processor {
             System.err.println("Program counter out of memory bounds");
             return false;
         }
-
+        /*
         if (pc > 0 && pc < memory.firstPosition()) {
             System.err.println("Program counter cannot access stack area");
             return false;
-        }
+        }*/
 
         memory.setDebug(pc);
 
@@ -49,7 +49,7 @@ public class Processor {
         boolean f3 = (word & 128) != 0;
 
         TestOnly.OPCODE opcode = TestOnly.OPCODE.values()[ri];
-        //System.out.print("\n" + opcode);
+        System.out.print("\n" + opcode);
 
         return parseOpCode(opcode, f1, f2, f3);
     }
@@ -219,5 +219,34 @@ public class Processor {
         System.out.println("------------");
         memory.dumpMemory();
     }
+    
+    //Getters para a interface
+    public short getPc() {
+        return pc;
+    }
+    
+    public short getSp() {
+        return memory.getSp();
+    }
 
+    public short getAcc() {
+        return acc;
+    }
+
+    public short getRi() {
+        return ri;
+    }
+
+    public short getRe() {
+        return re;
+    }
+
+    public byte getMop() {
+        return mop;
+    }
+
+    public short[] getMemory() {
+        return memory.getMemory();
+    }
+    
 }
