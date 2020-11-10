@@ -121,7 +121,7 @@ public class Processor {
     private void read(boolean f1) {
         //Placeholder?
         Scanner inputScanner = new Scanner(System.in);
-        short input = inputScanner.nextByte();
+        short input = inputScanner.nextShort();
 
         re = pc;
         short address = memory.getAddress(pc++, f1);

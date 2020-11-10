@@ -462,7 +462,7 @@ public class Interface extends javax.swing.JFrame {
         if (file != null)
             processor = new Processor(file);
         else {
-            file = new File("input/testbin");
+            file = new File("input/exercicio1");
             processor = new Processor(file);
             //Processor processor = new Processor(Assembler.convert(file));
             //processor.dump();
