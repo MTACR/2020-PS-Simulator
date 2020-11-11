@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 public class Memory {
 
@@ -8,14 +10,14 @@ public class Memory {
     private final boolean[] debug; // usado pra identificar se é opcode ou dado
     private short sp; //stackpointer
 
-    private static final short stackZero = 2; //posição anterior ao inicio da pilha //definidos assim pra facilitar possiveis modificações
-    private static short stackSize = 0; //tamanho maximo da pilha
+    private static final short stackZero = 3; //posição do inicio da pilha //definidos assim pra facilitar possiveis modificações
+    private static short stackSize = 0; // O tamanho da pilha é definido ao carregar o arquivo.
 
     public Memory(int size) {
         memory = new short[size];
         debug = new boolean[size];
         sp = stackZero;
-        stackSize = (short) memory[2]; //usar memory[2] para obter o endereço limite da pilha
+        stackSize = (short) memory[2]; // usar memory[2] para obter o endereço limite da pilha
     }
 
     //Pilha
@@ -69,6 +71,8 @@ public class Memory {
             reader.close();
         } catch (Exception e) {
             e.printStackTrace();
+            final JPanel panel = new JPanel();
+            JOptionPane.showMessageDialog(panel, "Arquivo inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
