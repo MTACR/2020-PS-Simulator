@@ -1,9 +1,11 @@
 
 import java.io.File;
+
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JFileChooser;
+import javax.swing.Timer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -18,6 +20,7 @@ public class Interface extends javax.swing.JFrame {
 
     private Processor processor;
     private File activeFile;
+    private Timer instructionTimer; // Temporizador que vai fazer o processador executar o programa inteiro no modo 0
 
     /**
      * Creates new form Interface
@@ -404,14 +407,34 @@ public class Interface extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private boolean executeNextInstruction() {
+        boolean errored = processor.nextInstruction();
+        updateRegisters();
+        updateMemory();
+        return errored;
+    }
+
     private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
         // Executa nextInstruction() no processador e atualiza interface
         if (activeFile != null) {
-            processor.nextInstruction();
-            updateRegisters();
-            updateMemory();
-        }
+            if (jRadioButton1.isSelected()) { // Modo não interativo
+                if (instructionTimer != null) { // Para de executar o programa se estiver executando
+                    instructionTimer.stop();
+                    return;
+                }
 
+                instructionTimer = new Timer(100, new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        if (!executeNextInstruction())
+                            instructionTimer.stop();
+                    }
+                });
+                instructionTimer.setRepeats(true);
+                instructionTimer.start();
+            } else if (jRadioButton2.isSelected()) { // Modo debug
+                executeNextInstruction();
+            }
+        }
     }//GEN-LAST:event_stepButtonActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
