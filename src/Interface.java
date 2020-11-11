@@ -5,6 +5,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.Timer;
 
 /*
@@ -21,6 +22,7 @@ public class Interface extends javax.swing.JFrame {
     private Processor processor;
     private File activeFile;
     private Timer instructionTimer; // Temporizador que vai fazer o processador executar o programa inteiro no modo 0
+    static public short out;
 
     /**
      * Creates new form Interface
@@ -312,7 +314,7 @@ public class Interface extends javax.swing.JFrame {
 
         jLabelOutput.setText("Saida");
 
-        inputTextField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        inputTextField.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         inputTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inputTextFieldActionPerformed(evt);
@@ -446,7 +448,9 @@ public class Interface extends javax.swing.JFrame {
         // Testa se a entrada é Short, caso contrário apaga input e mostra uma mensagem de erro
         try {
             short value = Short.parseShort(inputTextField.getText());
-            outputLabel.setText(String.format("%05d", value));
+            //outputLabel.setText(String.format("%05d", value));
+            processor.setAcc(value);
+            updateRegisters();
             inputTextField.setText("");
         } catch (NumberFormatException ex) {
             inputTextField.setText("");
@@ -454,7 +458,11 @@ public class Interface extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(panel, "A entrada deve ser do tipo Short! (-32,768 até 32,767)", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_inputTextFieldActionPerformed
-
+    //Setter para o método write
+    static protected void setOutputLabel(short out) {
+        outputLabel.setText(String.format("%05d", out));
+    }
+    
     private void jMenu1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu1MouseClicked
         // Abre o menu para escolher um arquivo, se for válido carrega no processador e atualiza interface
         System.out.println("Interface.jMenu1MouseClicked()");
@@ -500,7 +508,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel mopValueLabel;
     private javax.swing.JLabel opModeLabel;
     private javax.swing.JPanel opPanel;
-    private javax.swing.JLabel outputLabel;
+    private static javax.swing.JLabel outputLabel;
     private javax.swing.JLabel pcLabel;
     private javax.swing.JLabel pcValueLabel;
     private javax.swing.JLabel reLabel;

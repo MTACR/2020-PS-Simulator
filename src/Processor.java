@@ -114,14 +114,18 @@ public class Processor {
         //Placeholder?
         re = pc;
         short word = memory.getWord(pc++, f1, f3);
-        System.out.println("Output: " + word);
+       
+        Interface.setOutputLabel(word);
+
+        //System.out.println("Output: " + word);
         //TODO?
     }
 
     private void read(boolean f1) {
         //Placeholder?
-        Scanner inputScanner = new Scanner(System.in);
-        short input = inputScanner.nextShort();
+//        Scanner inputScanner = new Scanner(System.in);
+//        short input = inputScanner.nextShort();
+        short input = this.acc;
 
         re = pc;
         short address = memory.getAddress(pc++, f1);
@@ -218,6 +222,12 @@ public class Processor {
         System.out.println("PC -\t" + pc);
         System.out.println("------------");
         memory.dumpMemory();
+    }
+    
+    // Setter p/ o input.
+    
+    public void setAcc(short acc) {
+        this.acc = acc;
     }
     
     //Getters para a interface
