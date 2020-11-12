@@ -1,5 +1,7 @@
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -23,6 +25,7 @@ public class Interface extends javax.swing.JFrame {
     private File activeFile;
     private Timer instructionTimer; // Temporizador que vai fazer o processador executar o programa inteiro no modo 0
     static public short out;
+    public List<Short> inputData;
 
     /**
      * Creates new form Interface
@@ -37,6 +40,7 @@ public class Interface extends javax.swing.JFrame {
         setLook();
         initComponents();
         initProcessor(file);
+        inputData = new LinkedList<>();
     }
 
     // Atualiza os valores dos Registradores na interface.
@@ -112,8 +116,6 @@ public class Interface extends javax.swing.JFrame {
         ioPanel = new javax.swing.JPanel();
         outputLabel = new javax.swing.JLabel();
         jLabelOutput = new javax.swing.JLabel();
-        inputTextField = new javax.swing.JTextField();
-        jLabelInput = new javax.swing.JLabel();
         ioLabel = new javax.swing.JLabel();
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -313,15 +315,6 @@ public class Interface extends javax.swing.JFrame {
 
         jLabelOutput.setText("Saida");
 
-        inputTextField.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        inputTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inputTextFieldActionPerformed(evt);
-            }
-        });
-
-        jLabelInput.setText("Entrada");
-
         javax.swing.GroupLayout ioPanelLayout = new javax.swing.GroupLayout(ioPanel);
         ioPanel.setLayout(ioPanelLayout);
         ioPanelLayout.setHorizontalGroup(
@@ -329,24 +322,20 @@ public class Interface extends javax.swing.JFrame {
             .addGroup(ioPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(inputTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                    .addComponent(jLabelOutput)
-                    .addComponent(jLabelInput)
-                    .addComponent(outputLabel))
+                    .addGroup(ioPanelLayout.createSequentialGroup()
+                        .addComponent(jLabelOutput)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(outputLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE))
                 .addContainerGap())
         );
         ioPanelLayout.setVerticalGroup(
             ioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ioPanelLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(jLabelInput)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(inputTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap()
                 .addComponent(jLabelOutput)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(outputLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         ioLabel.setText("I/O");
@@ -399,7 +388,7 @@ public class Interface extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(memoryLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(opPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -425,8 +414,9 @@ public class Interface extends javax.swing.JFrame {
 
                 instructionTimer = new Timer(100, new java.awt.event.ActionListener() {
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        if (!executeNextInstruction())
+                        if (!executeNextInstruction()) {
                             instructionTimer.stop();
+                        }
                     }
                 });
                 instructionTimer.setRepeats(true);
@@ -435,33 +425,18 @@ public class Interface extends javax.swing.JFrame {
                 executeNextInstruction();
             }
         }
-        
+
     }//GEN-LAST:event_stepButtonActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         // Reabre arquivo e reseta a interface
         initProcessor(activeFile);
     }//GEN-LAST:event_resetButtonActionPerformed
-
-    private void inputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputTextFieldActionPerformed
-        // Testa se a entrada é Short, caso contrário apaga input e mostra uma mensagem de erro
-        
-        try {
-            short value = Short.parseShort(inputTextField.getText());
-            processor.isAwaiting = false;
-            updateRegisters();
-            inputTextField.setText("");
-        } catch (NumberFormatException ex) {
-            inputTextField.setText("");
-            final JPanel panel = new JPanel();
-            JOptionPane.showMessageDialog(panel, "A entrada deve ser do tipo Short! (-32,768 até 32,767)", "Erro", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_inputTextFieldActionPerformed
     //Setter para o método write
     public void setOutputLabel(short out) {
         outputLabel.setText(String.format("%05d", out));
     }
-    
+
     private void jMenu1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu1MouseClicked
         // Abre o menu para escolher um arquivo, se for válido carrega no processador e atualiza interface
         System.out.println("Interface.jMenu1MouseClicked()");
@@ -479,7 +454,7 @@ public class Interface extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-               /* Create and display the form */
+        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Interface().setVisible(true);
@@ -492,10 +467,8 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel accLabel;
     private javax.swing.JLabel accValueLabel;
     private javax.swing.ButtonGroup buttonGroup;
-    private javax.swing.JTextField inputTextField;
     private javax.swing.JLabel ioLabel;
     private javax.swing.JPanel ioPanel;
-    private javax.swing.JLabel jLabelInput;
     private javax.swing.JLabel jLabelOutput;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar2;
@@ -507,7 +480,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel mopValueLabel;
     private javax.swing.JLabel opModeLabel;
     private javax.swing.JPanel opPanel;
-    private javax.swing.JLabel outputLabel;
+    private static javax.swing.JLabel outputLabel;
     private javax.swing.JLabel pcLabel;
     private javax.swing.JLabel pcValueLabel;
     private javax.swing.JLabel reLabel;
@@ -525,13 +498,12 @@ public class Interface extends javax.swing.JFrame {
     // Carrega o binário e atualiza a interface
     private void initProcessor(File file) {
         if (file != null) {
-            processor = new Processor(file,this);
+            processor = new Processor(file, this);
             activeFile = file;
-            processor.inputField = inputTextField;
             updateGUI();
         }
     }
-    
+
     private void setLook() {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -544,7 +516,7 @@ public class Interface extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
-    
+
     public void updateGUI() {
         updateRegisters();
         updateMemory();

@@ -1,9 +1,7 @@
-import java.awt.Frame;
+
 import java.io.File;
-import java.util.Scanner;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class Processor {
 
@@ -16,17 +14,13 @@ public class Processor {
     private final Memory memory;
     private Interface gui;
 
-    public boolean isAwaiting;
-    public short inputValue;
-    public JTextField inputField;
-
     public Processor(File file) {
         gui = null;
         memory = new Memory(64);
         memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
         pc = memory.firstPosition();
     }
-    
+
     public Processor(File file, Interface gui) {
         this.gui = gui;
         memory = new Memory(64);
@@ -35,7 +29,7 @@ public class Processor {
     }
 
     public boolean nextInstruction() {
-        if (ri != 11){ // Se ri=11(STOP), parar execução
+        if (ri != 11) { // Se ri=11(STOP), parar execução
             if (pc == 0) {
                 System.err.println("Stack overflow");
                 return false;
@@ -57,15 +51,15 @@ public class Processor {
 
             ri = (short) (word & 15);
 
-            boolean f1 = (word & 32)  != 0;
-            boolean f2 = (word & 64)  != 0;
+            boolean f1 = (word & 32) != 0;
+            boolean f2 = (word & 64) != 0;
             boolean f3 = (word & 128) != 0;
 
             TestOnly.OPCODE opcode = TestOnly.OPCODE.values()[ri];
             System.out.print("\n" + opcode);
 
             return parseOpCode(opcode, f1, f2, f3);
-        } else{
+        } else {
             return false;
         }
     }
@@ -126,7 +120,7 @@ public class Processor {
         return true;
     }
 
-    private void write(boolean f1, boolean f3){
+    private void write(boolean f1, boolean f3) {
         //Placeholder?
         re = pc;
         short word = memory.getWord(pc++, f1, f3);
@@ -140,22 +134,19 @@ public class Processor {
         //Placeholder?
 //        Scanner inputScanner = new Scanner(System.in);
 //        short input = inputScanner.nextShort();
-        //short input = this.acc;
-
-        isAwaiting = true;
-
-        while (isAwaiting) {
-            //TODO
-
-        }
-        
         short address = memory.getAddress(pc++, f1);
-        short input = inputValue;
-        memory.storeWord(address, input);
-        gui.updateGUI();
+        Short input = null;
+
+        do {
+            try {
+                input = Short.parseShort(JOptionPane.showInputDialog("Insira a entrada"));
+                memory.storeWord(address, input);
+            } catch (NumberFormatException ex) {
+                final JPanel panel = new JPanel();
+                JOptionPane.showMessageDialog(panel, "A entrada deve ser do tipo Short! (-32,768 até 32,767)", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        } while (input == null);
     }
-        
-    
 
     private void copy(boolean f1, boolean f2, boolean f3) {
         re = pc;
@@ -169,8 +160,9 @@ public class Processor {
         if (memory.push(pc)) {
             pc = memory.getWord(pc++, f1, false);
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
     private boolean ret() {
@@ -179,8 +171,9 @@ public class Processor {
         if (pop >= 0) {
             pc = pop;
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
     private void branch(boolean f1) {
@@ -189,24 +182,27 @@ public class Processor {
     }
 
     private void branchNeg(boolean f1) {
-        if (acc < 0)
+        if (acc < 0) {
             branch(f1);
-        else
+        } else {
             pc++;
+        }
     }
 
     private void branchPos(boolean f1) {
-        if (acc > 0)
+        if (acc > 0) {
             branch(f1);
-        else
+        } else {
             pc++;
+        }
     }
 
     private void branchZero(boolean f1) {
-        if (acc == 0)
+        if (acc == 0) {
             branch(f1);
-        else
+        } else {
             pc++;
+        }
     }
 
     private void add(boolean f1, boolean f3) {
@@ -248,18 +244,17 @@ public class Processor {
         System.out.println("------------");
         memory.dumpMemory();
     }
-    
+
     // Setter p/ o input.
-    
     public void setAcc(short acc) {
         this.acc = acc;
     }
-    
+
     //Getters para a interface
     public short getPc() {
         return pc;
     }
-    
+
     public short getSp() {
         return memory.getSp();
     }

@@ -87,7 +87,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="memoryLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="MemoryScrollPane" pref="196" max="32767" attributes="0"/>
+              <Component id="MemoryScrollPane" pref="205" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="opPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -432,10 +432,11 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="inputTextField" pref="155" max="32767" attributes="0"/>
-                      <Component id="jLabelOutput" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabelInput" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="outputLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="jLabelOutput" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                      <Component id="outputLabel" pref="155" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -444,15 +445,11 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                  <Component id="jLabelInput" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="inputTextField" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabelOutput" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="outputLabel" min="-2" pref="29" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -472,21 +469,6 @@
         <Component class="javax.swing.JLabel" name="jLabelOutput">
           <Properties>
             <Property name="text" type="java.lang.String" value="Saida"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="inputTextField">
-          <Properties>
-            <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-              <Color id="Cursor Padr&#xe3;o"/>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inputTextFieldActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabelInput">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Entrada"/>
           </Properties>
         </Component>
       </SubComponents>
