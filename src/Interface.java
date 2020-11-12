@@ -3,11 +3,8 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.Timer;
 
 /*

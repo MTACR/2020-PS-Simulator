@@ -16,6 +16,7 @@ public class Processor {
     private OnStep step;
 
     public interface OnStep {
+
         boolean onStep();
     }
 
@@ -40,7 +41,7 @@ public class Processor {
 
         step = this::nextInstruction;
     }
-    
+
     private boolean nextInstruction() {
         if (ri != 11) { // Se ri=11(STOP), parar execução
             if (pc == 0) {
@@ -80,7 +81,7 @@ public class Processor {
 
         TestOnly.OPCODE opcode = TestOnly.OPCODE.values()[ri & 15];
         System.out.print("\n" + opcode);
-
+        step = this::nextInstruction;
         switch (opcode) {
             case BR:
                 branch(f1);
@@ -131,8 +132,6 @@ public class Processor {
                 System.err.println("Invalid opcode");
                 return false;
         }
-
-        step = this::nextInstruction;
 
         return true;
     }
@@ -281,7 +280,7 @@ public class Processor {
     }
 
     public short getRi() {
-        return ri;
+        return (short) (ri & 15);
     }
 
     public short getRe() {
