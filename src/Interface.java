@@ -445,12 +445,10 @@ public class Interface extends javax.swing.JFrame {
 
     private void inputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputTextFieldActionPerformed
         // Testa se a entrada é Short, caso contrário apaga input e mostra uma mensagem de erro
-        processor.inputData();
-
+        
         try {
             short value = Short.parseShort(inputTextField.getText());
-            //outputLabel.setText(String.format("%05d", value));
-            processor.setAcc(value);
+            processor.isAwaiting = false;
             updateRegisters();
             inputTextField.setText("");
         } catch (NumberFormatException ex) {
@@ -529,6 +527,7 @@ public class Interface extends javax.swing.JFrame {
         if (file != null) {
             processor = new Processor(file,this);
             activeFile = file;
+            processor.inputField = inputTextField;
             updateGUI();
         }
     }

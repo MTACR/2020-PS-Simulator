@@ -17,6 +17,8 @@ public class Processor {
     private Interface gui;
 
     public boolean isAwaiting;
+    public short inputValue;
+    public JTextField inputField;
 
     public Processor(File file) {
         gui = null;
@@ -148,19 +150,9 @@ public class Processor {
         }
         
         short address = memory.getAddress(pc++, f1);
-        short input = Short.parseShort(JOptionPane.showInputDialog("Insira a entrada"));
+        short input = inputValue;
         memory.storeWord(address, input);
-        do {
-            try {
-                short value = Short.parseShort(inputField.getText());
-                gui.updateGUI();
-                inputField.setText("");
-            } catch (NumberFormatException ex) {
-                inputField.setText("");
-                final JPanel panel = new JPanel();
-                JOptionPane.showMessageDialog(panel, "A entrada deve ser do tipo Short! (-32,768 até 32,767)", "Erro", JOptionPane.ERROR_MESSAGE);
-            }
-        } while (true);
+        gui.updateGUI();
     }
         
     
@@ -291,11 +283,4 @@ public class Processor {
     public short[] getMemory() {
         return memory.getMemory();
     }
-
-    public void inputData() {
-        isAwaiting = false;
-
-        //TODO
-    }
-    
 }
