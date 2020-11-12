@@ -12,13 +12,14 @@ public class Memory {
 
     private static final short stackZero = 3; //posição do inicio da pilha //definidos assim pra facilitar possiveis modificações
     private static short stackSize = 0; // O tamanho da pilha é definido ao carregar o arquivo.
-
+    
     public Memory(int size) {
         memory = new short[size];
         debug = new boolean[size];
         sp = stackZero;
         stackSize = (short) memory[2]; // usar memory[2] para obter o endereço limite da pilha
     }
+    
 
     //Pilha
 

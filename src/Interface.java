@@ -64,7 +64,6 @@ public class Interface extends javax.swing.JFrame {
         int col = (processor.getPc() % 4 + 1);
         memoryTable.setRowSelectionInterval(line, line);
         memoryTable.setColumnSelectionInterval(col, col);
-
     }
 
     // Para evitar ArrayIndexOutOfBoundsException caso a memória não seja multipla de 4.
@@ -411,8 +410,7 @@ public class Interface extends javax.swing.JFrame {
 
     private boolean executeNextInstruction() {
         boolean errored = processor.nextInstruction();
-        updateRegisters();
-        updateMemory();
+        updateGUI();
         return errored;
     }
 
@@ -437,6 +435,7 @@ public class Interface extends javax.swing.JFrame {
                 executeNextInstruction();
             }
         }
+        
     }//GEN-LAST:event_stepButtonActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
@@ -459,7 +458,7 @@ public class Interface extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_inputTextFieldActionPerformed
     //Setter para o método write
-    static protected void setOutputLabel(short out) {
+    public void setOutputLabel(short out) {
         outputLabel.setText(String.format("%05d", out));
     }
     
@@ -508,7 +507,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel mopValueLabel;
     private javax.swing.JLabel opModeLabel;
     private javax.swing.JPanel opPanel;
-    private static javax.swing.JLabel outputLabel;
+    private javax.swing.JLabel outputLabel;
     private javax.swing.JLabel pcLabel;
     private javax.swing.JLabel pcValueLabel;
     private javax.swing.JLabel reLabel;
@@ -526,14 +525,13 @@ public class Interface extends javax.swing.JFrame {
     // Carrega o binário e atualiza a interface
     private void initProcessor(File file) {
         if (file != null) {
-            processor = new Processor(file);
+            processor = new Processor(file,this);
             activeFile = file;
-            updateRegisters();
-            updateMemory();
-            updateMemory();
+            processor.inputField = inputTextField; 
+            updateGUI();
         }
     }
-
+    
     private void setLook() {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -542,14 +540,13 @@ public class Interface extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+    }
+    
+    public void updateGUI() {
+        updateRegisters();
+        updateMemory();
     }
 }

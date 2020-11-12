@@ -1,5 +1,9 @@
+import java.awt.Frame;
 import java.io.File;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class Processor {
 
@@ -9,49 +13,60 @@ public class Processor {
     private short ri;
     private short re;
     private byte mop;
+    
+    public JTextField inputField;
 
     private final Memory memory;
+    private Interface gui;
 
     public Processor(File file) {
+        gui = null;
         memory = new Memory(64);
         memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
-
         pc = memory.firstPosition();
-
-        //TODO: alterar de acordo com modo de operação
-        //while (nextInstruction());
+    }
+    
+    public Processor(File file, Interface gui) {
+        this.gui = gui;
+        memory = new Memory(64);
+        memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
+        pc = memory.firstPosition();
     }
 
     public boolean nextInstruction() {
-        if (pc == 0) {
-            System.err.println("Stack overflow");
+        if (ri != 11){ // Se ri=11(STOP), parar execução
+            if (pc == 0) {
+                System.err.println("Stack overflow");
+                return false;
+            }
+
+            if (pc > memory.size() || pc < 0) {
+                System.err.println("Program counter out of memory bounds");
+                return false;
+            }
+            /*
+            if (pc > 0 && pc < memory.firstPosition()) {
+                System.err.println("Program counter cannot access stack area");
+                return false;
+            }*/
+
+            memory.setDebug(pc);
+
+            short word = memory.getWord(pc++, false, true);
+
+            ri = (short) (word & 15);
+
+            boolean f1 = (word & 32)  != 0;
+            boolean f2 = (word & 64)  != 0;
+            boolean f3 = (word & 128) != 0;
+
+            TestOnly.OPCODE opcode = TestOnly.OPCODE.values()[ri];
+            System.out.print("\n" + opcode);
+
+            return parseOpCode(opcode, f1, f2, f3);
+        } else{
             return false;
         }
-
-        if (pc > memory.size() || pc < 0) {
-            System.err.println("Program counter out of memory bounds");
-            return false;
-        }
-        /*
-        if (pc > 0 && pc < memory.firstPosition()) {
-            System.err.println("Program counter cannot access stack area");
-            return false;
-        }*/
-
-        memory.setDebug(pc);
-
-        short word = memory.getWord(pc++, false, true);
-
-        ri = (short) (word & 15);
-
-        boolean f1 = (word & 32)  != 0;
-        boolean f2 = (word & 64)  != 0;
-        boolean f3 = (word & 128) != 0;
-
-        TestOnly.OPCODE opcode = TestOnly.OPCODE.values()[ri];
-        System.out.print("\n" + opcode);
-
-        return parseOpCode(opcode, f1, f2, f3);
     }
 
     // seleciona qual código a ser processado e lida com a quantidade de palavras a ser lida pros operandos
@@ -114,8 +129,7 @@ public class Processor {
         //Placeholder?
         re = pc;
         short word = memory.getWord(pc++, f1, f3);
-       
-        Interface.setOutputLabel(word);
+        gui.setOutputLabel(word);
 
         //System.out.println("Output: " + word);
         //TODO?
@@ -125,12 +139,25 @@ public class Processor {
         //Placeholder?
 //        Scanner inputScanner = new Scanner(System.in);
 //        short input = inputScanner.nextShort();
-        short input = this.acc;
-
-        re = pc;
+        //short input = this.acc;
+        
         short address = memory.getAddress(pc++, f1);
+        short input = Short.parseShort(JOptionPane.showInputDialog("Insira a entrada"));
         memory.storeWord(address, input);
+        do {
+            try {
+                short value = Short.parseShort(inputField.getText());
+                gui.updateGUI();
+                inputField.setText("");
+            } catch (NumberFormatException ex) {
+                inputField.setText("");
+                final JPanel panel = new JPanel();
+                JOptionPane.showMessageDialog(panel, "A entrada deve ser do tipo Short! (-32,768 até 32,767)", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        } while (true);
     }
+        
+    
 
     private void copy(boolean f1, boolean f2, boolean f3) {
         re = pc;
