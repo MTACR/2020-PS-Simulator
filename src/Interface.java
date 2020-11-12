@@ -398,7 +398,7 @@ public class Interface extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private boolean executeNextInstruction() {
-        boolean errored = processor.nextInstruction();
+        boolean errored = processor.step();
         updateGUI();
         return errored;
     }

@@ -13,12 +13,23 @@ public class Processor {
     private byte mop;
     private final Memory memory;
     private Interface gui;
+    private OnStep step;
+
+    public interface OnStep {
+        boolean onStep();
+    }
+
+    public boolean step() {
+        return step.onStep();
+    }
 
     public Processor(File file) {
         gui = null;
         memory = new Memory(64);
         memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
         pc = memory.firstPosition();
+
+        step = this::nextInstruction;
     }
 
     public Processor(File file, Interface gui) {
@@ -26,9 +37,11 @@ public class Processor {
         memory = new Memory(64);
         memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
         pc = memory.firstPosition();
+
+        step = this::nextInstruction;
     }
     
-    public boolean nextInstruction() {
+    private boolean nextInstruction() {
         if (ri != 11) { // Se ri=11(STOP), parar execução
             if (pc == 0) {
                 System.err.println("Stack overflow");
@@ -47,25 +60,27 @@ public class Processor {
 
             memory.setDebug(pc);
 
-            short word = memory.getWord(pc++, false, true);
+            ri = memory.getWord(pc++, false, true);
 
-            ri = (short) (word & 15);
+            step = this::parseOpCode;
 
-            boolean f1 = (word & 32) != 0;
-            boolean f2 = (word & 64) != 0;
-            boolean f3 = (word & 128) != 0;
+            return true;
 
-            TestOnly.OPCODE opcode = TestOnly.OPCODE.values()[ri];
-            System.out.print("\n" + opcode);
-
-            return parseOpCode(opcode, f1, f2, f3);
+            //return parseOpCode(opcode, f1, f2, f3);
         } else {
             return false;
         }
     }
 
     // seleciona qual código a ser processado e lida com a quantidade de palavras a ser lida pros operandos
-    private boolean parseOpCode(TestOnly.OPCODE opcode, boolean f1, boolean f2, boolean f3) {
+    private boolean parseOpCode() {
+        boolean f1 = (ri & 32) != 0;
+        boolean f2 = (ri & 64) != 0;
+        boolean f3 = (ri & 128) != 0;
+
+        TestOnly.OPCODE opcode = TestOnly.OPCODE.values()[ri & 15];
+        System.out.print("\n" + opcode);
+
         switch (opcode) {
             case BR:
                 branch(f1);
@@ -116,6 +131,8 @@ public class Processor {
                 System.err.println("Invalid opcode");
                 return false;
         }
+
+        step = this::nextInstruction;
 
         return true;
     }
