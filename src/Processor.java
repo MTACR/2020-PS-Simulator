@@ -13,11 +13,10 @@ public class Processor {
     private short ri;
     private short re;
     private byte mop;
-    
-    public JTextField inputField;
-
     private final Memory memory;
     private Interface gui;
+
+    public boolean isAwaiting;
 
     public Processor(File file) {
         gui = null;
@@ -140,6 +139,13 @@ public class Processor {
 //        Scanner inputScanner = new Scanner(System.in);
 //        short input = inputScanner.nextShort();
         //short input = this.acc;
+
+        isAwaiting = true;
+
+        while (isAwaiting) {
+            //TODO
+
+        }
         
         short address = memory.getAddress(pc++, f1);
         short input = Short.parseShort(JOptionPane.showInputDialog("Insira a entrada"));
@@ -284,6 +290,12 @@ public class Processor {
 
     public short[] getMemory() {
         return memory.getMemory();
+    }
+
+    public void inputData() {
+        isAwaiting = false;
+
+        //TODO
     }
     
 }

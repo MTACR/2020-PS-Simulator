@@ -445,6 +445,8 @@ public class Interface extends javax.swing.JFrame {
 
     private void inputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputTextFieldActionPerformed
         // Testa se a entrada é Short, caso contrário apaga input e mostra uma mensagem de erro
+        processor.inputData();
+
         try {
             short value = Short.parseShort(inputTextField.getText());
             //outputLabel.setText(String.format("%05d", value));
@@ -527,7 +529,6 @@ public class Interface extends javax.swing.JFrame {
         if (file != null) {
             processor = new Processor(file,this);
             activeFile = file;
-            processor.inputField = inputTextField; 
             updateGUI();
         }
     }
