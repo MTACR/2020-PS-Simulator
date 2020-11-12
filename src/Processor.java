@@ -27,7 +27,7 @@ public class Processor {
         memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
         pc = memory.firstPosition();
     }
-
+    
     public boolean nextInstruction() {
         if (ri != 11) { // Se ri=11(STOP), parar execução
             if (pc == 0) {
@@ -136,7 +136,6 @@ public class Processor {
 //        short input = inputScanner.nextShort();
         short address = memory.getAddress(pc++, f1);
         Short input = null;
-
         do {
             try {
                 input = Short.parseShort(JOptionPane.showInputDialog("Insira a entrada"));
@@ -208,6 +207,7 @@ public class Processor {
     private void add(boolean f1, boolean f3) {
         re = pc;
         acc += memory.getWord(pc++, f1, f3);
+        gui.updateGUI();
     }
 
     private void divide(boolean f1, boolean f3) {

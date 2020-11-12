@@ -409,6 +409,7 @@ public class Interface extends javax.swing.JFrame {
             if (jRadioButton1.isSelected()) { // Modo não interativo
                 if (instructionTimer != null) { // Para de executar o programa se estiver executando
                     instructionTimer.stop();
+                    instructionTimer = null;
                     return;
                 }
 
@@ -416,6 +417,7 @@ public class Interface extends javax.swing.JFrame {
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
                         if (!executeNextInstruction()) {
                             instructionTimer.stop();
+                            instructionTimer = null;
                         }
                     }
                 });
