@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -61,17 +62,14 @@ public class Memory {
 
     public void loadFileToMemory(File file) {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-
-            String line;
-            int i = 0;
-
-            while ((line = reader.readLine()) != null)
-                memory[i++] = (short) Integer.parseInt(line, 2);
-
-            reader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String line;
+                int i = 0;
+                
+                while ((line = reader.readLine()) != null)
+                    memory[i++] = (short) Integer.parseInt(line, 2);
+            }
+        } catch (IOException | NumberFormatException e) {
             final JPanel panel = new JPanel();
             JOptionPane.showMessageDialog(panel, "Arquivo inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
         }

@@ -4,19 +4,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Processor {
-
+    private static final short MEMORY_SIZE = 512;
+    
     private short pc;
     private short acc;
-    //private short sp; //implementado na memoria
     private short ri;
     private short re;
     private byte mop;
+
     private final Memory memory;
-    private Interface gui;
+    private final Interface gui;
     private OnStep step;
 
     public interface OnStep {
-
         boolean onStep();
     }
 
@@ -26,7 +26,7 @@ public class Processor {
 
     public Processor(File file) {
         gui = null;
-        memory = new Memory(64);
+        memory = new Memory(MEMORY_SIZE);
         memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
         pc = memory.firstPosition();
 
@@ -35,13 +35,13 @@ public class Processor {
 
     public Processor(File file, Interface gui) {
         this.gui = gui;
-        memory = new Memory(64);
+        memory = new Memory(MEMORY_SIZE);
         memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
         pc = memory.firstPosition();
 
         step = this::nextInstruction;
     }
-
+    
     private boolean nextInstruction() {
         if (ri != 11) { // Se ri=11(STOP), parar execução
             if (pc == 0) {
@@ -53,27 +53,18 @@ public class Processor {
                 System.err.println("Program counter out of memory bounds");
                 return false;
             }
-            /*
-            if (pc > 0 && pc < memory.firstPosition()) {
-                System.err.println("Program counter cannot access stack area");
-                return false;
-            }*/
-
+            
             memory.setDebug(pc);
-
             ri = memory.getWord(pc++, false, true);
-
             step = this::parseOpCode;
-
             return true;
-
             //return parseOpCode(opcode, f1, f2, f3);
         } else {
             return false;
         }
     }
 
-    // seleciona qual código a ser processado e lida com a quantidade de palavras a ser lida pros operandos
+    // Seleciona qual código a ser processado e lida com a quantidade de palavras a ser lida pros operandos
     private boolean parseOpCode() {
         boolean f1 = (ri & 32) != 0;
         boolean f2 = (ri & 64) != 0;
@@ -82,6 +73,8 @@ public class Processor {
         TestOnly.OPCODE opcode = TestOnly.OPCODE.values()[ri & 15];
         System.out.print("\n" + opcode);
         step = this::nextInstruction;
+        
+        
         switch (opcode) {
             case BR:
                 branch(f1);
@@ -132,24 +125,19 @@ public class Processor {
                 System.err.println("Invalid opcode");
                 return false;
         }
-
         return true;
     }
 
     private void write(boolean f1, boolean f3) {
-        //Placeholder?
+        // Carrega um enderço e coloca o valor na interface gráfica
         re = pc;
         short word = memory.getWord(pc++, f1, f3);
         gui.setOutputLabel(word);
-
-        //System.out.println("Output: " + word);
-        //TODO?
     }
 
     private void read(boolean f1) {
-        //Placeholder?
-//        Scanner inputScanner = new Scanner(System.in);
-//        short input = inputScanner.nextShort();
+        // Carrega o endereço do operando e abre uma janela com um campo para a entrada,
+        // salva o valor lido no endereço do operando.
         short address = memory.getAddress(pc++, f1);
         Short input = null;
         do {
@@ -223,7 +211,6 @@ public class Processor {
     private void add(boolean f1, boolean f3) {
         re = pc;
         acc += memory.getWord(pc++, f1, f3);
-        gui.updateGUI();
     }
 
     private void divide(boolean f1, boolean f3) {
@@ -260,10 +247,9 @@ public class Processor {
         System.out.println("------------");
         memory.dumpMemory();
     }
-
-    // Setter p/ o input.
-    public void setAcc(short acc) {
-        this.acc = acc;
+    
+    public void setMop(byte mop) {
+        this.mop = mop;
     }
 
     //Getters para a interface
@@ -280,7 +266,7 @@ public class Processor {
     }
 
     public short getRi() {
-        return (short) (ri & 15);
+        return ri;
     }
 
     public short getRe() {

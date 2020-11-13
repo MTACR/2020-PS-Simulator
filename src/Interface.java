@@ -1,8 +1,4 @@
-
 import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JFileChooser;
 import javax.swing.Timer;
@@ -21,8 +17,9 @@ public class Interface extends javax.swing.JFrame {
     private Processor processor;
     private File activeFile;
     private Timer instructionTimer; // Temporizador que vai fazer o processador executar o programa inteiro no modo 0
-    static public short out;
-    public List<Short> inputData;
+    public short out;
+    private boolean abort;
+    private boolean running;
 
     /**
      * Creates new form Interface
@@ -37,7 +34,6 @@ public class Interface extends javax.swing.JFrame {
         setLook();
         initComponents();
         initProcessor(file);
-        inputData = new LinkedList<>();
     }
 
     // Atualiza os valores dos Registradores na interface.
@@ -46,8 +42,8 @@ public class Interface extends javax.swing.JFrame {
         spValueLabel.setText(String.format("%05d", processor.getSp()));
         accValueLabel.setText(String.format("%05d", processor.getAcc()));
         mopValueLabel.setText(String.format("%03d", processor.getMop()));
-        //riValueLabel.setText(String.format("%05d", processor.getRi()));
-        riValueLabel.setText("" + TestOnly.OPCODE.values()[processor.getRi()]);
+        riValueLabel.setText(String.format("%05d", processor.getRi()));
+        riTextLabel.setText("" + TestOnly.OPCODE.values()[(processor.getRi() & 15)]);
         reValueLabel.setText(String.format("%05d", processor.getRe()));
     }
 
@@ -61,15 +57,16 @@ public class Interface extends javax.swing.JFrame {
             model.addRow(new Object[]{i, next(memory, i++), next(memory, i++), next(memory, i++), next(memory, i++)});
         }
         memoryTable.setCellSelectionEnabled(true);
-        int line = processor.getPc() / 4;
-        int col = (processor.getPc() % 4 + 1);
+        
+        int position = processor.getPc();
+        int line = position / 4;
+        int col = (position % 4 + 1);
         memoryTable.setRowSelectionInterval(line, line);
         memoryTable.setColumnSelectionInterval(col, col);
     }
 
     // Para evitar ArrayIndexOutOfBoundsException caso a memória não seja multipla de 4.
     private String next(short[] memory, int index) {
-        //if (index < memory.length) return String.format("%05d",memory[index]);
         if (index < memory.length) {
             return ("" + memory[index]);
         } else {
@@ -100,10 +97,11 @@ public class Interface extends javax.swing.JFrame {
         riValueLabel = new javax.swing.JLabel();
         reLabel = new javax.swing.JLabel();
         reValueLabel = new javax.swing.JLabel();
+        riTextLabel = new javax.swing.JLabel();
         opPanel = new javax.swing.JPanel();
         opModeLabel = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButtonMode0 = new javax.swing.JRadioButton();
+        jRadioButtonMode1 = new javax.swing.JRadioButton();
         resetButton = new javax.swing.JButton();
         stepButton = new javax.swing.JButton();
         registerLabel = new javax.swing.JLabel();
@@ -112,7 +110,7 @@ public class Interface extends javax.swing.JFrame {
         memoryTable = new javax.swing.JTable();
         ioPanel = new javax.swing.JPanel();
         outputLabel = new javax.swing.JLabel();
-        jLabelOutput = new javax.swing.JLabel();
+        outputStreamLabel = new javax.swing.JLabel();
         ioLabel = new javax.swing.JLabel();
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -152,6 +150,9 @@ public class Interface extends javax.swing.JFrame {
         reValueLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         reValueLabel.setText("00000");
 
+        riTextLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        riTextLabel.setText("NOP");
+
         javax.swing.GroupLayout registersPanelLayout = new javax.swing.GroupLayout(registersPanel);
         registersPanel.setLayout(registersPanelLayout);
         registersPanelLayout.setHorizontalGroup(
@@ -163,19 +164,22 @@ public class Interface extends javax.swing.JFrame {
                     .addComponent(spLabel)
                     .addComponent(pcValueLabel)
                     .addComponent(spValueLabel))
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 123, Short.MAX_VALUE)
                 .addGroup(registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(accLabel)
                     .addComponent(mopValueLabel)
                     .addComponent(mopLabel)
                     .addComponent(accValueLabel))
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 122, Short.MAX_VALUE)
                 .addGroup(registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(reValueLabel)
                     .addComponent(reLabel)
-                    .addComponent(riValueLabel)
+                    .addGroup(registersPanelLayout.createSequentialGroup()
+                        .addComponent(riValueLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(riTextLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(riLabel))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 36, Short.MAX_VALUE))
         );
         registersPanelLayout.setVerticalGroup(
             registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -189,7 +193,8 @@ public class Interface extends javax.swing.JFrame {
                 .addGroup(registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(pcValueLabel)
                     .addComponent(accValueLabel)
-                    .addComponent(riValueLabel))
+                    .addComponent(riValueLabel)
+                    .addComponent(riTextLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(mopLabel)
@@ -205,12 +210,22 @@ public class Interface extends javax.swing.JFrame {
 
         opModeLabel.setText("Modo de Operação");
 
-        buttonGroup.add(jRadioButton1);
-        jRadioButton1.setSelected(true);
-        jRadioButton1.setText("Modo 0");
+        buttonGroup.add(jRadioButtonMode0);
+        jRadioButtonMode0.setSelected(true);
+        jRadioButtonMode0.setText("Modo 0");
+        jRadioButtonMode0.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonMode0ActionPerformed(evt);
+            }
+        });
 
-        buttonGroup.add(jRadioButton2);
-        jRadioButton2.setText("Modo 1");
+        buttonGroup.add(jRadioButtonMode1);
+        jRadioButtonMode1.setText("Modo 1");
+        jRadioButtonMode1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonMode1ActionPerformed(evt);
+            }
+        });
 
         resetButton.setText("Reset");
         resetButton.setMaximumSize(null);
@@ -236,9 +251,9 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(opPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(opPanelLayout.createSequentialGroup()
-                        .addComponent(jRadioButton1)
+                        .addComponent(jRadioButtonMode0)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButton2))
+                        .addComponent(jRadioButtonMode1))
                     .addComponent(opModeLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(stepButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -255,8 +270,8 @@ public class Interface extends javax.swing.JFrame {
                         .addComponent(opModeLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(opPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(jRadioButton2)
-                            .addComponent(jRadioButton1)))
+                            .addComponent(jRadioButtonMode1)
+                            .addComponent(jRadioButtonMode0)))
                     .addGroup(opPanelLayout.createSequentialGroup()
                         .addGap(30, 30, 30)
                         .addGroup(opPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -307,10 +322,10 @@ public class Interface extends javax.swing.JFrame {
 
         ioPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        outputLabel.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        outputLabel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         outputLabel.setText("00000");
 
-        jLabelOutput.setText("Saida");
+        outputStreamLabel.setText("Output Stream");
 
         javax.swing.GroupLayout ioPanelLayout = new javax.swing.GroupLayout(ioPanel);
         ioPanel.setLayout(ioPanelLayout);
@@ -319,23 +334,21 @@ public class Interface extends javax.swing.JFrame {
             .addGroup(ioPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ioPanelLayout.createSequentialGroup()
-                        .addComponent(jLabelOutput)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(outputLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(outputStreamLabel)
+                    .addComponent(outputLabel))
+                .addGap(15, 15, 15))
         );
         ioPanelLayout.setVerticalGroup(
             ioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ioPanelLayout.createSequentialGroup()
+            .addGroup(ioPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabelOutput)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(outputLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(outputStreamLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(outputLabel)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        ioLabel.setText("I/O");
+        ioLabel.setText("Saída");
 
         jMenu1.setText("Abrir Binário");
         jMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -361,13 +374,13 @@ public class Interface extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(ioLabel)
                             .addComponent(ioPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addGap(11, 11, 11)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(registerLabel)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(registersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 628, Short.MAX_VALUE)
+                    .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE)
                     .addComponent(opPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -401,34 +414,41 @@ public class Interface extends javax.swing.JFrame {
     }
 
     private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
-        // Executa nextInstruction() no processador e atualiza interface
+        // Executa nextInstruction() no processador e atualiza interface.
+        // Dependendo do modo de operação selecionado, executa continuamente ou apenas uma instrução
         if (activeFile != null) {
-            if (jRadioButton1.isSelected()) { // Modo não interativo
+            if (processor.getMop() == 0) { // Modo não interativo
                 if (instructionTimer != null) { // Para de executar o programa se estiver executando
                     instructionTimer.stop();
                     instructionTimer = null;
                     return;
                 }
 
-                instructionTimer = new Timer(100, new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        if (!executeNextInstruction()) {
-                            instructionTimer.stop();
-                            instructionTimer = null;
-                        }
+                instructionTimer = new Timer(100, (java.awt.event.ActionEvent evt1) -> {
+                    running = true;
+                    if (abort || !executeNextInstruction()) {
+                        instructionTimer.stop();
+                        instructionTimer = null;
+                        abort = false;
+                        running = false;
                     }
                 });
                 instructionTimer.setRepeats(true);
                 instructionTimer.start();
-            } else if (jRadioButton2.isSelected()) { // Modo debug
+
+            } else if (processor.getMop() == 1) { // Modo debug
                 executeNextInstruction();
             }
+            running = false;
         }
 
     }//GEN-LAST:event_stepButtonActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         // Reabre arquivo e reseta a interface
+        if (running) {
+            abort = true;
+        }
         initProcessor(activeFile);
     }//GEN-LAST:event_resetButtonActionPerformed
     //Setter para o método write
@@ -449,15 +469,25 @@ public class Interface extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenu1MouseClicked
 
+    private void jRadioButtonMode1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMode1ActionPerformed
+        // Altera o registrador de modo de operação no processador
+        processor.setMop((byte) 1);
+        updateGUI();
+    }//GEN-LAST:event_jRadioButtonMode1ActionPerformed
+
+    private void jRadioButtonMode0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMode0ActionPerformed
+        // Altera o registrador de modo de operação no processador
+        processor.setMop((byte) 0);
+        updateGUI();
+    }//GEN-LAST:event_jRadioButtonMode0ActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Interface().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Interface().setVisible(true);
         });
     }
 
@@ -468,11 +498,10 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JLabel ioLabel;
     private javax.swing.JPanel ioPanel;
-    private javax.swing.JLabel jLabelOutput;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar2;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButtonMode0;
+    private javax.swing.JRadioButton jRadioButtonMode1;
     private javax.swing.JLabel memoryLabel;
     private javax.swing.JTable memoryTable;
     private javax.swing.JLabel mopLabel;
@@ -480,6 +509,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel opModeLabel;
     private javax.swing.JPanel opPanel;
     private static javax.swing.JLabel outputLabel;
+    private javax.swing.JLabel outputStreamLabel;
     private javax.swing.JLabel pcLabel;
     private javax.swing.JLabel pcValueLabel;
     private javax.swing.JLabel reLabel;
@@ -488,6 +518,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JPanel registersPanel;
     private javax.swing.JButton resetButton;
     private javax.swing.JLabel riLabel;
+    private javax.swing.JLabel riTextLabel;
     private javax.swing.JLabel riValueLabel;
     private javax.swing.JLabel spLabel;
     private javax.swing.JLabel spValueLabel;
@@ -499,7 +530,13 @@ public class Interface extends javax.swing.JFrame {
         if (file != null) {
             processor = new Processor(file, this);
             activeFile = file;
+            if (jRadioButtonMode0.isSelected()) {
+                processor.setMop((byte) 0);
+            } else {
+                processor.setMop((byte) 1);
+            }
             updateGUI();
+
         }
     }
 
