@@ -13,6 +13,7 @@ public class Memory {
 
     private static final short stackZero = 3; //posição do inicio da pilha //definidos assim pra facilitar possiveis modificações
     private static short stackSize = 0; // O tamanho da pilha é definido ao carregar o arquivo.
+    private short accessed; //um "RE" atualizado a cada acesso na memory
     
     public Memory(int size) {
         memory = new short[size];
@@ -81,35 +82,35 @@ public class Memory {
 
     // retorna um endereço da memória dependendo do modo de endereçamento
     // f1 diz se é direto ou indireto
-    public short getAddress(int pos, boolean f1) {
+    public short getAddress(int pos, boolean f1, boolean f3) { 
         if (pos > memory.length || pos < 0)
             throw new RuntimeException("Out of bounds");
 
-        short s = memory[pos];
-
-        if (f1) {
-            return memory[s];
+        if (f3){
+            accessed = (short) pos;
         } else {
-            return s;
+            short s = memory[pos];
+            if (f1) {
+                accessed = memory[s];
+            } else {
+                accessed = s;
+            }
         }
+        
+        return accessed;
     }
-
+    
+    public short getAddress(int pos, boolean f1) { 
+        return getAddress(pos, f1, false);
+    }
+    
     // retorna um valor da memória dependendo do modo de endereçamento
     // f1 diz se é direto ou indireto e f3 diz se é imediato
     public short getWord(int pos, boolean f1, boolean f3) {
         if (pos > memory.length || pos < 0)
             throw new RuntimeException("Out of bounds");
 
-        short s = memory[pos];
-
-        if (f3) {
-            return s;
-        } else if (f1) {
-            short contentsAddress = memory[s];
-            return memory[contentsAddress];
-        } else {
-            return memory[s];
-        }
+        return memory[getAddress(pos, f1, f3)];
     }
 
     // imprime o conteudo da memória
@@ -137,6 +138,10 @@ public class Memory {
 
     public short[] getMemory() {
         return memory;
+    }
+    
+    public short getAccessed(){ //chamado nas operações para atualizar o RE com o endereço mais recentemente acessado
+        return accessed;
     }
     
 }

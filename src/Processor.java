@@ -130,8 +130,8 @@ public class Processor {
 
     private void write(boolean f1, boolean f3) {
         // Carrega um enderço e coloca o valor na interface gráfica
-        re = pc;
         short word = memory.getWord(pc++, f1, f3);
+        re = memory.getAccessed();
         gui.setOutputLabel(word);
     }
 
@@ -152,10 +152,10 @@ public class Processor {
     }
 
     private void copy(boolean f1, boolean f2, boolean f3) {
-        re = pc;
         short address = memory.getAddress(pc++, f1);
-        re = pc;
+        re = memory.getAccessed();
         short word = memory.getWord(pc++, f2, f3);
+        re = memory.getAccessed();
         memory.storeWord(address, word);
     }
 
@@ -180,8 +180,8 @@ public class Processor {
     }
 
     private void branch(boolean f1) {
-        re = pc;
-        pc = memory.getAddress(pc++, f1);
+        pc = memory.getAddress(pc/*++*/, f1); 
+        re = memory.getAccessed();
     }
 
     private void branchNeg(boolean f1) {
@@ -209,33 +209,33 @@ public class Processor {
     }
 
     private void add(boolean f1, boolean f3) {
-        re = pc;
         acc += memory.getWord(pc++, f1, f3);
+        re = memory.getAccessed();
     }
 
     private void divide(boolean f1, boolean f3) {
-        re = pc;
         acc /= memory.getWord(pc++, f1, f3);
+        re = memory.getAccessed();
     }
 
     private void load(boolean f1, boolean f3) {
-        re = pc;
         acc = memory.getWord(pc++, f1, f3);
+        re = memory.getAccessed();
     }
 
     private void mult(boolean f1, boolean f3) {
-        re = pc;
         acc *= memory.getWord(pc++, f1, f3);
+        re = memory.getAccessed();
     }
 
     private void sub(boolean f1, boolean f3) {
-        re = pc;
         acc -= memory.getWord(pc++, f1, f3);
+        re = memory.getAccessed();
     }
 
     private void store(boolean f1) {
-        re = pc;
         short address = memory.getAddress(pc++, f1);
+        re = memory.getAccessed();
         memory.storeWord(address, acc);
     }
 
