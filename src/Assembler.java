@@ -63,19 +63,22 @@ public class Assembler {
 		String opcodeBin = Integer.toBinaryString(opcode);
 		opcodeBin = fillBinary(opcodeBin, 4, 'l');
 		
+		//adicionar mais um bit porque a descrição do trabalho tá confusa
+		opcodeBin = '0' + opcodeBin;
+		
 		//bit 5
-		if (addrOpd1 == 1) opcodeBin += '1'; 
-		else opcodeBin += '0';
+		if (addrOpd1 == 1) opcodeBin = '1' + opcodeBin; 
+		else opcodeBin = '0' + opcodeBin;
 		
 		//bit 6
-		if (addrOpd2 == 1) opcodeBin += '1'; 
-		else opcodeBin += '0';
+		if (addrOpd2 == 1) opcodeBin = '1' + opcodeBin; 
+		else opcodeBin = '0' + opcodeBin;
 		
 		//bit 7
-		if (addrOpd1 == 2 || addrOpd2 == 2) opcodeBin += '1'; 
-		else opcodeBin += '0';
+		if (addrOpd1 == 2 || addrOpd2 == 2) opcodeBin = '1' + opcodeBin; 
+		else opcodeBin = '0' + opcodeBin;
 		
-		opcodeBin = fillBinary(opcodeBin, 16, 'r');
+		opcodeBin = fillBinary(opcodeBin, 16, 'l');
 		
 		return opcodeBin + "\n";
 	}
@@ -111,10 +114,10 @@ public class Assembler {
 		return strBin + "\n";
 	}
 	
-	public static File convert(File fileAssembly) {
+	public static File convert(File fileAssembly, int stackSize) {
 		File fileBinary;
 		String binaryOut = "";
-		int numWords = 0;
+		//int numWords = 0;
 		
 		try {
             BufferedReader reader = new BufferedReader(new FileReader(fileAssembly));
@@ -130,25 +133,32 @@ public class Assembler {
 				addrOpd1 = -1;
 				addrOpd2 = -1;
 				
-				String[] lineArr = line.split(" ");			
+				String[] lineArr = line.split(" ");		
+				if (lineArr[0].startsWith("//")) continue; // provavelmente tem solução melhor pra colocar comentários...
+				
 				opcode = lineArr[0];
 				
+				//TODO: criar área de dados (.code{} e .data{})
 				if (getOpcode(opcode) == -1) {
 					binaryOut += dataToBinary(opcode);
 					continue;
-				} else {
+				}/* else {
 					numWords++;
-				}
+				}*/
 				
 				if (lineArr.length > 1) {
-					numWords++;
-					opd1 = lineArr[1];
-					addrOpd1 = getAddrMode(opd1);
-					
-					if (lineArr.length > 2) {
-						numWords++;
-						opd2 = lineArr[2];
-						addrOpd2 = getAddrMode(opd2);
+					if (!lineArr[1].startsWith("//")) {
+						//numWords++;
+						opd1 = lineArr[1];
+						addrOpd1 = getAddrMode(opd1);
+
+						if (lineArr.length > 2) {
+							if (!lineArr[2].startsWith("//")) {
+								//numWords++;
+								opd2 = lineArr[2];
+								addrOpd2 = getAddrMode(opd2);
+							}
+						}
 					}
 				}
 				
@@ -168,10 +178,19 @@ public class Assembler {
             e.printStackTrace();
         }
 		
-		String startData = Integer.toBinaryString(numWords + 1);
-		startData = fillBinary(startData, 16, 'l');
+		//String startData = Integer.toBinaryString(numWords + 1);
+		//startData = fillBinary(startData, 16, 'l');
 		
-		binaryOut = startData + "\n" + binaryOut;
+		String stack = fillBinary("0", 16, 'l') + "\n" + fillBinary("0", 16, 'l') + "\n"; //duas primeiras linhas zeradas
+		stack += fillBinary(Integer.toBinaryString(stackSize), 16, 'l') + "\n"; //tamanho da pilha
+		
+		for (int i = 0; i < stackSize; i++) {
+			stack += fillBinary("0", 16, 'l') + "\n";
+		}
+		
+		
+		//binaryOut = stack + startData + "\n" + binaryOut;
+		binaryOut = stack + binaryOut;
 		
 		//Placeholder (não lembro bem como faz isso em java
 		File fileOut = new File("input/" + fileAssembly.getName() + "_bin");
