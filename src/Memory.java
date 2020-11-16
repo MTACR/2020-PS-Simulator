@@ -96,11 +96,14 @@ public class Memory {
         short s = memory[pos];
 
         if (f3) {
+            accessed = (short) pos;
             return s;
         } else if (f1) {
             short contentsAddress = memory[s];
+            accessed = contentsAddress;
             return memory[contentsAddress];
         } else {
+            accessed = s;
             return memory[s];
         }
     }
