@@ -3,7 +3,7 @@ import java.io.File;
 public class Main {
 
     public static void main(String[] args) {
-        File file = new File("input/testbin");
+        File file = new File("input/fatorial.txt");
         // Rodar via console
         /* 
         if (file.exists()) {
@@ -15,7 +15,7 @@ public class Main {
         */
         
         // Rodar via interface
-        Interface f = new Interface(file);
+        Interface f = new Interface(Assembler.convert(file, 10));
         f.setVisible(true);
     }
 }

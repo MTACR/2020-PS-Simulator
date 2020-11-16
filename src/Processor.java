@@ -4,8 +4,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Processor {
+
     private static final short MEMORY_SIZE = 512;
-    
+
     private short pc;
     private short acc;
     private short ri;
@@ -17,6 +18,7 @@ public class Processor {
     private OnStep step;
 
     public interface OnStep {
+
         boolean onStep();
     }
 
@@ -41,7 +43,7 @@ public class Processor {
 
         step = this::nextInstruction;
     }
-    
+
     private boolean nextInstruction() {
         if (ri != 11) { // Se ri=11(STOP), parar execução
             if (pc == 0) {
@@ -53,7 +55,7 @@ public class Processor {
                 System.err.println("Program counter out of memory bounds");
                 return false;
             }
-            
+
             memory.setDebug(pc);
             ri = memory.getWord(pc++, false, true);
             step = this::parseOpCode;
@@ -73,8 +75,7 @@ public class Processor {
         TestOnly.OPCODE opcode = TestOnly.OPCODE.values()[ri & 15];
         System.out.print("\n" + opcode);
         step = this::nextInstruction;
-        
-        
+
         switch (opcode) {
             case BR:
                 branch(f1);
@@ -160,12 +161,13 @@ public class Processor {
     }
 
     private boolean call(boolean f1) {
-        if (memory.push(pc)) {
-            pc = memory.getWord(pc++, f1, false);
-            return true;
-        } else {
+        //if (memory.push(pc)) {
+        memory.push((short) (pc + 1));
+        pc = memory.getWord(pc++, f1, false);
+        return true;
+        /*} else {
             return false;
-        }
+        }*/
     }
 
     private boolean ret() {
@@ -180,7 +182,7 @@ public class Processor {
     }
 
     private void branch(boolean f1) {
-        pc = memory.getAddress(pc/*++*/, f1); 
+        pc = memory.getAddress(pc/*++*/, f1);
         re = memory.getAccessed();
     }
 
@@ -247,7 +249,7 @@ public class Processor {
         System.out.println("------------");
         memory.dumpMemory();
     }
-    
+
     public void setMop(byte mop) {
         this.mop = mop;
     }

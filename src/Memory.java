@@ -19,32 +19,32 @@ public class Memory {
         memory = new short[size];
         debug = new boolean[size];
         sp = stackZero;
-        stackSize = (short) memory[2]; // usar memory[2] para obter o endereço limite da pilha
     }
     
 
     //Pilha
 
     public boolean push(short word) {  //insere na pilha
-        sp++;
-
+        //sp++
         if (sp > stackSize + 2) { //verifica se a pilha está cheia
-            System.err.println("Stack overflow");
+            System.err.println("Stack overflow " + sp + "size: " + stackSize);
             sp = 0; //"causando um desvio para o endereço 0 (zero)"
             return false;
         } else {
             memory[sp] = word;
+            sp++; // Só aumenta SP se foi inserido algo na pilha
             return true;
         }
     }
 
     public short pop() { //retira da pilha
-        if (sp <= stackZero) { //verifica se a pilha está vazia
+        System.err.println("sp" + sp +" zero: " + stackZero + " valorPilha " + memory[sp]);  
+        if (sp <= stackZero) { //verifica se a pilha está vazia 
             System.err.println("Stack underflow");
             sp = memory[2];
-            return -1;
+            return 0; // -1 iria dar OutOfBoundsException
         } else
-            return memory[sp--];
+            return memory[--sp];
     }
 
     public short firstPosition() {
@@ -69,6 +69,9 @@ public class Memory {
                 
                 while ((line = reader.readLine()) != null)
                     memory[i++] = (short) Integer.parseInt(line, 2);
+                
+                // TAMANHO DA PILHA É DEFINIDO DEPOIS DE CARREGAR O ARQUIVO
+                stackSize = (short) memory[2]; // usar memory[2] para obter o endereço limite da pilha
             }
         } catch (IOException | NumberFormatException e) {
             final JPanel panel = new JPanel();
@@ -106,12 +109,28 @@ public class Memory {
     
     // retorna um valor da memória dependendo do modo de endereçamento
     // f1 diz se é direto ou indireto e f3 diz se é imediato
-    public short getWord(int pos, boolean f1, boolean f3) {
+    /*public short getWord(int pos, boolean f1, boolean f3) {
         if (pos > memory.length || pos < 0)
             throw new RuntimeException("Out of bounds");
 
         return memory[getAddress(pos, f1, f3)];
+    }*/
+    public short getWord(int pos, boolean f1, boolean f3) {
+        if (pos > memory.length || pos < 0)
+            throw new RuntimeException("Out of bounds");
+
+        short s = memory[pos];
+
+        if (f3) {
+            return s;
+        } else if (f1) {
+            short contentsAddress = memory[s];
+            return memory[contentsAddress];
+        } else {
+            return memory[s];
+        }
     }
+    
 
     // imprime o conteudo da memória
     public void dumpMemory() {
