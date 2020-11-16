@@ -345,7 +345,7 @@ public class Interface extends javax.swing.JFrame {
                 .addComponent(outputStreamLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(outputLabel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         ioLabel.setText("Saída");

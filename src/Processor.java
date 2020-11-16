@@ -182,7 +182,7 @@ public class Processor {
     }
 
     private void branch(boolean f1) {
-        pc = memory.getAddress(pc/*++*/, f1);
+        pc = memory.getWord(pc/*++*/, f1, false);
         re = memory.getAccessed();
     }
 
