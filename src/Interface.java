@@ -97,6 +97,7 @@ public class Interface extends javax.swing.JFrame {
         ioLabel = new javax.swing.JLabel();
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(640, 300));
@@ -341,6 +342,14 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenuBar2.add(jMenu1);
 
+        jMenu2.setText("Abrir Código");
+        jMenu2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenu2MouseClicked(evt);
+            }
+        });
+        jMenuBar2.add(jMenu2);
+
         setJMenuBar(jMenuBar2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -464,6 +473,19 @@ public class Interface extends javax.swing.JFrame {
         updateGUI();
     }//GEN-LAST:event_jRadioButtonMode0ActionPerformed
 
+    private void jMenu2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu2MouseClicked
+        // Abre o menu para escolher um arquivo de código, se for válido carrega no processador e atualiza interface
+        System.out.println("Interface.jMenu1MouseClicked()");
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = Assembler.convert(fileChooser.getSelectedFile(), 10);
+            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+            initProcessor(selectedFile);
+        }
+    }//GEN-LAST:event_jMenu2MouseClicked
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
             new Interface().setVisible(true);
@@ -478,6 +500,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel ioLabel;
     private javax.swing.JPanel ioPanel;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JRadioButton jRadioButtonMode0;
     private javax.swing.JRadioButton jRadioButtonMode1;
