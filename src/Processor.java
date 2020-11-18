@@ -1,9 +1,38 @@
-
 import java.io.File;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Processor {
+
+    public enum OPCODE {
+        BR(0),
+        BRPOS(1),
+        ADD(2),
+        LOAD(3),
+        BRZERO(4),
+        BRNEG(5),
+        SUB(6),
+        STORE(7),
+        WRITE(8),
+        RET(9),
+        DIVIDE(10),
+        STOP(11),
+        READ(12),
+        COPY(13),
+        MULT(14),
+        CALL(15);
+
+        private final int op;
+
+        OPCODE(int op) {
+            this.op = op;
+        }
+
+        public int getValue()
+        {
+            return op;
+        }
+    }
 
     private static final short MEMORY_SIZE = 512;
 
@@ -18,7 +47,6 @@ public class Processor {
     private OnStep step;
 
     public interface OnStep {
-
         boolean onStep();
     }
 
@@ -56,14 +84,13 @@ public class Processor {
                 return false;
             }
 
-            memory.setDebug(pc);
             ri = memory.getWord(pc++, false, true);
+
             step = this::parseOpCode;
+
             return true;
-            //return parseOpCode(opcode, f1, f2, f3);
-        } else {
+        } else
             return false;
-        }
     }
 
     // Seleciona qual código a ser processado e lida com a quantidade de palavras a ser lida pros operandos
@@ -72,8 +99,8 @@ public class Processor {
         boolean f2 = (ri & 64) != 0;
         boolean f3 = (ri & 128) != 0;
 
-        TestOnly.OPCODE opcode = TestOnly.OPCODE.values()[ri & 15];
-        System.out.print("\n" + opcode);
+        OPCODE opcode = OPCODE.values()[ri & 15];
+
         step = this::nextInstruction;
 
         switch (opcode) {
@@ -129,16 +156,16 @@ public class Processor {
         return true;
     }
 
+    // Carrega um enderço e coloca o valor na interface gráfica
     private void write(boolean f1, boolean f3) {
-        // Carrega um enderço e coloca o valor na interface gráfica
         short word = memory.getWord(pc++, f1, f3);
         re = memory.getAccessed();
         gui.setOutputLabel(word);
     }
 
+    // Carrega o endereço do operando e abre uma janela com um campo para a entrada,
+    // salva o valor lido no endereço do operando.
     private void read(boolean f1) {
-        // Carrega o endereço do operando e abre uma janela com um campo para a entrada,
-        // salva o valor lido no endereço do operando.
         short address = memory.getAddress(pc++, f1);
         Short input = null;
         do {
@@ -155,19 +182,19 @@ public class Processor {
     private void copy(boolean f1, boolean f2, boolean f3) {
         short address = memory.getAddress(pc++, f1);
         re = memory.getAccessed();
+
         short word = memory.getWord(pc++, f2, f3);
         re = memory.getAccessed();
+
         memory.storeWord(address, word);
     }
 
     private boolean call(boolean f1) {
-        //if (memory.push(pc)) {
-        memory.push((short) (pc + 1));
-        pc = memory.getWord(pc++, f1, false);
-        return true;
-        /*} else {
+        if (memory.push((short) (pc + 1))) {
+            pc = memory.getWord(pc++, f1, false);
+            return true;
+        } else
             return false;
-        }*/
     }
 
     private boolean ret() {
@@ -176,38 +203,34 @@ public class Processor {
         if (pop >= 0) {
             pc = pop;
             return true;
-        } else {
+        } else
             return false;
-        }
     }
 
     private void branch(boolean f1) {
-        pc = memory.getWord(pc/*++*/, f1, false);
+        pc = memory.getWord(pc, f1, false);
         re = memory.getAccessed();
     }
 
     private void branchNeg(boolean f1) {
-        if (acc < 0) {
+        if (acc < 0)
             branch(f1);
-        } else {
+        else
             pc++;
-        }
     }
 
     private void branchPos(boolean f1) {
-        if (acc > 0) {
+        if (acc > 0)
             branch(f1);
-        } else {
+        else
             pc++;
-        }
     }
 
     private void branchZero(boolean f1) {
-        if (acc == 0) {
+        if (acc == 0)
             branch(f1);
-        } else {
+        else
             pc++;
-        }
     }
 
     private void add(boolean f1, boolean f3) {
@@ -241,14 +264,14 @@ public class Processor {
         memory.storeWord(address, acc);
     }
 
-    public void dump() {
+    /*public void dump() {
         System.out.println("ACC -\t" + acc);
         System.out.println("RE -\t" + re);
         System.out.println("RI -\t" + ri);
         System.out.println("PC -\t" + pc);
         System.out.println("------------");
         memory.dumpMemory();
-    }
+    }*/
 
     public void setMop(byte mop) {
         this.mop = mop;
@@ -282,4 +305,5 @@ public class Processor {
     public short[] getMemory() {
         return memory.getMemory();
     }
+
 }
