@@ -34,7 +34,7 @@ public class Processor {
         }
     }
 
-    private static final short MEMORY_SIZE = 512;
+    private static final short MEMORY_SIZE = 1024;
 
     private short pc;
     private short acc;

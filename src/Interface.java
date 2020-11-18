@@ -407,7 +407,7 @@ public class Interface extends javax.swing.JFrame {
                     return;
                 }
 
-                instructionTimer = new Timer(100, (java.awt.event.ActionEvent evt1) -> {
+                instructionTimer = new Timer(50, (java.awt.event.ActionEvent evt1) -> {
                     running = true;
                     if (abort || !executeNextInstruction()) {
                         instructionTimer.stop();
