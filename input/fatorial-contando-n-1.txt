@@ -1,0 +1,32 @@
+// Gambiarra pro assembler montar todo o programa
+BR $44
+//
+// Função fatorial (endereço 15)
+// Número para pegar o fatorial está no endereço 100
+LOAD 1
+STORE $42
+//
+LOAD *43
+// Verifica se é menor ou igual a 1
+SUB 1
+BRPOS $40
+RET
+// Armazena numero - 1 na posição 100
+STORE $43
+mult *42
+STORE $42
+CALL $41
+RET
+//
+// Lê o número da entrada
+READ $43
+// Chama fatorial
+CALL $45
+STOP
+// endereço 46 = 15
+26
+19
+101
+100
+35
+15
