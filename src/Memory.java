@@ -73,9 +73,9 @@ public class Memory {
 
     // retorna um endereço da memória dependendo do modo de endereçamento
     // f1 diz se é direto ou indireto
-    public short getAddress(int pos, boolean f1) {
+    /*public short getAddress(int pos, boolean f1) {
         return getWord(pos, f1, false);
-    }
+    }*/
 
     public short getWord(int pos, boolean f1, boolean f3) {
         if (pos > memory.length || pos < 0) {

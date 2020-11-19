@@ -166,7 +166,7 @@ public class Processor {
     // Carrega o endereço do operando e abre uma janela com um campo para a entrada,
     // salva o valor lido no endereço do operando.
     private void read(boolean f1) {
-        short address = memory.getAddress(pc++, f1);
+        short address = memory.getWord(pc++, f1, false);
         Short input = null;
         do {
             try {
@@ -180,7 +180,7 @@ public class Processor {
     }
 
     private void copy(boolean f1, boolean f2, boolean f3) {
-        short address = memory.getAddress(pc++, f1);
+        short address = memory.getWord(pc++, f1, false);
         re = memory.getAccessed();
 
         short word = memory.getWord(pc++, f2, f3);
@@ -259,7 +259,7 @@ public class Processor {
     }
 
     private void store(boolean f1) {
-        short address = memory.getAddress(pc++, f1);
+        short address = memory.getWord(pc++, f1, false);
         re = memory.getAccessed();
         memory.storeWord(address, acc);
     }
