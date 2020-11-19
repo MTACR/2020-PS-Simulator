@@ -47,7 +47,7 @@ public class Memory {
         return (short) (memory[2] + 3);
     }
 
-    //Fim pilha
+    //Carrega programa para memória e retorna início da área de dados
     public void loadFileToMemory(File file) {
         try {
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {

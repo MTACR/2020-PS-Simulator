@@ -36,6 +36,7 @@ public class Processor {
 
     private static final short MEMORY_SIZE = 1024;
 
+    // Registradores da maquina
     private short pc;
     private short acc;
     private short ri;
@@ -46,6 +47,7 @@ public class Processor {
     private final Interface gui;
     private OnStep step;
 
+    // Função reflexiva, faz parte da integração com a interface, permitindo a alternancia entre nextInstruction() e parseOpCode()
     public interface OnStep {
         boolean onStep();
     }
@@ -54,6 +56,7 @@ public class Processor {
         return step.onStep();
     }
 
+    // Construtores
     public Processor(File file) {
         gui = null;
         memory = new Memory(MEMORY_SIZE);
@@ -66,12 +69,13 @@ public class Processor {
     public Processor(File file, Interface gui) {
         this.gui = gui;
         memory = new Memory(MEMORY_SIZE);
-        memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
+        memory.loadFileToMemory(file);
         pc = memory.firstPosition();
 
         step = this::nextInstruction;
     }
 
+    // Determina a proxima instrução
     private boolean nextInstruction() {
         if (ri != 11) { // Se ri=11(STOP), parar execução
             if (pc == 0) {
@@ -167,6 +171,7 @@ public class Processor {
     // salva o valor lido no endereço do operando.
     private void read(boolean f1) {
         short address = memory.getWord(pc++, f1, false);
+        re = memory.getAccessed();
         Short input = null;
         do {
             try {
@@ -179,6 +184,7 @@ public class Processor {
         } while (input == null);
     }
 
+    // Copia um dado de um endereço da memória a outro
     private void copy(boolean f1, boolean f2, boolean f3) {
         short address = memory.getWord(pc++, f1, false);
         re = memory.getAccessed();
@@ -189,14 +195,17 @@ public class Processor {
         memory.storeWord(address, word);
     }
 
+    // Empilha o PC atual e vai para o inicio da função/endereço determinado. Em caso de falha (Stack overflow), para o programa
     private boolean call(boolean f1) {
         if (memory.push((short) (pc + 1))) {
             pc = memory.getWord(pc++, f1, false);
+            re = memory.getAccessed();
             return true;
         } else
             return false;
     }
 
+    // Desempilha um valor para o PC. Em caso de falha (Stack Underflow), o programa para.
     private boolean ret() {
         short pop = memory.pop();
 
@@ -207,11 +216,13 @@ public class Processor {
             return false;
     }
 
+    // Desvio de fluxo incondicional
     private void branch(boolean f1) {
         pc = memory.getWord(pc, f1, false);
         re = memory.getAccessed();
     }
 
+    // Desvios de fluxo condicionais
     private void branchNeg(boolean f1) {
         if (acc < 0)
             branch(f1);
@@ -233,6 +244,7 @@ public class Processor {
             pc++;
     }
 
+    // Operações aritméticas
     private void add(boolean f1, boolean f3) {
         acc += memory.getWord(pc++, f1, f3);
         re = memory.getAccessed();
@@ -240,11 +252,6 @@ public class Processor {
 
     private void divide(boolean f1, boolean f3) {
         acc /= memory.getWord(pc++, f1, f3);
-        re = memory.getAccessed();
-    }
-
-    private void load(boolean f1, boolean f3) {
-        acc = memory.getWord(pc++, f1, f3);
         re = memory.getAccessed();
     }
 
@@ -258,6 +265,14 @@ public class Processor {
         re = memory.getAccessed();
     }
 
+    // Operações de memória
+    // Carrega um valor da memória para o acumulador
+    private void load(boolean f1, boolean f3) {
+        acc = memory.getWord(pc++, f1, f3);
+        re = memory.getAccessed();
+    }
+
+    // Armazena o valor do acumulador na memória
     private void store(boolean f1) {
         short address = memory.getWord(pc++, f1, false);
         re = memory.getAccessed();
@@ -273,6 +288,7 @@ public class Processor {
         memory.dumpMemory();
     }*/
 
+    //Setters
     public void setMop(byte mop) {
         this.mop = mop;
     }
