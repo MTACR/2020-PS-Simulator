@@ -1,0 +1,9 @@
+macro
+TESTE &a,&b
+MACRO
+TESTE2
+MACRO
+TESTE3 &i,&j
+MEND
+MEND
+MEND
