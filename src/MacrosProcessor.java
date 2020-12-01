@@ -137,6 +137,14 @@ public class MacrosProcessor {
         macros.put(name, m);
     }
 
+// Expande uma macro. Line é a linha com o comando de expansão
+
+    private void expandMacro(String macroName, String line) {
+        System.out.println("Expandindo a macro " + macroName);
+        Macro m = (Macro)macros.get(macroName);
+        // TODO Verificar parâmetros e expandir a macro
+    }
+
     // Processa um arquivo contendo macros
 
     public void process(File input) throws IOException, MacrosProcessingError {
@@ -145,8 +153,21 @@ public class MacrosProcessor {
         String line;
 
         while ((line = getNextLine()) != null) {
-            if (line.toUpperCase().equals("MACRO"))
+            boolean writeLineToFile = true;
+            if (line.toUpperCase().equals("MACRO")) {
+                writeLineToFile = false;
                 processMacro();
+                continue;
+            }
+            for (String macroName: macros.keySet()) {
+                if (line.startsWith(macroName + " ") || line.equals(macroName)) {
+                    writeLineToFile = false;
+                    expandMacro(macroName, line);
+                    break;
+                }
+            }
+            if (writeLineToFile)
+                writeLine(line);
         }
     }
 
