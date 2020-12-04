@@ -37,23 +37,83 @@ class Macro {
     }
 }
 
+/* Classe que armazena os dados de uma expansão.
+    * Ela internamente se comporta como uma pilha, o elemento que estiver em
+    * expansionData é o atualmente processado e os anteriores a ele se comportam
+    * como uma pilha. Isso é necessário, dentre outras coisas,  para o processador de macros saber para qual linha / código voltar
+    * após terminar uma expansão. */
+
+class MacrosExpansionData {
+    String []code;
+    int lineNumber;
+    MacrosExpansionData previous;
+
+    public MacrosExpansionData(String []code, int lineNumber, MacrosExpansionData previous) {
+        this.code = code;
+        this.lineNumber = lineNumber;
+        this.previous = previous;
+    }
+
+    // Pega o código associado a esse dado de expansão
+
+    public String []getCode() {
+        return code;
+    }
+
+    // Pega o número da linha que está sendo processada pelo processador de macros
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    // Pega o elemento anterior da pilha de dados de expansão
+
+    public MacrosExpansionData getPrevious() {
+        return previous;
+    }
+
+    // Usado internamente: pega a próxima linha do código
+
+    public String getNextLine() {
+        try {
+            return code[lineNumber ++];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+}
+
 public class MacrosProcessor {
     protected Map <String, Macro> macros; // Mapa que armazenará as macros já definidas
     private BufferedReader reader;
     private int lineNumber;
+    private MacrosExpansionData expansionData;
 
     // Cria o processador de macros
 
     public MacrosProcessor() {
         macros = new HashMap <String, Macro>();
         lineNumber = 0;
+        expansionData = null;
     }
 
 // Pega a próxima linha do arquivo
 
     private String getNextLine() throws IOException {
-        lineNumber ++;
-        return reader.readLine();
+        if (expansionData != null) {
+            return expansionData.getNextLine();
+        } else {
+            lineNumber ++;
+            return reader.readLine();
+        }
+    }
+
+    private int getLineNumber() {
+        if (expansionData != null) {
+            return expansionData.getLineNumber();
+        } else {
+            return lineNumber;
+        }
     }
 
 // Joga um erro de processamento de macro
@@ -78,9 +138,9 @@ public class MacrosProcessor {
         System.out.println(line);
     }
 
-// Processa uma definição de macro completa. Retorna quando achar um MEND
+// Processa uma definição de macro completa. Retorna a linha do MEND em caso de sucesso.
 
-    private void processMacro() throws MacrosProcessingError, IOException {
+    private int processMacro() throws MacrosProcessingError, IOException {
     int insideMacro = 0;
         String macroDefinitionLine = getNextLineOrError("Não encontrou a linha com a definição da macro");
 
@@ -135,30 +195,24 @@ public class MacrosProcessor {
         Macro m = new Macro(name, parameters, codeArray);
 
         macros.put(name, m);
+
+        return getLineNumber();
     }
 
-// Expande uma macro. Line é a linha com o comando de expansão
+// Processa realmente a macro, independente se está dentro de outra ou é o arquivo puro
 
-    private void expandMacro(String macroName, String line) {
-        System.out.println("Expandindo a macro " + macroName);
-        Macro m = (Macro)macros.get(macroName);
-        // TODO Verificar parâmetros e expandir a macro
-    }
-
-    // Processa um arquivo contendo macros
-
-    public void process(File input) throws IOException, MacrosProcessingError {
-        reader = new BufferedReader(new FileReader(input));
-
+    private void doProcess() throws MacrosProcessingError, IOException {
         String line;
 
         while ((line = getNextLine()) != null) {
             boolean writeLineToFile = true;
+
             if (line.toUpperCase().equals("MACRO")) {
                 writeLineToFile = false;
                 processMacro();
                 continue;
             }
+
             for (String macroName: macros.keySet()) {
                 if (line.startsWith(macroName + " ") || line.equals(macroName)) {
                     writeLineToFile = false;
@@ -166,9 +220,37 @@ public class MacrosProcessor {
                     break;
                 }
             }
+
             if (writeLineToFile)
                 writeLine(line);
         }
+    }
+
+// Expande uma macro. Line é a linha com o comando de expansão
+
+    private void expandMacro(String macroName, String line) throws MacrosProcessingError, IOException {
+        System.out.println("Expandindo a macro " + macroName);
+
+        Macro m = (Macro)macros.get(macroName);
+
+        // TODO Verificar parâmetros e expandir a macro
+
+        // Cria novos dados de expansão na pilha, ligando-os ao anterior
+        expansionData = new MacrosExpansionData(m.getCode(), 0, expansionData);
+
+        // Processa o código na macro expandida
+        doProcess();
+
+        // Volta para a macro anterior ou para o arquivo
+        expansionData = expansionData.getPrevious();
+    }
+
+    // Processa um arquivo contendo macros
+
+    public void process(File input) throws IOException, MacrosProcessingError {
+        reader = new BufferedReader(new FileReader(input));
+
+        doProcess();
     }
 
     public static void main(String []args) {
