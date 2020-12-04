@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/UFPEL/Programação%20de%20Sistemas/PS-1/src/Assembler.java</file>
-            <file>file:/C:/UFPEL/Programação%20de%20Sistemas/PS-1/src/Processor.java</file>
-            <file>file:/C:/UFPEL/Programação%20de%20Sistemas/PS-1/src/Main.java</file>
-            <file>file:/C:/UFPEL/Programação%20de%20Sistemas/PS-1/src/Memory.java</file>
+            <file>file:/C:/UFPEL/Programação%20de%20Sistemas/PS-1/src/assembler.java</file>
+            <file>file:/C:/UFPEL/Programação%20de%20Sistemas/PS-1/src/simulator.Processor.java</file>
+            <file>file:/C:/UFPEL/Programação%20de%20Sistemas/PS-1/src/simulator.Main.java</file>
+            <file>file:/C:/UFPEL/Programação%20de%20Sistemas/PS-1/src/simulator.Memory.java</file>
         </group>
     </open-files>
 </project-private>

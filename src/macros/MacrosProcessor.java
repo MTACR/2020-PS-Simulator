@@ -1,8 +1,9 @@
+package macros;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -256,7 +257,7 @@ public class MacrosProcessor {
     public static void main(String []args) {
         MacrosProcessor processor = new MacrosProcessor();
         try {
-            processor.process(new File("testemacro.asm"));
+            processor.process(new File("input/testemacro.asm"));
         } catch (IOException error) {
             System.out.println("Erro no arquivo: " + error.getMessage());
         } catch (MacrosProcessingError error) {
