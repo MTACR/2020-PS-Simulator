@@ -107,6 +107,10 @@ public class Assembler {
 	
 	private static String dataToBinary(String data) {
 		int dataInt = Integer.parseInt(data);
+
+		if (dataInt > Short.MAX_VALUE)
+			throw new RuntimeException("Valor fora dos limites");
+
 		String strBin = Integer.toBinaryString(dataInt);
 		
 		strBin = fillBinary(strBin, 16, 'l');
@@ -115,9 +119,7 @@ public class Assembler {
 	}
 	
 	public static File convert(File fileAssembly, int stackSize) {
-		File fileBinary;
 		String binaryOut = "";
-		//int numWords = 0;
 		
 		try {
             BufferedReader reader = new BufferedReader(new FileReader(fileAssembly));
@@ -125,9 +127,12 @@ public class Assembler {
 					
             while ((line = reader.readLine()) != null) {
 
+            	if (line.length() > 80)
+					throw new RuntimeException("Linha muito longa");
+
 				//ignora comentários
-				if (line.contains("//"))
-					line = line.substring(0, line.indexOf("//"));
+				if (line.contains("*"))
+					line = line.substring(0, line.indexOf("*"));
 
 				//ignora linhas em branco
 				if (line.isEmpty())
@@ -141,17 +146,23 @@ public class Assembler {
 				//se é operando escreve no binário
 				if (lineArr.length == 1) {
 					if (getOpcode(opcode) == -1) {
+						try {
+							Integer.parseInt(opcode);
+						} catch (NumberFormatException e) {
+							throw new RuntimeException("Instrução inválida");
+						}
+
 						binaryOut += dataToBinary(opcode);
 						continue;
 
 						// verifica quantidade de parametros
 					} else if (!opcode.equalsIgnoreCase("stop") && !opcode.equalsIgnoreCase("ret"))
-						throw new RuntimeException("poucos parâmetros");
+						throw new RuntimeException("Erro de sintaxe");
 				}
 
 				// verifica quantidade de parametros
 				if (lineArr.length == 2 && opcode.equalsIgnoreCase("copy"))
-					throw new RuntimeException("poucos parâmetros");
+					throw new RuntimeException("Erro de sintaxe");
 
 				//TODO: criar área de dados (.code{} e .data{})
 				//if (getOpcode(opcode) == -1) {
@@ -174,7 +185,7 @@ public class Assembler {
 						addrOpd1 = getAddrMode(opd1);
 
 						if (opd1.isEmpty())
-							throw new RuntimeException("parâmetro 1 inválido");
+							throw new RuntimeException("Erro de sintaxe");
 
 						if (lineArr.length > 2)
 							if (opcode.equalsIgnoreCase("copy")) {
@@ -184,12 +195,12 @@ public class Assembler {
 								addrOpd2 = getAddrMode(opd2);
 
 								if (opd2.isEmpty())
-									throw new RuntimeException("parâmetro 2 inválido");
+									throw new RuntimeException("Erro de sintaxe");
 
 							} else
-								throw new RuntimeException("muitos parâmetros");
+								throw new RuntimeException("Erro de sintaxe");
 					} else
-						throw new RuntimeException("muitos parâmetros");
+						throw new RuntimeException("Erro de sintaxe");
 
 				binaryOut += opcodeBinary(getOpcode(opcode), addrOpd1, addrOpd2);
 
@@ -218,7 +229,8 @@ public class Assembler {
 		
 		//binaryOut = stack + startData + "\n" + binaryOut;
 		binaryOut = stack + binaryOut;
-		
+
+
 		//Placeholder (não lembro bem como faz isso em java
 		File fileOut = new File("input/" + fileAssembly.getName() + "_bin");
 		
