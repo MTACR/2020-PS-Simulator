@@ -1,3 +1,7 @@
+package simulator;
+
+import assembler.Assembler;
+
 import java.io.File;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JFileChooser;
@@ -450,7 +454,7 @@ public class Interface extends javax.swing.JFrame {
 
     private void jMenu1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu1MouseClicked
         // Abre o menu para escolher um arquivo, se for válido carrega no processador e atualiza interface
-        System.out.println("Interface.jMenu1MouseClicked()");
+        System.out.println("Simulator.Interface.jMenu1MouseClicked()");
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = fileChooser.showOpenDialog(this);
@@ -475,7 +479,7 @@ public class Interface extends javax.swing.JFrame {
 
     private void jMenu2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu2MouseClicked
         // Abre o menu para escolher um arquivo de código, se for válido carrega no processador e atualiza interface
-        System.out.println("Interface.jMenu1MouseClicked()");
+        System.out.println("Simulator.Interface.jMenu1MouseClicked()");
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = fileChooser.showOpenDialog(this);

@@ -1,3 +1,7 @@
+package simulator;
+
+import assembler.Assembler;
+
 import java.io.File;
 
 public class Main {
