@@ -86,7 +86,7 @@ public class Assembler {
 	
 	//recebe o operando (incluindo o char de tipo de endereçamento) e retorna o binário
 	private static String opdBinary(String opd) {
-		if (opd.charAt(0) == '$' || opd.charAt(0) == '*') opd = opd.substring(1);
+		if (opd.charAt(0) == '#' || opd.charAt(0) == 'I') opd = opd.substring(1);
 		
 		String opdBin = Integer.toBinaryString(Integer.parseInt(opd));
 		opdBin = fillBinary(opdBin, 16, 'l');
@@ -140,8 +140,10 @@ public class Assembler {
 				System.out.println(opcode);
 
 				//se é operando escreve no binário
-				if (lineArr.length == 1 && getOpcode(opcode) == -1)
+				if (lineArr.length == 1 && getOpcode(opcode) == -1) {
 					binaryOut += dataToBinary(opcode);
+					continue;
+				}
 
 				//TODO: criar área de dados (.code{} e .data{})
 				//if (getOpcode(opcode) == -1) {
@@ -150,35 +152,45 @@ public class Assembler {
 				//}/* else {
 					//numWords++;
 				//}*/
-				
+
+				String opd1 = "";
+				String opd2 = "";
+				int addrOpd1 = -1;
+				int addrOpd2 = -1;
+
 				if (lineArr.length > 1)
 					if (!opcode.equalsIgnoreCase("stop") && !opcode.equalsIgnoreCase("ret")) {
-						String opd1 = lineArr[1];
+						opd1 = lineArr[1];
 						System.out.println(opd1);
+
+						addrOpd1 = getAddrMode(opd1);
 
 						if (opd1.isEmpty())
 							throw new RuntimeException("parâmetro 1 inválido");
 
-						int addrOpd1 = getAddrMode(opd1);
-
 						if (lineArr.length > 2)
 							if (opcode.equalsIgnoreCase("copy")) {
-								String opd2 = lineArr[2];
+								opd2 = lineArr[2];
 								System.out.println(opd2);
+
+								addrOpd2 = getAddrMode(opd2);
 
 								if (opd2.isEmpty())
 									throw new RuntimeException("parâmetro 2 inválido");
 
-								int addrOpd2 = getAddrMode(opd2);
-
-								int opcodeInt = getOpcode(opcode);
-								binaryOut += opcodeBinary(opcodeInt, addrOpd1, addrOpd2);
-								binaryOut += opdBinary(opd1);
-								binaryOut += opdBinary(opd2);
 							} else
-								throw new RuntimeException("muitos parâmetros 2");
+								throw new RuntimeException("muitos parâmetros");
 					} else
-						throw new RuntimeException("muitos parâmetros 1");
+						throw new RuntimeException("muitos parâmetros");
+
+				binaryOut += opcodeBinary(getOpcode(opcode), addrOpd1, addrOpd2);
+
+				if (!opd1.isEmpty())
+					binaryOut += opdBinary(opd1);
+
+				if (!opd2.isEmpty())
+					binaryOut += opdBinary(opd2);
+
             }
             reader.close();
         } catch (IOException | NumberFormatException e) {
