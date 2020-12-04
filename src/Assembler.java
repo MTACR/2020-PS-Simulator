@@ -6,7 +6,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.concurrent.ExecutionException;
 
 public class Assembler {
@@ -120,6 +123,9 @@ public class Assembler {
 	
 	public static File convert(File fileAssembly, int stackSize) {
 		String binaryOut = "";
+		//List<String> macrosList = new ArrayList<>();
+		//Stack<String> macrosStack = new Stack<>();
+		List<String> variables = new ArrayList<>();
 		
 		try {
             BufferedReader reader = new BufferedReader(new FileReader(fileAssembly));
@@ -143,7 +149,69 @@ public class Assembler {
 				String opcode = lineArr[0];
 				System.out.println(opcode);
 
-				//se é operando escreve no binário
+				//se é diretiva
+				//if (opcode.equalsIgnoreCase("start")) {
+					//TODO inicio programa
+					//continue;
+				//}
+
+				//TODO acho q isso é o processador....
+				//lida com declaração de macro
+				/*if (opcode.equalsIgnoreCase("macro")) {
+					if ((line = reader.readLine()) != null) {
+
+						String[] macroArr = line.replace(",", "").split(" ");
+						String macroName = macroArr[0];
+						boolean hasLabel = false;
+
+						if (getOpcode(macroName) != -1)
+							throw new RuntimeException("Erro de sintaxe");
+
+						//TODO não entendi esse &LAB
+						if (macroArr[0].startsWith("&LAB")) {
+							//TODO handle LAB
+
+							macroName = macroArr[1];
+							hasLabel = true;
+
+							if (getOpcode(macroName) != -1)
+								throw new RuntimeException("Erro de sintaxe");
+						}
+
+						if (macrosList.contains(macroName))
+							throw new RuntimeException("Símbolo redefinido");
+
+						//coloca a macro na pilha de macros
+						macrosStack.push(macroName);
+						macrosList.add(macroName);
+
+						if (hasLabel) {
+							if (macroArr.length > 2) {
+								//TODO lidar com parametros
+							}
+						} else {
+							if (macroArr.length > 1) {
+								//TODO lidar com parametros
+							}
+						}
+
+						continue;
+					} else
+						throw new RuntimeException("Macro esperada");
+				}
+
+
+				//lida com final da macro
+				if (opcode.equalsIgnoreCase("mend")) {
+					if (macrosStack.pop() != null)
+						continue;
+					else
+						throw new RuntimeException("Erro de sintaxe");
+				}*/
+
+				// verifica quantidade de parametros
+				// se for 1 e for um opcode do tipo stop ou ret continua
+				// senão, testa se é um decimal, se não for lança exceção
 				if (lineArr.length == 1) {
 					if (getOpcode(opcode) == -1) {
 						try {
@@ -161,16 +229,41 @@ public class Assembler {
 				}
 
 				// verifica quantidade de parametros
-				if (lineArr.length == 2 && opcode.equalsIgnoreCase("copy"))
-					throw new RuntimeException("Erro de sintaxe");
+				// se for 2 e for um opcode do tipo copy continua
+				// senão verifica se é uma declaração de variável
+				if (lineArr.length == 2) {
+					if (getOpcode(opcode) == -1) {
+						String firstChar = String.valueOf(opcode.charAt(0));
+						boolean isNumber = true;
 
-				//TODO: criar área de dados (.code{} e .data{})
-				//if (getOpcode(opcode) == -1) {
-					//binaryOut += dataToBinary(opcode);
-					//continue;
-				//}/* else {
-					//numWords++;
-				//}*/
+						try {
+							Integer.parseInt(firstChar);
+						} catch (NumberFormatException e) {
+							isNumber = false; //Que gambiarra KKKKKKKKKK
+						}
+
+						if (isNumber)
+							throw new RuntimeException("Erro de sintaxe");
+
+						//TODO lidar com declarações
+						if (lineArr[1].equalsIgnoreCase("space")) {
+							if (variables.contains(opcode))
+								throw new RuntimeException("Símbolo redefinido");
+
+							variables.add(opcode);
+
+						} else if (lineArr[1].equalsIgnoreCase("const")) {
+							//TODO lidar com constantes
+
+						} else throw new RuntimeException("Erro de sintaxe");
+
+						continue;
+
+					} else if (opcode.equalsIgnoreCase("copy"))
+						throw new RuntimeException("Erro de sintaxe");
+				}
+
+				//TODO suportar variáveis
 
 				String opd1 = "";
 				String opd2 = "";
@@ -212,9 +305,12 @@ public class Assembler {
 
             }
             reader.close();
-        } catch (IOException | NumberFormatException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
+		//if (!macrosStack.isEmpty())
+			//throw new RuntimeException("Falta diretiva MEND");
 		
 		//String startData = Integer.toBinaryString(numWords + 1);
 		//startData = fillBinary(startData, 16, 'l');
