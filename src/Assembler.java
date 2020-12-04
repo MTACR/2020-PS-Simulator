@@ -139,12 +139,19 @@ public class Assembler {
 				System.out.println(opcode);
 
 				//se é operando escreve no binário
-				if (lineArr.length == 1)
+				if (lineArr.length == 1) {
 					if (getOpcode(opcode) == -1) {
 						binaryOut += dataToBinary(opcode);
 						continue;
+
+						// verifica quantidade de parametros
 					} else if (!opcode.equalsIgnoreCase("stop") && !opcode.equalsIgnoreCase("ret"))
 						throw new RuntimeException("poucos parâmetros");
+				}
+
+				// verifica quantidade de parametros
+				if (lineArr.length == 2 && opcode.equalsIgnoreCase("copy"))
+					throw new RuntimeException("poucos parâmetros");
 
 				//TODO: criar área de dados (.code{} e .data{})
 				//if (getOpcode(opcode) == -1) {
