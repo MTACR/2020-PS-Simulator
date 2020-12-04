@@ -100,8 +100,7 @@ public class Assembler {
 		String aux = "";
 		
 		while (numBinary.length() + aux.length() < size) aux += '0';
-		
-		
+
 		if (fill == 'l') return aux + numBinary;
 		else return numBinary + aux;
 	}
@@ -140,10 +139,12 @@ public class Assembler {
 				System.out.println(opcode);
 
 				//se é operando escreve no binário
-				if (lineArr.length == 1 && getOpcode(opcode) == -1) {
-					binaryOut += dataToBinary(opcode);
-					continue;
-				}
+				if (lineArr.length == 1)
+					if (getOpcode(opcode) == -1) {
+						binaryOut += dataToBinary(opcode);
+						continue;
+					} else if (!opcode.equalsIgnoreCase("stop") && !opcode.equalsIgnoreCase("ret"))
+						throw new RuntimeException("poucos parâmetros");
 
 				//TODO: criar área de dados (.code{} e .data{})
 				//if (getOpcode(opcode) == -1) {
