@@ -59,6 +59,7 @@ public class FirstPass {
                     if (table0.contains(lineArr[0])) {
                         symbols.add(new Symbol(line, address, "", lineArr[0], "", ""));
                         address += 1;
+
                     } else
                         throw new RuntimeException("Instrução inválida em " + line);
 
@@ -72,6 +73,7 @@ public class FirstPass {
                     if (table0.contains(lineArr[1])) {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
                         address += 1;
+
                         if (!labels.contains(lineArr[0]))
                             labels.add(lineArr[0]);
                         else
@@ -95,6 +97,7 @@ public class FirstPass {
                     if (table1.contains(lineArr[1])) {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], ""));
                         address += 2;
+
                         if (!labels.contains(lineArr[0]))
                             labels.add(lineArr[0]);
                         else
@@ -117,6 +120,7 @@ public class FirstPass {
 
                     if (table2.contains(lineArr[1])) {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], lineArr[3]));
+                        address += 3;
 
                         if (!labels.contains(lineArr[0]))
                             labels.add(lineArr[0]);
@@ -126,8 +130,7 @@ public class FirstPass {
 
                     else
                         throw new RuntimeException("Instrução inválida em " + line);
-
-                    address += 3;
+                    
                     line++;
                     continue;
                 }
