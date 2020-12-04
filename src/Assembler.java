@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 public class Assembler {
 	
@@ -122,56 +123,64 @@ public class Assembler {
 		try {
             BufferedReader reader = new BufferedReader(new FileReader(fileAssembly));
             String line;
-			String opcode, opd1, opd2;
-			int addrOpd1, addrOpd2;
-			// String[] lineArr = new String[3];
 					
-            while ((line = reader.readLine()) != null) {				
-				opcode = "";
-				opd1 = "";
-				opd2 = ""; 
-				addrOpd1 = -1;
-				addrOpd2 = -1;
-				
-				String[] lineArr = line.split(" ");		
-				if (lineArr[0].startsWith("//")) continue; // provavelmente tem solução melhor pra colocar comentários...
-				
-				opcode = lineArr[0];
-				
-				//TODO: criar área de dados (.code{} e .data{})
-				if (getOpcode(opcode) == -1) {
-					binaryOut += dataToBinary(opcode);
+            while ((line = reader.readLine()) != null) {
+
+				//ignora comentários
+				if (line.contains("//"))
+					line = line.substring(0, line.indexOf("//"));
+
+				//ignora linhas em branco
+				if (line.isEmpty())
 					continue;
-				}/* else {
-					numWords++;
-				}*/
+
+				//divide linha quando acha um espaço
+				String[] lineArr = line.split(" ");
+				String opcode = lineArr[0];
+				System.out.println(opcode);
+
+				//se é operando escreve no binário
+				if (lineArr.length == 1 && getOpcode(opcode) == -1)
+					binaryOut += dataToBinary(opcode);
+
+				//TODO: criar área de dados (.code{} e .data{})
+				//if (getOpcode(opcode) == -1) {
+					//binaryOut += dataToBinary(opcode);
+					//continue;
+				//}/* else {
+					//numWords++;
+				//}*/
 				
 				if (lineArr.length > 1) {
-					if (!lineArr[1].startsWith("//")) {
-						//numWords++;
-						opd1 = lineArr[1];
-						addrOpd1 = getAddrMode(opd1);
+					if (!opcode.equalsIgnoreCase("stop") && !opcode.equalsIgnoreCase("ret")) {
+						String opd1 = lineArr[1];
+						System.out.println(opd1);
+
+						if (opd1.isEmpty())
+							throw new RuntimeException("parâmetro 1 inválido");
+
+						int addrOpd1 = getAddrMode(opd1);
 
 						if (lineArr.length > 2) {
-							if (!lineArr[2].startsWith("//")) {
-								//numWords++;
-								opd2 = lineArr[2];
-								addrOpd2 = getAddrMode(opd2);
-							}
+							if (opcode.equalsIgnoreCase("copy")) {
+								String opd2 = lineArr[2];
+								System.out.println(opd2);
+
+								if (opd2.isEmpty())
+									throw new RuntimeException("parâmetro 2 inválido");
+
+								int addrOpd2 = getAddrMode(opd2);
+
+								int opcodeInt = getOpcode(opcode);
+								binaryOut += opcodeBinary(opcodeInt, addrOpd1, addrOpd2);
+								binaryOut += opdBinary(opd1);
+								binaryOut += opdBinary(opd2);
+							} else
+								throw new RuntimeException("muitos parâmetros 2");
 						}
-					}
+					} else
+						throw new RuntimeException("muitos parâmetros 1");
 				}
-				
-				int opcodeInt = getOpcode(opcode);
-				binaryOut += opcodeBinary(opcodeInt, addrOpd1, addrOpd2);
-				
-				if (!"".equals(opd1)) {
-					binaryOut += opdBinary(opd1);
-					
-					if (!"".equals(opd2)) {
-						binaryOut += opdBinary(opd2);
-					}
-				}	
             }
             reader.close();
         } catch (IOException | NumberFormatException e) {
@@ -205,7 +214,12 @@ public class Assembler {
 		
 		return fileOut;
 	}
-	
+
+	public static void main(String[] args) {
+		File file = new File("input/assembler_test");
+
+		Assembler.convert(file, 10);
+	}
 	
 	/*public void teste(File file) {
 		//System.out.println(opcode);
