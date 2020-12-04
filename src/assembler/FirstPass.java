@@ -56,13 +56,13 @@ public class FirstPass {
 
                 if (lineArr.length == 1) {
 
-                    if (table0.contains(lineArr[0]))
+                    if (table0.contains(lineArr[0])) {
                         symbols.add(new Symbol(line, address, "", lineArr[0], "", ""));
-
-                    else
+                        address += 1;
+                    } else
                         throw new RuntimeException("Instrução inválida em " + line);
 
-                    address += 1;
+
                     line++;
                     continue;
                 }
@@ -71,20 +71,21 @@ public class FirstPass {
 
                     if (table0.contains(lineArr[1])) {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
-
+                        address += 1;
                         if (!labels.contains(lineArr[0]))
                             labels.add(lineArr[0]);
                         else
                             throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
                     }
 
-                    else if (table1.contains(lineArr[0]))
+                    else if (table1.contains(lineArr[0])) {
                         symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
+                        address += 2;
+                    }
 
                     else
                         throw new RuntimeException("Instrução inválida em " + line);
 
-                    address += 2;
                     line++;
                     continue;
                 }
@@ -93,20 +94,21 @@ public class FirstPass {
 
                     if (table1.contains(lineArr[1])) {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], ""));
-
+                        address += 2;
                         if (!labels.contains(lineArr[0]))
                             labels.add(lineArr[0]);
                         else
                             throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
                     }
 
-                    else if (table2.contains(lineArr[0]))
+                    else if (table2.contains(lineArr[0])) {
                         symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], lineArr[2]));
+                        address += 3;
+                    }
 
                     else
                         throw new RuntimeException("Instrução inválida em " + line);
 
-                    address += 3;
                     line++;
                     continue;
                 }
