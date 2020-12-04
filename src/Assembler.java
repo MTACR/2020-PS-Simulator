@@ -54,9 +54,9 @@ public class Assembler {
 	//retorna o modo de endereçamento (0 p/ direto, 1 p/ indireto ou 2 p/ imediato)
 	//no assembly, direto é '$' antes da posição; indireto é '*' antes da posição; imediato é só o numero.
 	private static int getAddrMode(String opd) {
-		if (opd.charAt(0) == '$') return 0; //endereçamento direto
-		else if (opd.charAt(0) == '*') return 1; //indireto
-		else return 2; //imediato
+		if (opd.charAt(0) == '#') 		return 2; //imediato
+		else if (opd.charAt(0) == 'I') 	return 1; //indireto
+		else 							return 0; //direto
 	}
 	
 	//recebe o numero da operação, retorna o binário
@@ -151,7 +151,7 @@ public class Assembler {
 					//numWords++;
 				//}*/
 				
-				if (lineArr.length > 1) {
+				if (lineArr.length > 1)
 					if (!opcode.equalsIgnoreCase("stop") && !opcode.equalsIgnoreCase("ret")) {
 						String opd1 = lineArr[1];
 						System.out.println(opd1);
@@ -161,7 +161,7 @@ public class Assembler {
 
 						int addrOpd1 = getAddrMode(opd1);
 
-						if (lineArr.length > 2) {
+						if (lineArr.length > 2)
 							if (opcode.equalsIgnoreCase("copy")) {
 								String opd2 = lineArr[2];
 								System.out.println(opd2);
@@ -177,10 +177,8 @@ public class Assembler {
 								binaryOut += opdBinary(opd2);
 							} else
 								throw new RuntimeException("muitos parâmetros 2");
-						}
 					} else
 						throw new RuntimeException("muitos parâmetros 1");
-				}
             }
             reader.close();
         } catch (IOException | NumberFormatException e) {

@@ -4,3 +4,7 @@
 /dist/
 *.class
 *.class
+*.class
+out/production/PS-1/Assembler.class
+out/production/PS-1/Processor$1.class
+out/production/PS-1/Processor.class
