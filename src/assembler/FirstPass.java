@@ -4,9 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class FirstPass {
 
@@ -27,7 +25,7 @@ public class FirstPass {
     //TODO lidar com macros
     public static List<Symbol> getSymbolsTable(File file) {
         List<Symbol> symbols = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
+        Map<String, Integer> labels = new HashMap<>();
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -63,7 +61,6 @@ public class FirstPass {
                     } else
                         throw new RuntimeException("Instrução inválida em " + line);
 
-
                     line++;
                     continue;
                 }
@@ -74,8 +71,8 @@ public class FirstPass {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
                         address += 1;
 
-                        if (!labels.contains(lineArr[0]))
-                            labels.add(lineArr[0]);
+                        if (!labels.containsKey(lineArr[0]))
+                            labels.put(lineArr[0], address);
                         else
                             throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
                     }
@@ -98,8 +95,8 @@ public class FirstPass {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], ""));
                         address += 2;
 
-                        if (!labels.contains(lineArr[0]))
-                            labels.add(lineArr[0]);
+                        if (!labels.containsKey(lineArr[0]))
+                            labels.put(lineArr[0], address);
                         else
                             throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
                     }
@@ -122,15 +119,15 @@ public class FirstPass {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], lineArr[3]));
                         address += 3;
 
-                        if (!labels.contains(lineArr[0]))
-                            labels.add(lineArr[0]);
+                        if (!labels.containsKey(lineArr[0]))
+                            labels.put(lineArr[0], address);
                         else
                             throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
                     }
 
                     else
                         throw new RuntimeException("Instrução inválida em " + line);
-                    
+
                     line++;
                     continue;
                 }
