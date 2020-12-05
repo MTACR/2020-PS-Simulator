@@ -61,6 +61,7 @@ public class SecondPass {
                     throw new RuntimeException("Label não definida: " + opd2);
             }
 
+            //TODO lidar com códigos q n são opcode
             int o = getOpcode(operator);
 
             if (o == -1) {
