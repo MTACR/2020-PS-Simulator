@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -187,7 +188,7 @@ public class MacrosProcessor {
             }
         }
 
-        System.out.println("Criando macro " + name + " com parâmetros " + parameters + " e código " + code);
+        System.out.println("Criando macro " + name + " com parâmetros " + Arrays.toString(parameters) + " e código " + code);
 
         // Converte o arrayList para o tamanho certo de array
         String[] codeArray = new String[code.size()];

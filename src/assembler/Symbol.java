@@ -28,6 +28,8 @@ public class Symbol {
             throw new RuntimeException(" Erro de sintaxe em " + opd2);
     }
 
+    //TODO na verdade as vars usam SUfixo
+
     private static boolean isLabelValid(String s) {
         if (s.isEmpty())
             return true;

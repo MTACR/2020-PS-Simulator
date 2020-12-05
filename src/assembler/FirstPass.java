@@ -6,32 +6,27 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+import static assembler.AssembleData.*;
+
 public class FirstPass {
 
     /*private static final List<String> table = Arrays.asList(
             "ADD", "BR", "BRNEG", "BRPOS", "BRZERO", "CALL", "COPY", "DIVIDE", "LOAD", "MULT", "READ", "RET", "STOP",
             "STORE", "SUB", "WRITE", "CONST", "END", "EXTDEF", "EXTR", "INIT", "PROC", "SPACE", "STACK", "START");*/
 
-    private static final List<String> table0 = Arrays.asList(
-            "RET", "STOP", "END", "EXTR", "SPACE", "MACRO");
 
-    private static final List<String> table1 = Arrays.asList(
-            "ADD", "BR", "BRNEG", "BRPOS", "BRZERO", "CALL", "DIVIDE", "LOAD", "MULT", "READ",
-            "STORE", "SUB", "WRITE", "CONST", "EXTDEF", "INIT", "STACK", "START");
-
-    private static final List<String> table2 = Arrays.asList(
-            "COPY", "PROC");
 
     //TODO lidar com macros
-    public static List<Symbol> getSymbolsTable(File file) {
+    //TODO reservar endereços
+    public static AssembleData getSymbolsTable(File file) {
         List<Symbol> symbols = new ArrayList<>();
         Map<String, Integer> labels = new HashMap<>();
+        int address = 0;
+        int line = 1;
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String string;
-            int line = 1;
-            int address = 0;
 
             while ((string = reader.readLine()) != null) {
                 string = string.toUpperCase();
@@ -141,12 +136,17 @@ public class FirstPass {
             e.printStackTrace();
         }
 
-        return symbols;
+        // Aloca endereço para variáveis
+        for (Symbol symbol : symbols)
+            if (symbol.operator.equals("SPACE"))
+                symbol.opd1 = String.valueOf(address++);
+
+        return new AssembleData(symbols, labels);
     }
 
     public static void main(String[] args) {
         System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s\n", "Line", "Address", "Label", "Operator", "Opd1", "Op2");
-        getSymbolsTable(new File("input/firstpass")).forEach(symbol -> {
+        getSymbolsTable(new File("input/firstpass")).symbols.forEach(symbol -> {
             System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s\n", symbol.line, symbol.address, symbol.label, symbol.operator, symbol.opd1, symbol.opd2);
         });
     }
