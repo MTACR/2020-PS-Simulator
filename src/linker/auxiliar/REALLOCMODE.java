@@ -1,7 +1,7 @@
 package linker.auxiliar;
 
 public enum REALLOCMODE {
-    ABSOLUT(0), RELATIVE(1);
+    ABSOLUTE(0), RELATIVE(1);
 
     private final int mode;
 
