@@ -1,13 +1,8 @@
 package assembler;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
-
 import static assembler.SymbolsTable.*;
-import static assembler.SecondPass.ADDRMODE.*;
 
 public class FirstPass {
 
@@ -15,8 +10,6 @@ public class FirstPass {
             "ADD", "BR", "BRNEG", "BRPOS", "BRZERO", "CALL", "COPY", "DIVIDE", "LOAD", "MULT", "READ", "RET", "STOP",
             "STORE", "SUB", "WRITE", "CONST", "END", "EXTDEF", "EXTR", "INIT", "PROC", "SPACE", "STACK", "START");*/
 
-    //TODO lidar com macros
-    //TODO reservar endereços
     public static SymbolsTable getSymbolsTable(File file) {
         List<Symbol> symbols = new ArrayList<>();
         Map<String, Integer> labels = new HashMap<>();
@@ -159,6 +152,25 @@ public class FirstPass {
         }
 
         symbols.addAll(labels2Alloc);
+
+        File lst = new File("output/MASMAPRG.lst");
+
+        try {
+            FileWriter out = new FileWriter(lst);
+            String string = "";
+
+            for (Map.Entry<String, Integer> entry : labels.entrySet()) {
+                String label = entry.getKey();
+                Integer addr = entry.getValue();
+
+                string += label + " " + addr + "\n";
+            }
+
+            out.write(string);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return new SymbolsTable(symbols, labels);
     }

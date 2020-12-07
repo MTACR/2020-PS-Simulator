@@ -1,12 +1,10 @@
 package assembler;
 
 import javafx.util.Pair;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
-
 import static assembler.FirstPass.getSymbolsTable;
 import static assembler.SecondPass.ADDRMODE.*;
 
@@ -35,14 +33,9 @@ public class SecondPass {
         List<Symbol> symbols = data.symbols;
         Map<String, Integer> labels = data.labels;
         Map<Integer, Pair<Integer, String>> vars = new TreeMap<>();
-
         List<ObjectCode> objects = new ArrayList<>();
 
-        //String binaryOut = "";
-        int stackSize = 0;
-
         for (Symbol symbol : symbols) {
-            String label = symbol.label;
             String operator = symbol.operator;
             String opd1 = symbol.opd1;
             String opd2 = symbol.opd2;
@@ -108,21 +101,31 @@ public class SecondPass {
             int o = getOpcode(operator);
 
             if (o == -1) {
-                if (operator.equals("SPACE")) {
-                    words.add(new Pair<>(Integer.parseInt(opd1), "r"));
-                    vars.put(Integer.parseInt(opd1), new Pair(0, "a"));
-                    objects.add(new ObjectCode(symbol.address, 1, words));
+                switch (operator) {
+                    case "SPACE":
+                        words.add(new Pair<>(Integer.parseInt(opd1), "r"));
+                        vars.put(Integer.parseInt(opd1), new Pair(0, "a"));
+                        objects.add(new ObjectCode(symbol.address, 1, words));
 
-                } else if (operator.equals("CONST")) {
-                    words.add(new Pair<>(Integer.parseInt(opd1), "r"));
-                    vars.put(Integer.parseInt(opd1), new Pair(Integer.parseInt(opd2), "a"));
-                    objects.add(new ObjectCode(symbol.address, 1, words));
+                        break;
 
-                } else if (operator.equals("LABEL")) {
-                    words.add(new Pair<>(symbol.address, "r"));
-                    vars.put(symbol.address, new Pair(Integer.parseInt(opd1), "r"));
+                    case "CONST":
+                        words.add(new Pair<>(Integer.parseInt(opd1), "r"));
+                        vars.put(Integer.parseInt(opd1), new Pair(Integer.parseInt(opd2), "a"));
+                        objects.add(new ObjectCode(symbol.address, 1, words));
+                        
+                        break;
 
-                } else throw new RuntimeException("Instrução inválida");
+                    // gambiarra para linkar labels
+                    case "LABEL":
+                        words.add(new Pair<>(symbol.address, "r"));
+                        vars.put(symbol.address, new Pair(Integer.parseInt(opd1), "r"));
+
+                        break;
+
+                    default:
+                        throw new RuntimeException("Instrução inválida");
+                }
 
             } else {
                 size++;
@@ -147,14 +150,6 @@ public class SecondPass {
             }
         }
 
-        /*String stack = fillBinary("0", 16, 'l') + "\n" + fillBinary("0", 16, 'l') + "\n"; //duas primeiras linhas zeradas
-        stack += fillBinary(Integer.toBinaryString(stackSize), 16, 'l') + "\n"; //tamanho da pilha
-
-        for (int i = 0; i < stackSize; i++)
-            stack += fillBinary("0", 16, 'l') + "\n";
-
-        binaryOut = stack + binaryOut;*/
-
         vars.forEach((addr, pair) -> {
             List<Pair<Integer, String>> words = new ArrayList<>();
             words.add(new Pair<>(pair.getKey(), pair.getValue()));
@@ -162,24 +157,6 @@ public class SecondPass {
         });
 
         File obj = new File("output/MASMAPRG.obj");
-        File lst = new File("output/MASMAPRG.lst");
-
-        try {
-            FileWriter out = new FileWriter(lst);
-            String string = "";
-
-            for (Map.Entry<String, Integer> entry : labels.entrySet()) {
-                String label = entry.getKey();
-                Integer addr = entry.getValue();
-
-                string += label + " " + addr + "\n";
-            }
-
-            out.write(string);
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         try {
             FileWriter out = new FileWriter(obj);
