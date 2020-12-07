@@ -12,3 +12,4 @@ TESTE2 &a,&b
 MEND
 
 TESTE 1,2
+TESTE @30,3

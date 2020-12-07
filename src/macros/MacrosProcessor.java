@@ -3,6 +3,7 @@ package macros;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,14 +47,28 @@ class Macro {
     * após terminar uma expansão. */
 
 class MacrosExpansionData {
-    String []code;
-    int lineNumber;
-    MacrosExpansionData previous;
+        private Map <String, String> parameters;
+    private String []code;
+    private int lineNumber;
+    private MacrosExpansionData previous;
 
     public MacrosExpansionData(String []code, int lineNumber, MacrosExpansionData previous) {
         this.code = code;
         this.lineNumber = lineNumber;
         this.previous = previous;
+        parameters = new HashMap <String, String>();
+    }
+
+    // Pega um parâmetro dessa expansão
+
+    public String getParameter(String name) {
+        return parameters.get(name);
+    }
+
+    // Coloca um parâmetro nessa expansão
+
+    public void setParameter(String name, String value) {
+        parameters.put(name, value);
     }
 
     // Pega o código associado a esse dado de expansão
@@ -88,6 +103,7 @@ class MacrosExpansionData {
 public class MacrosProcessor {
     protected Map <String, Macro> macros; // Mapa que armazenará as macros já definidas
     private BufferedReader reader;
+    private FileWriter writer;
     private int lineNumber;
     private MacrosExpansionData expansionData;
 
@@ -97,6 +113,8 @@ public class MacrosProcessor {
         macros = new HashMap <String, Macro>();
         lineNumber = 0;
         expansionData = null;
+        reader = null;
+        writer = null;
     }
 
 // Pega a próxima linha do arquivo
@@ -136,8 +154,8 @@ public class MacrosProcessor {
 
     // Escreve uma linha no arquivo que terá a saída do processador de macros (por enquanto imprime na tela)
 
-    private void writeLine(String line) {
-        System.out.println(line);
+    private void writeLine(String line) throws IOException {
+        writer.write(line + "\n");
     }
 
 // Processa uma definição de macro completa. Retorna a linha do MEND em caso de sucesso.
@@ -162,6 +180,8 @@ public class MacrosProcessor {
             for (String parameter: parameters) {
                 if (!parameter.startsWith("&"))
                     error("Parâmetro " + parameter + " deve começar com &");
+
+                checkIfParameterNameIsValidOrError(parameter);
             }
         } else
             parameters = new String [0];
@@ -188,8 +208,6 @@ public class MacrosProcessor {
             }
         }
 
-        System.out.println("Criando macro " + name + " com parâmetros " + Arrays.toString(parameters) + " e código " + code);
-
         // Converte o arrayList para o tamanho certo de array
         String[] codeArray = new String[code.size()];
         codeArray = code.toArray(codeArray);
@@ -199,6 +217,69 @@ public class MacrosProcessor {
         macros.put(name, m);
 
         return getLineNumber();
+    }
+
+    // Pega o valor do parâmetro especificado da expansão ou joga um erro se não encontrar
+
+    private String getParameterValueOrError(String parameter) throws MacrosProcessingError {
+        // Navega na árvore dos dados de expansão, tentando achar o parâmetro
+        for (MacrosExpansionData current = expansionData; current != null; current = current.getPrevious()) {
+            String value = current.getParameter(parameter);
+            if (value != null)
+                return value;
+        }
+
+        error("Parâmetro não existe: " + parameter);
+        return null;
+    }
+
+    // Verifica se o nome do parâmetro é válido
+
+    public static boolean isParameterNameValid(String parameter) {
+        return !parameter.equals("&") && parameter.indexOf(",") == -1 && parameter.indexOf(" ") == -1;
+    }
+
+    // Checa se o parâmetro é válido. Se o código passar dessa função o nome do parâmetro é válido
+
+    private void checkIfParameterNameIsValidOrError(String parameter) throws MacrosProcessingError {
+        if (!isParameterNameValid(parameter))
+            error("Nome de parâmetro inválido: " + parameter);
+    }
+
+    // Substitui os parâmetros com os passados na macro. Retorna a string modificada.
+
+    public String replaceParameters(String line) throws MacrosProcessingError {
+        // Pega o parâmetro
+        int andSign;
+
+        while ((andSign = line.indexOf('&')) > -1) {
+            // Calcula onde termina o parâmetro
+            int end = -1;
+
+            int comma = line.indexOf(',', andSign);
+            if (comma > -1)
+                end = comma;
+
+            int space = line.indexOf(' ', andSign);
+            if (end == -1 && space > -1)
+                end = space;
+
+            String parameter = null;
+
+            if (end == -1)
+                parameter = line.substring(andSign);
+            else if (end > -1)
+                parameter = line.substring(andSign, end);
+
+            checkIfParameterNameIsValidOrError(parameter); // Sem if, pois se o código passar não lançou a exceção
+
+            String firstPart = line.substring(0, andSign);
+            String secondPart = end > -1 ? line.substring(end) : "";
+
+            line = firstPart + getParameterValueOrError(parameter) + secondPart;
+        }
+
+        return line;
     }
 
 // Processa realmente a macro, independente se está dentro de outra ou é o arquivo puro
@@ -214,6 +295,8 @@ public class MacrosProcessor {
                 processMacro();
                 continue;
             }
+
+            line = replaceParameters(line);
 
             for (String macroName: macros.keySet()) {
                 if (line.startsWith(macroName + " ") || line.equals(macroName)) {
@@ -231,14 +314,24 @@ public class MacrosProcessor {
 // Expande uma macro. Line é a linha com o comando de expansão
 
     private void expandMacro(String macroName, String line) throws MacrosProcessingError, IOException {
-        System.out.println("Expandindo a macro " + macroName);
+        // Tira o nome da macro da linha
+        int space = line.indexOf(' ');
+        line = space > -1 ? line.substring(space + 1) : "";
 
         Macro m = (Macro)macros.get(macroName);
 
-        // TODO Verificar parâmetros e expandir a macro
+        String []parameters = line.split(",");
+
+        if (parameters.length != m.getParameters().length)
+            error("Número de parâmetros inválidos na chamada da macro " + macroName + ": " + parameters.length + " passados e " + m.getParameters().length + " requeridos.");
 
         // Cria novos dados de expansão na pilha, ligando-os ao anterior
         expansionData = new MacrosExpansionData(m.getCode(), 0, expansionData);
+
+        // Ajusta os parâmetros
+        for (int parameter = 0; parameter < m.getParameters().length; parameter ++) {
+            expansionData.setParameter(m.getParameters()[parameter], parameters[parameter]);
+        }
 
         // Processa o código na macro expandida
         doProcess();
@@ -247,18 +340,22 @@ public class MacrosProcessor {
         expansionData = expansionData.getPrevious();
     }
 
-    // Processa um arquivo contendo macros
+    // Processa um arquivo contendo macros, gerando a saída num arquivo
 
-    public void process(File input) throws IOException, MacrosProcessingError {
+    public void process(File input, File output) throws IOException, MacrosProcessingError {
         reader = new BufferedReader(new FileReader(input));
+        writer = new FileWriter(output);
 
         doProcess();
+
+        writer.close();
+
     }
 
     public static void main(String []args) {
         MacrosProcessor processor = new MacrosProcessor();
         try {
-            processor.process(new File("input/testemacro.asm"));
+            processor.process(new File("input/testemacro.asm"), new File("input/testemacro.asm.proc"));
         } catch (IOException error) {
             System.out.println("Erro no arquivo: " + error.getMessage());
         } catch (MacrosProcessingError error) {
