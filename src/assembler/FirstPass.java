@@ -66,7 +66,6 @@ public class FirstPass {
                     }
 
                     else if (table1.contains(lineArr[0])) {
-
                         symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
                         address += 2;
                     }
@@ -107,12 +106,13 @@ public class FirstPass {
 
                     if (table2.contains(lineArr[1])) {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], lineArr[3]));
-                        address += 3;
 
                         if (!labels.containsKey(lineArr[0]))
                             labels.put(lineArr[0], address);
                         else
                             throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
+
+                        address += 3;
                     }
 
                     else

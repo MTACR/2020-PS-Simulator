@@ -113,7 +113,7 @@ public class SecondPass {
                         words.add(new Pair<>(Integer.parseInt(opd1), "r"));
                         vars.put(Integer.parseInt(opd1), new Pair(Integer.parseInt(opd2), "a"));
                         objects.add(new ObjectCode(symbol.address, 1, words));
-                        
+
                         break;
 
                     // gambiarra para linkar labels
@@ -162,9 +162,8 @@ public class SecondPass {
             FileWriter out = new FileWriter(obj);
             String string = "";
 
-            for (ObjectCode objectCode : objects) {
+            for (ObjectCode objectCode : objects)
                 string += objectCode.address + " " + objectCode.size + " " + objectCode.printWords() + "\n";
-            }
 
             out.write(string);
             out.close();
