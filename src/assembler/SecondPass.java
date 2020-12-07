@@ -43,7 +43,7 @@ public class SecondPass {
             String opd1 = symbol.opd1;
             String opd2 = symbol.opd2;
 
-            System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s\n", symbol.line, symbol.address, symbol.label, symbol.operator, symbol.opd1, symbol.opd2);
+            //System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s\n", symbol.line, symbol.address, symbol.label, symbol.operator, symbol.opd1, symbol.opd2);
 
             int modeOpd1 = -1;
             int modeOpd2 = -1;
@@ -124,6 +124,8 @@ public class SecondPass {
             stack += fillBinary("0", 16, 'l') + "\n";
 
         binaryOut = stack + binaryOut;*/
+
+
 
         // salva constantes
         for (String s : consts)

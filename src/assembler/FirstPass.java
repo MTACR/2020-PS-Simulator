@@ -62,12 +62,13 @@ public class FirstPass {
 
                     if (table0.contains(lineArr[1])) {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
-                        address += 1;
 
                         if (!labels.containsKey(lineArr[0]))
                             labels.put(lineArr[0], address);
                         else
                             throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
+
+                        address += 1;
                     }
 
                     else if (table1.contains(lineArr[0])) {
@@ -86,12 +87,13 @@ public class FirstPass {
 
                     if (table1.contains(lineArr[1])) {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], ""));
-                        address += 2;
 
                         if (!labels.containsKey(lineArr[0]))
                             labels.put(lineArr[0], address);
                         else
                             throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
+
+                        address += 2;
                     }
 
                     else if (table2.contains(lineArr[0])) {
@@ -134,13 +136,25 @@ public class FirstPass {
             e.printStackTrace();
         }
 
-        // Aloca endereço para variáveis
-        for (Symbol symbol : symbols)
-            if (symbol.operator.equals("SPACE"))
-                symbol.opd1 = String.valueOf(address++);
+        List<Symbol> labels2Alloc = new ArrayList<>();
 
-            else if (symbol.operator.equals("CONST"))
-                symbol.opd2 = String.valueOf(address++);
+        // Aloca endereço para variáveis
+        for (Symbol symbol : symbols) {
+            if (!symbol.label.isEmpty()) {
+                if (symbol.operator.equals("SPACE"))
+                    symbol.opd1 = String.valueOf(address++);
+
+                else if (symbol.operator.equals("CONST"))
+                    symbol.opd2 = String.valueOf(address++);
+
+                else {
+                    labels2Alloc.add(new Symbol(line, address++, symbol.label, "SPACE", String.valueOf(labels.get(symbol.label)), ""));
+                    line++;
+                }
+            }
+        }
+
+        symbols.addAll(labels2Alloc);
 
         return new AssembleData(symbols, labels);
     }
