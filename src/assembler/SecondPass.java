@@ -3,17 +3,36 @@ package assembler;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static assembler.FirstPass.getSymbolsTable;
+import static assembler.SecondPass.ADDRMODE.*;
 
 public class SecondPass {
+
+    private static final List<String> table = Arrays.asList(
+            "ADD", "DIVIDE", "LOAD", "MULT", "SUB", "WRITE");
+
+    enum ADDRMODE {
+        DIRETO(0), INDIRETO(1), IMEDIATO(2);
+
+        private final int op;
+
+        ADDRMODE(int op) {
+            this.op = op;
+        }
+
+        public int getValue()
+        {
+            return op;
+        }
+    }
 
     public static void pass(File file) {
         AssembleData data = getSymbolsTable(file);
         List<Symbol> symbols = data.symbols;
         Map<String, Integer> labels = data.labels;
+        List<String> consts = new ArrayList<>();
 
         String binaryOut = "";
         int stackSize = 0;
@@ -36,10 +55,16 @@ public class SecondPass {
                 addrOpd1 = labels.get(opd1);
 
             } else if (!opd1.isEmpty()) {
-                int a = getAddrMode(opd1);
+                ADDRMODE a = getAddrMode(opd1);
 
-                if (a >= 0) {
-                    modeOpd1 = a;
+                if (a == IMEDIATO && !table.contains(operator))
+                    throw new RuntimeException("Modo de endereçamento inválido em: " + operator + " " + opd1);
+
+                if (a == IMEDIATO || a == INDIRETO)
+                    opd1 = opd1.substring(1);
+
+                if (a != null) {
+                    modeOpd1 = a.getValue();
                     addrOpd1 = Integer.parseInt(opd1);
                 }
                 else
@@ -51,10 +76,16 @@ public class SecondPass {
                 addrOpd2 = labels.get(opd2);
 
             } else if (!opd2.isEmpty()) {
-                int a = getAddrMode(opd2);
+                ADDRMODE a = getAddrMode(opd2);
 
-                if (a >= 0) {
-                    modeOpd2 = a;
+                if (a == IMEDIATO && !operator.equals("COPY"))
+                    throw new RuntimeException("Modo de endereçamento inválido em: " + operator + " " + opd2);
+
+                if (a == IMEDIATO || a == INDIRETO)
+                    opd2 = opd2.substring(1);
+
+                if (a != null) {
+                    modeOpd2 = a.getValue();
                     addrOpd2 = Integer.parseInt(opd2);
                 }
                 else
@@ -65,12 +96,15 @@ public class SecondPass {
             int o = getOpcode(operator);
 
             if (o == -1) {
-                if (operator.equals("SPACE")) {
-
+                if (operator.equals("SPACE"))
                     binaryOut += opdBinary(Integer.parseInt(opd1));
 
-                } else
-                    throw new RuntimeException("Instrução inválida");
+                else if (operator.equals("CONST")) {
+                    binaryOut += opdBinary(Integer.parseInt(opd2));
+                    consts.add(opd1);
+                }
+
+                else throw new RuntimeException("Instrução inválida");
 
             } else {
                 binaryOut += opcodeBinary(o, modeOpd1, modeOpd2);
@@ -90,6 +124,10 @@ public class SecondPass {
             stack += fillBinary("0", 16, 'l') + "\n";
 
         binaryOut = stack + binaryOut;*/
+
+        // salva constantes
+        for (String s : consts)
+            binaryOut += opdBinary(Integer.parseInt(s));
 
         File fileOut = new File("input/secondpass");
 
@@ -142,15 +180,15 @@ public class SecondPass {
         return opdBin + '\n';
     }
 
-    private static int getAddrMode(String opd) {
-        if (opd.charAt(0) == '#') 		return 2; //imediato
-        if (opd.charAt(0) == 'I') 	    return 1; //indireto
+    private static ADDRMODE getAddrMode(String opd) {
+        if (opd.charAt(0) == '#') 		return IMEDIATO; //imediato
+        if (opd.charAt(0) == 'I') 	    return INDIRETO; //indireto
 
         try {
             Double.parseDouble(opd);
-                                        return 0; //direto
+                                        return DIRETO; //direto
         } catch (NumberFormatException nfe) {
-                                        return -1; //erro
+                                        return null; //erro
         }
     }
 

@@ -14,8 +14,6 @@ public class FirstPass {
             "ADD", "BR", "BRNEG", "BRPOS", "BRZERO", "CALL", "COPY", "DIVIDE", "LOAD", "MULT", "READ", "RET", "STOP",
             "STORE", "SUB", "WRITE", "CONST", "END", "EXTDEF", "EXTR", "INIT", "PROC", "SPACE", "STACK", "START");*/
 
-
-
     //TODO lidar com macros
     //TODO reservar endereços
     public static AssembleData getSymbolsTable(File file) {
@@ -140,6 +138,9 @@ public class FirstPass {
         for (Symbol symbol : symbols)
             if (symbol.operator.equals("SPACE"))
                 symbol.opd1 = String.valueOf(address++);
+
+            else if (symbol.operator.equals("CONST"))
+                symbol.opd2 = String.valueOf(address++);
 
         return new AssembleData(symbols, labels);
     }
