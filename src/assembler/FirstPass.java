@@ -151,8 +151,9 @@ public class FirstPass {
                     symbol.opd1 = String.valueOf(address++);
 
                 } else {
-                    labels2Alloc.add(new Symbol(line, address++, symbol.label, "SPACE", String.valueOf(labels.get(symbol.label)), ""));
-                    line++;
+                    labels2Alloc.add(new Symbol(line++, address, symbol.label, "LABEL", String.valueOf(labels.get(symbol.label)), ""));
+                    labels.replace(symbol.label, address);
+                    address++;
                 }
             }
         }

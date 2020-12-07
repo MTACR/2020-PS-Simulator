@@ -34,7 +34,7 @@ public class SecondPass {
         SymbolsTable data = getSymbolsTable(file);
         List<Symbol> symbols = data.symbols;
         Map<String, Integer> labels = data.labels;
-        Map<Integer, Integer> vars = new TreeMap<>();
+        Map<Integer, Pair<Integer, String>> vars = new TreeMap<>();
 
         List<ObjectCode> objects = new ArrayList<>();
 
@@ -74,8 +74,8 @@ public class SecondPass {
                     modeOpd1 = a.getValue();
                     addrOpd1 = Integer.parseInt(opd1);
                 }
-                else
-                    throw new RuntimeException("Label não definida: " + opd1);
+
+                else throw new RuntimeException("Label não definida: " + opd1);
 
                 size++;
             }
@@ -98,8 +98,8 @@ public class SecondPass {
                     modeOpd2 = a.getValue();
                     addrOpd2 = Integer.parseInt(opd2);
                 }
-                else
-                    throw new RuntimeException("Label não definida: " + opd2);
+
+                else throw new RuntimeException("Label não definida: " + opd2);
 
                 size++;
             }
@@ -109,21 +109,20 @@ public class SecondPass {
 
             if (o == -1) {
                 if (operator.equals("SPACE")) {
-                    //binaryOut += opdBinary(Integer.parseInt(opd1));
                     words.add(new Pair<>(Integer.parseInt(opd1), "r"));
-                    vars.put(Integer.parseInt(opd1), 0);
-
+                    vars.put(Integer.parseInt(opd1), new Pair(0, "a"));
                     objects.add(new ObjectCode(symbol.address, 1, words));
 
                 } else if (operator.equals("CONST")) {
                     words.add(new Pair<>(Integer.parseInt(opd1), "r"));
-                    vars.put(Integer.parseInt(opd1), Integer.parseInt(opd2));
-
+                    vars.put(Integer.parseInt(opd1), new Pair(Integer.parseInt(opd2), "a"));
                     objects.add(new ObjectCode(symbol.address, 1, words));
-                    //consts.put(opd2, symbol.address);
-                }
 
-                else throw new RuntimeException("Instrução inválida");
+                } else if (operator.equals("LABEL")) {
+                    words.add(new Pair<>(symbol.address, "r"));
+                    vars.put(symbol.address, new Pair(Integer.parseInt(opd1), "r"));
+
+                } else throw new RuntimeException("Instrução inválida");
 
             } else {
                 size++;
@@ -145,14 +144,6 @@ public class SecondPass {
                     words.add(new Pair<>(addrOpd2, "r"));
 
                 objects.add(new ObjectCode(symbol.address, size, words));
-
-                //binaryOut += opcodeBinary(o, modeOpd1, modeOpd2);
-
-                //if (!opd1.isEmpty())
-                    //binaryOut += opdBinary(addrOpd1);
-
-                //if (!opd2.isEmpty())
-                    //binaryOut += opdBinary(addrOpd2);
             }
         }
 
@@ -164,9 +155,9 @@ public class SecondPass {
 
         binaryOut = stack + binaryOut;*/
 
-        vars.forEach((addr, value) -> {
+        vars.forEach((addr, pair) -> {
             List<Pair<Integer, String>> words = new ArrayList<>();
-            words.add(new Pair<>(value, "a"));
+            words.add(new Pair<>(pair.getKey(), pair.getValue()));
             objects.add(new ObjectCode(addr, 1, words));
         });
 
