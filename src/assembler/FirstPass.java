@@ -6,7 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-import static assembler.AssembleData.*;
+import static assembler.SymbolsTable.*;
+import static assembler.SecondPass.ADDRMODE.*;
 
 public class FirstPass {
 
@@ -16,7 +17,7 @@ public class FirstPass {
 
     //TODO lidar com macros
     //TODO reservar endereços
-    public static AssembleData getSymbolsTable(File file) {
+    public static SymbolsTable getSymbolsTable(File file) {
         List<Symbol> symbols = new ArrayList<>();
         Map<String, Integer> labels = new HashMap<>();
         int address = 0;
@@ -72,6 +73,7 @@ public class FirstPass {
                     }
 
                     else if (table1.contains(lineArr[0])) {
+
                         symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
                         address += 2;
                     }
@@ -144,10 +146,11 @@ public class FirstPass {
                 if (symbol.operator.equals("SPACE"))
                     symbol.opd1 = String.valueOf(address++);
 
-                else if (symbol.operator.equals("CONST"))
-                    symbol.opd2 = String.valueOf(address++);
+                else if (symbol.operator.equals("CONST")) {
+                    symbol.opd2 = symbol.opd1;
+                    symbol.opd1 = String.valueOf(address++);
 
-                else {
+                } else {
                     labels2Alloc.add(new Symbol(line, address++, symbol.label, "SPACE", String.valueOf(labels.get(symbol.label)), ""));
                     line++;
                 }
@@ -156,7 +159,19 @@ public class FirstPass {
 
         symbols.addAll(labels2Alloc);
 
-        return new AssembleData(symbols, labels);
+        return new SymbolsTable(symbols, labels);
+    }
+
+    private static SecondPass.ADDRMODE getAddrMode(String opd) {
+        if (opd.charAt(0) == '#') 		return IMEDIATO; //imediato
+        if (opd.charAt(0) == 'I') 	    return INDIRETO; //indireto
+
+        try {
+            Double.parseDouble(opd);
+            return DIRETO; //direto
+        } catch (NumberFormatException nfe) {
+            return null; //erro
+        }
     }
 
     public static void main(String[] args) {

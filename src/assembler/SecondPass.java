@@ -1,5 +1,7 @@
 package assembler;
 
+import javafx.util.Pair;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,11 +30,13 @@ public class SecondPass {
         }
     }
 
-    public static void pass(File file) {
-        AssembleData data = getSymbolsTable(file);
+    public static List<ObjectCode> pass(File file) {
+        SymbolsTable data = getSymbolsTable(file);
         List<Symbol> symbols = data.symbols;
         Map<String, Integer> labels = data.labels;
-        List<String> consts = new ArrayList<>();
+        Map<Integer, Integer> vars = new TreeMap<>();
+
+        List<ObjectCode> objects = new ArrayList<>();
 
         String binaryOut = "";
         int stackSize = 0;
@@ -49,10 +53,13 @@ public class SecondPass {
             int modeOpd2 = -1;
             int addrOpd1 = -1;
             int addrOpd2 = -1;
+            int size = 0;
+            List<Pair<Integer, String>> words = new ArrayList<>();
 
             if (labels.containsKey(opd1)) {
                 modeOpd1 = 0;
                 addrOpd1 = labels.get(opd1);
+                size++;
 
             } else if (!opd1.isEmpty()) {
                 ADDRMODE a = getAddrMode(opd1);
@@ -69,11 +76,14 @@ public class SecondPass {
                 }
                 else
                     throw new RuntimeException("Label não definida: " + opd1);
+
+                size++;
             }
 
             if (labels.containsKey(opd2)) {
                 modeOpd2 = 0;
                 addrOpd2 = labels.get(opd2);
+                size++;
 
             } else if (!opd2.isEmpty()) {
                 ADDRMODE a = getAddrMode(opd2);
@@ -90,30 +100,59 @@ public class SecondPass {
                 }
                 else
                     throw new RuntimeException("Label não definida: " + opd2);
+
+                size++;
             }
 
             //TODO lidar com códigos q n são opcode
             int o = getOpcode(operator);
 
             if (o == -1) {
-                if (operator.equals("SPACE"))
-                    binaryOut += opdBinary(Integer.parseInt(opd1));
+                if (operator.equals("SPACE")) {
+                    //binaryOut += opdBinary(Integer.parseInt(opd1));
+                    words.add(new Pair<>(Integer.parseInt(opd1), "r"));
+                    vars.put(Integer.parseInt(opd1), 0);
 
-                else if (operator.equals("CONST")) {
-                    binaryOut += opdBinary(Integer.parseInt(opd2));
-                    consts.add(opd1);
+                    objects.add(new ObjectCode(symbol.address, 1, words));
+
+                } else if (operator.equals("CONST")) {
+                    words.add(new Pair<>(Integer.parseInt(opd1), "r"));
+                    vars.put(Integer.parseInt(opd1), Integer.parseInt(opd2));
+
+                    objects.add(new ObjectCode(symbol.address, 1, words));
+                    //consts.put(opd2, symbol.address);
                 }
 
                 else throw new RuntimeException("Instrução inválida");
 
             } else {
-                binaryOut += opcodeBinary(o, modeOpd1, modeOpd2);
+                size++;
 
-                if (!opd1.isEmpty())
-                    binaryOut += opdBinary(addrOpd1);
+                int op = o;
 
-                if (!opd2.isEmpty())
-                    binaryOut += opdBinary(addrOpd2);
+                if (modeOpd1 != -1)
+                    op += modeOpd1;
+
+                if (modeOpd2 != -1)
+                    op += modeOpd2;
+
+                words.add(new Pair<>(op, "a"));
+
+                if (addrOpd1 != -1)
+                    words.add(new Pair<>(addrOpd1, "r"));
+
+                if (addrOpd2 != -1)
+                    words.add(new Pair<>(addrOpd2, "r"));
+
+                objects.add(new ObjectCode(symbol.address, size, words));
+
+                //binaryOut += opcodeBinary(o, modeOpd1, modeOpd2);
+
+                //if (!opd1.isEmpty())
+                    //binaryOut += opdBinary(addrOpd1);
+
+                //if (!opd2.isEmpty())
+                    //binaryOut += opdBinary(addrOpd2);
             }
         }
 
@@ -127,11 +166,14 @@ public class SecondPass {
 
 
 
-        // salva constantes
-        for (String s : consts)
-            binaryOut += opdBinary(Integer.parseInt(s));
+        vars.forEach((addr, value) -> {
+            List<Pair<Integer, String>> words = new ArrayList<>();
+            words.add(new Pair<>(value, "a"));
+            objects.add(new ObjectCode(addr, 1, words));
+        });
 
-        File fileOut = new File("input/secondpass");
+
+        /*File fileOut = new File("input/secondpass");
 
         try {
             FileWriter out = new FileWriter(fileOut);
@@ -139,10 +181,12 @@ public class SecondPass {
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+
+        return objects;
     }
 
-    private static String opcodeBinary(int opcode, int addrOpd1, int addrOpd2) {
+    /*private static String opcodeBinary(int opcode, int addrOpd1, int addrOpd2) {
         String opcodeBin = Integer.toBinaryString(opcode);
         opcodeBin = fillBinary(opcodeBin, 4, 'l');
 
@@ -180,7 +224,7 @@ public class SecondPass {
         opdBin = fillBinary(opdBin, 16, 'l');
 
         return opdBin + '\n';
-    }
+    }*/
 
     private static ADDRMODE getAddrMode(String opd) {
         if (opd.charAt(0) == '#') 		return IMEDIATO; //imediato
@@ -234,7 +278,10 @@ public class SecondPass {
     }
 
     public static void main(String[] args) {
-        pass(new File("input/firstpass"));
+        System.out.printf("%-10s %-10s %-10s\n", "Address", "Size", "Machine");
+        pass(new File("input/firstpass")).forEach(objectCode -> {
+            System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.printWords());
+        });
     }
 
 }

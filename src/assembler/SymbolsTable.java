@@ -4,11 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class AssembleData {
+public class SymbolsTable {
     public List<Symbol> symbols;
     public Map<String, Integer> labels;
 
-    public AssembleData(List<Symbol> symbols, Map<String, Integer> labels) {
+    public SymbolsTable(List<Symbol> symbols, Map<String, Integer> labels) {
         this.symbols = symbols;
         this.labels = labels;
     }
