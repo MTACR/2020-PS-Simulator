@@ -162,18 +162,6 @@ public class FirstPass {
         return new SymbolsTable(symbols, labels);
     }
 
-    private static SecondPass.ADDRMODE getAddrMode(String opd) {
-        if (opd.charAt(0) == '#') 		return IMEDIATO; //imediato
-        if (opd.charAt(0) == 'I') 	    return INDIRETO; //indireto
-
-        try {
-            Double.parseDouble(opd);
-            return DIRETO; //direto
-        } catch (NumberFormatException nfe) {
-            return null; //erro
-        }
-    }
-
     public static void main(String[] args) {
         System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s\n", "Line", "Address", "Label", "Operator", "Opd1", "Op2");
         getSymbolsTable(new File("input/firstpass")).symbols.forEach(symbol -> {

@@ -38,7 +38,7 @@ public class SecondPass {
 
         List<ObjectCode> objects = new ArrayList<>();
 
-        String binaryOut = "";
+        //String binaryOut = "";
         int stackSize = 0;
 
         for (Symbol symbol : symbols) {
@@ -164,24 +164,45 @@ public class SecondPass {
 
         binaryOut = stack + binaryOut;*/
 
-
-
         vars.forEach((addr, value) -> {
             List<Pair<Integer, String>> words = new ArrayList<>();
             words.add(new Pair<>(value, "a"));
             objects.add(new ObjectCode(addr, 1, words));
         });
 
-
-        /*File fileOut = new File("input/secondpass");
+        File obj = new File("output/MASMAPRG.obj");
+        File lst = new File("output/MASMAPRG.lst");
 
         try {
-            FileWriter out = new FileWriter(fileOut);
-            out.write(binaryOut);
+            FileWriter out = new FileWriter(lst);
+            String string = "";
+
+            for (Map.Entry<String, Integer> entry : labels.entrySet()) {
+                String label = entry.getKey();
+                Integer addr = entry.getValue();
+
+                string += label + " " + addr + "\n";
+            }
+
+            out.write(string);
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
+
+        try {
+            FileWriter out = new FileWriter(obj);
+            String string = "";
+
+            for (ObjectCode objectCode : objects) {
+                string += objectCode.address + " " + objectCode.size + " " + objectCode.printWords() + "\n";
+            }
+
+            out.write(string);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return objects;
     }
