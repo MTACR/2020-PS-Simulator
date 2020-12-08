@@ -66,7 +66,7 @@ public class FirstPass {
 
                         length += size;
 
-                        List<Pair<Integer, String>> words = new ArrayList<>();
+                        List<Pair<Integer, Character>> words = new ArrayList<>();
 
                         for (int i = 2; i < (size * 2) + 2; ) {
                             int op = Integer.parseInt(sl[i]);
