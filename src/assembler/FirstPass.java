@@ -21,7 +21,10 @@ public class FirstPass {
             String string;
 
             while ((string = reader.readLine()) != null) {
-                string = string.toUpperCase();
+                string = string.toUpperCase().trim();
+
+                //TODO receber arquivo sem , do processador de macros
+                //string = string.replace(",", "");
 
                 if (string.length() > 80)
                     throw new RuntimeException("Linha muito longa em" + line);
@@ -45,8 +48,7 @@ public class FirstPass {
                         symbols.add(new Symbol(line, address, "", lineArr[0], "", ""));
                         address += 1;
 
-                    } else
-                        throw new RuntimeException("Instrução inválida em " + line);
+                    } else throw new RuntimeException("Instrução inválida em " + line);
 
                     line++;
                     continue;
@@ -59,8 +61,8 @@ public class FirstPass {
 
                         if (!labels.containsKey(lineArr[0]))
                             labels.put(lineArr[0], address);
-                        else
-                            throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
+
+                        else throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
 
                         address += 1;
                     }
@@ -70,8 +72,7 @@ public class FirstPass {
                         address += 2;
                     }
 
-                    else
-                        throw new RuntimeException("Instrução inválida em " + line);
+                    else throw new RuntimeException("Instrução inválida em " + line);
 
                     line++;
                     continue;
@@ -84,8 +85,8 @@ public class FirstPass {
 
                         if (!labels.containsKey(lineArr[0]))
                             labels.put(lineArr[0], address);
-                        else
-                            throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
+
+                        else throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
 
                         address += 2;
                     }
@@ -95,8 +96,7 @@ public class FirstPass {
                         address += 3;
                     }
 
-                    else
-                        throw new RuntimeException("Instrução inválida em " + line);
+                    else throw new RuntimeException("Instrução inválida em " + line);
 
                     line++;
                     continue;
@@ -109,14 +109,13 @@ public class FirstPass {
 
                         if (!labels.containsKey(lineArr[0]))
                             labels.put(lineArr[0], address);
-                        else
-                            throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
+
+                        else throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
 
                         address += 3;
                     }
 
-                    else
-                        throw new RuntimeException("Instrução inválida em " + line);
+                    else throw new RuntimeException("Instrução inválida em " + line);
 
                     line++;
                     continue;

@@ -1,15 +1,14 @@
 package assembler;
 
 import javafx.util.Pair;
-
 import java.util.List;
 
 public class ObjectCode {
     public int address;
     public int size;
-    public List<Pair<Integer, String>> word;
+    public List<Pair<Integer, Character>> word;
 
-    public ObjectCode(int address, int size, List<Pair<Integer, String>> word) {
+    public ObjectCode(int address, int size, List<Pair<Integer, Character>> word) {
         this.address = address;
         this.size = size;
         this.word = word;

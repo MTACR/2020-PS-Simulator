@@ -32,7 +32,7 @@ public class SecondPass {
         SymbolsTable data = getSymbolsTable(file);
         List<Symbol> symbols = data.symbols;
         Map<String, Integer> labels = data.labels;
-        Map<Integer, Pair<Integer, String>> vars = new TreeMap<>();
+        Map<Integer, Pair<Integer, Character>> vars = new TreeMap<>();
         List<ObjectCode> objects = new ArrayList<>();
 
         for (Symbol symbol : symbols) {
@@ -47,7 +47,7 @@ public class SecondPass {
             int addrOpd1 = -1;
             int addrOpd2 = -1;
             int size = 0;
-            List<Pair<Integer, String>> words = new ArrayList<>();
+            List<Pair<Integer, Character>> words = new ArrayList<>();
 
             if (labels.containsKey(opd1)) {
                 modeOpd1 = 0;
@@ -103,23 +103,22 @@ public class SecondPass {
             if (o == -1) {
                 switch (operator) {
                     case "SPACE":
-                        words.add(new Pair<>(Integer.parseInt(opd1), "r"));
-                        vars.put(Integer.parseInt(opd1), new Pair(0, "a"));
+                        words.add(new Pair<>(Integer.parseInt(opd1), 'r'));
+                        vars.put(Integer.parseInt(opd1), new Pair(0, 'a'));
                         objects.add(new ObjectCode(symbol.address, 1, words));
 
                         break;
 
                     case "CONST":
-                        words.add(new Pair<>(Integer.parseInt(opd1), "r"));
-                        vars.put(Integer.parseInt(opd1), new Pair(Integer.parseInt(opd2), "a"));
+                        words.add(new Pair<>(Integer.parseInt(opd1), 'r'));
+                        vars.put(Integer.parseInt(opd1), new Pair(Integer.parseInt(opd2), 'a'));
                         objects.add(new ObjectCode(symbol.address, 1, words));
 
                         break;
 
                     // gambiarra para linkar labels
                     case "LABEL":
-                        words.add(new Pair<>(symbol.address, "r"));
-                        vars.put(symbol.address, new Pair(Integer.parseInt(opd1), "r"));
+                        vars.put(symbol.address, new Pair(Integer.parseInt(opd1), 'r'));
 
                         break;
 
@@ -138,20 +137,20 @@ public class SecondPass {
                 if (modeOpd2 != -1)
                     op += modeOpd2;
 
-                words.add(new Pair<>(op, "a"));
+                words.add(new Pair<>(op, 'a'));
 
                 if (addrOpd1 != -1)
-                    words.add(new Pair<>(addrOpd1, "r"));
+                    words.add(new Pair<>(addrOpd1, 'r'));
 
                 if (addrOpd2 != -1)
-                    words.add(new Pair<>(addrOpd2, "r"));
+                    words.add(new Pair<>(addrOpd2, 'r'));
 
                 objects.add(new ObjectCode(symbol.address, size, words));
             }
         }
 
         vars.forEach((addr, pair) -> {
-            List<Pair<Integer, String>> words = new ArrayList<>();
+            List<Pair<Integer, Character>> words = new ArrayList<>();
             words.add(new Pair<>(pair.getKey(), pair.getValue()));
             objects.add(new ObjectCode(addr, 1, words));
         });
@@ -268,7 +267,7 @@ public class SecondPass {
     public static void main(String[] args) {
         System.out.printf("%-10s %-10s %-10s\n", "Address", "Size", "Machine");
         pass(new File("input/firstpass")).forEach(objectCode -> {
-            System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.printWords());
+            System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.word);
         });
     }
 
