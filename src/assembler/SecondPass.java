@@ -110,12 +110,12 @@ public class SecondPass {
                         break;
 
                     case "EXTR":
-                        words.add(new Pair<>(Integer.parseInt(opd1), '-'));
+                        words.add(new Pair<>(Integer.parseInt(opd1), 'a'));
                         vars.put(Integer.parseInt(opd1), new Pair(null, 'a'));
                         objects.add(new ObjectCode(symbol.address, 1, words));
 
                         break;
-                        
+
                     case "CONST":
                         words.add(new Pair<>(Integer.parseInt(opd1), 'r'));
                         vars.put(Integer.parseInt(opd1), new Pair(Integer.parseInt(opd2), 'a'));

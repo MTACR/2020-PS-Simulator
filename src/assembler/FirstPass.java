@@ -159,8 +159,15 @@ public class FirstPass {
                 switch (symbol.operator) {
 
                     case "SPACE":
-                    case "EXTR":
                         symbol.opd1 = String.valueOf(address++);
+
+                        break;
+
+                    case "EXTR":
+                        symbol.opd1 = String.valueOf(address);
+                        labels.replace(symbol.label, new Pair<>(address, '-'));
+
+                        address++;
 
                         break;
 
