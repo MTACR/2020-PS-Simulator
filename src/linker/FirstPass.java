@@ -112,7 +112,7 @@ public class FirstPass {
                 }
             }
 
-            offset+= seg.length;
+            offset += seg.length;
         }
         return tgs;
     }
