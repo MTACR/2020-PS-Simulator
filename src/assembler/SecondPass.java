@@ -31,7 +31,7 @@ public class SecondPass {
     public static List<ObjectCode> pass(File file) {
         SymbolsTable data = getSymbolsTable(file);
         List<Symbol> symbols = data.symbols;
-        Map<String, Integer> labels = data.labels;
+        Map<String, Pair<Integer, Character>> labels = data.labels;
         Map<Integer, Pair<Integer, Character>> vars = new TreeMap<>();
         List<ObjectCode> objects = new ArrayList<>();
 
@@ -51,7 +51,7 @@ public class SecondPass {
 
             if (labels.containsKey(opd1)) {
                 modeOpd1 = 0;
-                addrOpd1 = labels.get(opd1);
+                addrOpd1 = labels.get(opd1).getKey();
                 size++;
 
             } else if (!opd1.isEmpty()) {
@@ -75,7 +75,7 @@ public class SecondPass {
 
             if (labels.containsKey(opd2)) {
                 modeOpd2 = 0;
-                addrOpd2 = labels.get(opd2);
+                addrOpd2 = labels.get(opd2).getKey();
                 size++;
 
             } else if (!opd2.isEmpty()) {
@@ -104,7 +104,7 @@ public class SecondPass {
                 switch (operator) {
                     case "SPACE":
                         words.add(new Pair<>(Integer.parseInt(opd1), 'r'));
-                        vars.put(Integer.parseInt(opd1), new Pair(0, 'a'));
+                        vars.put(Integer.parseInt(opd1), new Pair(null, 'a'));
                         objects.add(new ObjectCode(symbol.address, 1, words));
 
                         break;
@@ -122,8 +122,14 @@ public class SecondPass {
 
                         break;
 
-                    default:
-                        throw new RuntimeException("Instrução inválida");
+                    case "EXTR":
+                        words.add(new Pair<>(Integer.parseInt(opd1), '+'));
+                        vars.put(Integer.parseInt(opd1), new Pair(null, 'a'));
+                        objects.add(new ObjectCode(symbol.address, 1, words));
+
+                        break;
+
+                    default: throw new RuntimeException("Instrução inválida");
                 }
 
             } else {

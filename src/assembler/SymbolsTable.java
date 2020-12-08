@@ -1,14 +1,16 @@
 package assembler;
 
+import javafx.util.Pair;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class SymbolsTable {
     public List<Symbol> symbols;
-    public Map<String, Integer> labels;
+    public Map<String, Pair<Integer, Character>> labels;
 
-    public SymbolsTable(List<Symbol> symbols, Map<String, Integer> labels) {
+    public SymbolsTable(List<Symbol> symbols, Map<String, Pair<Integer, Character>> labels) {
         this.symbols = symbols;
         this.labels = labels;
     }

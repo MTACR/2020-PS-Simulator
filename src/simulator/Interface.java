@@ -484,9 +484,11 @@ public class Interface extends javax.swing.JFrame {
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = Assembler.convert(fileChooser.getSelectedFile(), 10);
-            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-            initProcessor(selectedFile);
+            //File selectedFile = Assembler.convert(fileChooser.getSelectedFile(), 10);
+            //System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+            //initProcessor(selectedFile);
+            //TODO
+            throw new RuntimeException("Precisa implementar dnv");
         }
     }//GEN-LAST:event_jMenu2MouseClicked
 

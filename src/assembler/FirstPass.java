@@ -1,5 +1,7 @@
 package assembler;
 
+import javafx.util.Pair;
+
 import java.io.*;
 import java.util.*;
 import static assembler.SymbolsTable.*;
@@ -12,7 +14,7 @@ public class FirstPass {
 
     public static SymbolsTable getSymbolsTable(File file) {
         List<Symbol> symbols = new ArrayList<>();
-        Map<String, Integer> labels = new HashMap<>();
+        Map<String, Pair<Integer, Character>> labels = new TreeMap<>();
         int address = 0;
         int line = 1;
 
@@ -45,6 +47,9 @@ public class FirstPass {
                 if (lineArr.length == 1) {
 
                     if (table0.contains(lineArr[0])) {
+                        if (lineArr[0].equals("EXTR"))
+                            throw new RuntimeException("Instrução necessita label em " + line);
+
                         symbols.add(new Symbol(line, address, "", lineArr[0], "", ""));
                         address += 1;
 
@@ -57,10 +62,14 @@ public class FirstPass {
                 if (lineArr.length == 2) {
 
                     if (table0.contains(lineArr[1])) {
-                        symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
+                        //if (!lineArr[1].equals("EXTR"))
+                            symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
 
                         if (!labels.containsKey(lineArr[0]))
-                            labels.put(lineArr[0], address);
+                            if (lineArr[1].equals("EXTR"))
+                                labels.put(lineArr[0], new Pair<>(address, '+'));
+                            else
+                                labels.put(lineArr[0], new Pair<>(address, 'r'));
 
                         else throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
 
@@ -84,7 +93,7 @@ public class FirstPass {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], ""));
 
                         if (!labels.containsKey(lineArr[0]))
-                            labels.put(lineArr[0], address);
+                            labels.put(lineArr[0], new Pair<>(address, 'r'));
 
                         else throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
 
@@ -108,7 +117,7 @@ public class FirstPass {
                         symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], lineArr[3]));
 
                         if (!labels.containsKey(lineArr[0]))
-                            labels.put(lineArr[0], address);
+                            labels.put(lineArr[0], new Pair<>(address, 'r'));
 
                         else throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
 
@@ -135,17 +144,30 @@ public class FirstPass {
         // Aloca endereço para variáveis
         for (Symbol symbol : symbols) {
             if (!symbol.label.isEmpty()) {
-                if (symbol.operator.equals("SPACE"))
-                    symbol.opd1 = String.valueOf(address++);
+                switch (symbol.operator) {
 
-                else if (symbol.operator.equals("CONST")) {
-                    symbol.opd2 = symbol.opd1;
-                    symbol.opd1 = String.valueOf(address++);
+                    case "SPACE":
+                        symbol.opd1 = String.valueOf(address++);
 
-                } else {
-                    labels2Alloc.add(new Symbol(line++, address, symbol.label, "LABEL", String.valueOf(labels.get(symbol.label)), ""));
-                    labels.replace(symbol.label, address);
-                    address++;
+                        break;
+
+                    case "CONST":
+                        symbol.opd2 = symbol.opd1;
+                        symbol.opd1 = String.valueOf(address++);
+
+                        break;
+
+                    case "EXTR":
+                        symbol.opd1 = String.valueOf(address++);
+
+                        break;
+
+                    default:
+                        labels2Alloc.add(new Symbol(line++, address, symbol.label, "LABEL", String.valueOf(labels.get(symbol.label).getKey()), ""));
+                        labels.replace(symbol.label, new Pair<>(address, 'r'));
+                        address++;
+
+                        break;
                 }
             }
         }
@@ -158,11 +180,11 @@ public class FirstPass {
             FileWriter out = new FileWriter(lst);
             String string = "";
 
-            for (Map.Entry<String, Integer> entry : labels.entrySet()) {
+            for (Map.Entry<String, Pair<Integer, Character>> entry : labels.entrySet()) {
                 String label = entry.getKey();
-                Integer addr = entry.getValue();
+                Pair<Integer, Character> addr = entry.getValue();
 
-                string += label + " " + addr + "\n";
+                string += label + " " + addr.getKey() + " " + addr.getValue() + "\n";
             }
 
             out.write(string);
