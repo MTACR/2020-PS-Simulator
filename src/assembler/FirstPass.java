@@ -25,7 +25,7 @@ public class FirstPass {
             String string;
 
             while ((string = reader.readLine()) != null) {
-                string = string.toUpperCase().trim();
+                string = string.toUpperCase().replaceAll("\\s+"," ").trim();
 
                 //TODO receber arquivo sem , do processador de macros
                 //string = string.replace(",", "");

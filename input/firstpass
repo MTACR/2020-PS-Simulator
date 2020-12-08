@@ -1,4 +1,4 @@
-READ GLOBAL
-L1 WRITE GLOBAL
-GLOBAL EXTR
-EXTDEF L1
+        READ    A
+L1      WRITE   A
+A       EXTR
+EXTDEF          L1

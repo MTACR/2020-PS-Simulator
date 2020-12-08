@@ -104,14 +104,14 @@ public class SecondPass {
                 switch (operator) {
                     case "SPACE":
                         words.add(new Pair<>(Integer.parseInt(opd1), 'r'));
-                        vars.put(Integer.parseInt(opd1), new Pair(null, 'a'));
+                        vars.put(Integer.parseInt(opd1), new Pair(0, 'a'));
                         objects.add(new ObjectCode(symbol.address, 1, words));
 
                         break;
 
                     case "EXTR":
                         words.add(new Pair<>(Integer.parseInt(opd1), 'a'));
-                        vars.put(Integer.parseInt(opd1), new Pair(null, 'a'));
+                        vars.put(Integer.parseInt(opd1), new Pair(0, 'a'));
                         objects.add(new ObjectCode(symbol.address, 1, words));
 
                         break;
