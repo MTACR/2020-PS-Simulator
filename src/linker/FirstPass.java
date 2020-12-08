@@ -78,7 +78,7 @@ public class FirstPass {
                         ObjectCode oc = new ObjectCode(address, size, words);
                         System.out.println(oc.printWords());
                         lines.add(oc);
-                        
+
                         line = reader.readLine();
                     }
                 }
@@ -111,6 +111,8 @@ public class FirstPass {
                     throw new Exception("Redefined Symbol in " + seg.fileName + ": " + def.symbol);
                 }
             }
+
+            offset+= seg.length;
         }
         return tgs;
     }

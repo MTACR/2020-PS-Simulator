@@ -17,8 +17,6 @@ public class Linker {
             e.printStackTrace();
         }
 
-
-
         /*try {
             checkUsages(segments);
         } catch (Exception e) {
