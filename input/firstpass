@@ -1,9 +1,10 @@
+TESTE EXTR
 READ A
 READ B
 READ D
 L1 WRITE 60
 STOP
-BR L1
+TESTE BR L1
 *
 A SPACE
 B SPACE
@@ -12,6 +13,6 @@ D SPACE
 TEMP1 SPACE
 TEMP2 SPACE
 J CONST 1
-teste EXTR
+
 
 *código de teste, n faz nada de útil

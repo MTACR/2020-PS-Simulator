@@ -116,16 +116,10 @@ public class SecondPass {
 
                         break;
 
-                    // gambiarra para linkar labels
+                    // gambiarra para linkar labels e extr
                     case "LABEL":
-                        vars.put(symbol.address, new Pair(Integer.parseInt(opd1), 'r'));
-
-                        break;
-
                     case "EXTR":
-                        words.add(new Pair<>(Integer.parseInt(opd1), '+'));
-                        vars.put(Integer.parseInt(opd1), new Pair(null, 'a'));
-                        objects.add(new ObjectCode(symbol.address, 1, words));
+                        vars.put(symbol.address, new Pair(Integer.parseInt(opd1), 'r'));
 
                         break;
 
