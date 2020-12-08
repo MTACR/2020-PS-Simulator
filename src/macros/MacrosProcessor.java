@@ -16,30 +16,6 @@ class MacrosProcessingError extends Exception {
     }
 }
 
-class Macro {
-    private String name;
-    private String []parameters;
-    private String[]code;
-
-    public Macro(String name, String []parameters, String []code) {
-        this.name = name;
-        this.parameters = parameters;
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String []getParameters() {
-        return parameters;
-    }
-
-    public String []getCode() {
-        return code;
-    }
-}
-
 /* Classe que armazena os dados de uma expansão.
     * Ela internamente se comporta como uma pilha, o elemento que estiver em
     * expansionData é o atualmente processado e os anteriores a ele se comportam
@@ -47,28 +23,36 @@ class Macro {
     * após terminar uma expansão. */
 
 class MacrosExpansionData {
-        private Map <String, String> parameters;
+    private String macroName;
+    private Map <String, String> parameters;
     private String []code;
     private int lineNumber;
     private MacrosExpansionData previous;
 
-    public MacrosExpansionData(String []code, int lineNumber, MacrosExpansionData previous) {
+    public MacrosExpansionData(String macroName, String []code, int lineNumber, MacrosExpansionData previous) {
+        this.macroName = macroName;
         this.code = code;
         this.lineNumber = lineNumber;
         this.previous = previous;
         parameters = new HashMap <String, String>();
     }
 
+    // Pega o nome da macro sendo expandida
+
+    public String getMacroName() {
+        return macroName;
+    }
+
     // Pega um parâmetro dessa expansão
 
-    public String getParameter(String name) {
-        return parameters.get(name);
+    public String getParameter(String parameter) {
+        return parameters.get(parameter);
     }
 
     // Coloca um parâmetro nessa expansão
 
-    public void setParameter(String name, String value) {
-        parameters.put(name, value);
+    public void setParameter(String parameter, String value) {
+        parameters.put(parameter, value);
     }
 
     // Pega o código associado a esse dado de expansão
@@ -97,6 +81,52 @@ class MacrosExpansionData {
         } catch (ArrayIndexOutOfBoundsException e) {
             return null;
         }
+    }
+}
+
+class Macro {
+    private String name;
+    private String labelParameter;
+    private String []parameters;
+    private String[]code;
+    private int expandedCount;
+    private MacrosExpansionData whereWasDefined;
+
+    public Macro(String name, String labelParameter, String []parameters, String []code, MacrosExpansionData whereWasDefined) {
+        this.name = name;
+        this.labelParameter = labelParameter;
+        this.parameters = parameters;
+        this.code = code;
+        this.whereWasDefined = whereWasDefined;
+        expandedCount = 0;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getLabelParameter() {
+        return labelParameter;
+    }
+
+    public String []getParameters() {
+        return parameters;
+    }
+
+    public String []getCode() {
+        return code;
+    }
+
+    // Retorna os dados de expansão de onde essa macro foi definida, para acesso a parâmetros globais
+
+    public MacrosExpansionData getWhereWasDefined() {
+        return whereWasDefined;
+    }
+
+    // Macro foi expandida. Retorna o novo valor de expansões
+
+    public int wasExpanded() {
+        return ++ expandedCount;
     }
 }
 
@@ -139,6 +169,12 @@ public class MacrosProcessor {
 // Joga um erro de processamento de macro
 
     private void error(String message) throws MacrosProcessingError {
+        // Adiciona informações de onde o erro ocorreu
+        if (expansionData == null)
+            message = "no arquivo principal, linha " + lineNumber + ": " + message;
+        else
+            message = "ao expandir a macro " + expansionData.getMacroName() + ", linha " + expansionData.getLineNumber() + ": " + message;
+
         throw new MacrosProcessingError(message);
     }
 
@@ -149,6 +185,7 @@ public class MacrosProcessor {
         if (line == null) {
             error(errorMessage);
         }
+
         return line;
     }
 
@@ -161,21 +198,35 @@ public class MacrosProcessor {
 // Processa uma definição de macro completa. Retorna a linha do MEND em caso de sucesso.
 
     private int processMacro() throws MacrosProcessingError, IOException {
-    int insideMacro = 0;
+        int insideMacro = 0;
         String macroDefinitionLine = getNextLineOrError("Não encontrou a linha com a definição da macro");
 
         String []macroParts = macroDefinitionLine.split(" ");
+        int startParametersIndex = 1;
 
         if (macroParts.length == 0)
             error("Esperava ao menos o nome da macro a criar");
 
         String name = macroParts[0];
+        String labelParameter = null;
+
+        // Verifica se é o parâmetro da label
+        if (name.startsWith("&")) {
+            labelParameter = name;
+
+            if (macroParts.length == 1)
+                error("Apenas o r�tulo da macro foi especificado em " + macroDefinitionLine);
+
+            labelParameter = name;
+            name = macroParts[1];
+            startParametersIndex = 2;
+        }
 
         // Verifica se tem parâmetros e se eles estão certos
         String []parameters;
 
-        if (macroParts.length == 2) { // Tem parâmetros
-            parameters = macroParts[1].split(",");
+        if (macroParts.length == (startParametersIndex + 1)) { // Tem parâmetros
+            parameters = macroParts[startParametersIndex].split(",");
 
             for (String parameter: parameters) {
                 if (!parameter.startsWith("&"))
@@ -212,8 +263,7 @@ public class MacrosProcessor {
         String[] codeArray = new String[code.size()];
         codeArray = code.toArray(codeArray);
 
-        Macro m = new Macro(name, parameters, codeArray);
-
+        Macro m = new Macro(name, labelParameter, parameters, codeArray, expansionData);
         macros.put(name, m);
 
         return getLineNumber();
@@ -222,14 +272,18 @@ public class MacrosProcessor {
     // Pega o valor do parâmetro especificado da expansão ou joga um erro se não encontrar
 
     private String getParameterValueOrError(String parameter) throws MacrosProcessingError {
-        // Navega na árvore dos dados de expansão, tentando achar o parâmetro
-        for (MacrosExpansionData current = expansionData; current != null; current = current.getPrevious()) {
+        MacrosExpansionData current = expansionData;
+
+        while (current != null) {
             String value = current.getParameter(parameter);
+
             if (value != null)
                 return value;
+
+            current = macros.get(current.getMacroName()).getWhereWasDefined();
         }
 
-        error("Parâmetro não existe: " + parameter);
+        error("Parâmetro não existe: " + parameter );
         return null;
     }
 
@@ -257,11 +311,13 @@ public class MacrosProcessor {
             int end = -1;
 
             int comma = line.indexOf(',', andSign);
-            if (comma > -1)
-                end = comma;
-
             int space = line.indexOf(' ', andSign);
-            if (end == -1 && space > -1)
+
+            if (comma >= 0 && space >= 0 && comma > space)
+                end = space; // Caso do parâmetro estar no início da linha
+            else if (comma > -1)
+                end = comma;
+            else if (space > -1)
                 end = space;
 
             String parameter = null;
@@ -282,9 +338,9 @@ public class MacrosProcessor {
         return line;
     }
 
-// Processa realmente a macro, independente se está dentro de outra ou é o arquivo puro
+// Processa realmente a macro, independente se está dentro de outra ou é o arquivo puro. labelName é o nome do rótulo se deve inserir no início da primeira linha de código.
 
-    private void doProcess() throws MacrosProcessingError, IOException {
+    private void doProcess(String labelName) throws MacrosProcessingError, IOException {
         String line;
 
         while ((line = getNextLine()) != null) {
@@ -296,24 +352,44 @@ public class MacrosProcessor {
                 continue;
             }
 
+            boolean hasLabel = line.startsWith("&");
+
             line = replaceParameters(line);
 
+            int space = line.indexOf(" ");
+            String macroLine = line; // Tenta identificar a macro a partir da linha original
+            String label = null;
+
+            if (hasLabel) {
+                if (space == -1)
+                    error("Rótulo sem instrução");
+
+                label = line.substring(0, space);
+                macroLine = line.substring(space + 1); // Tira o nome da label do nome da macro
+            }
+
             for (String macroName: macros.keySet()) {
-                if (line.startsWith(macroName + " ") || line.equals(macroName)) {
+                if (macroLine.startsWith(macroName + " ") || macroLine.equals(macroName)) {
                     writeLineToFile = false;
-                    expandMacro(macroName, line);
+                    expandMacro(macroName, macroLine, label);
                     break;
                 }
             }
 
-            if (writeLineToFile)
-                writeLine(line);
+            if (writeLineToFile) {
+                if (labelName != null) {
+                    writeLine(labelName + " " + line);
+                    labelName = null;
+                } else
+                    writeLine(line);
+            }
         }
     }
 
-// Expande uma macro. Line é a linha com o comando de expansão
+// Expande uma macro. Line é a linha com o comando de expansão e label é a label na qual essa macro deve ser expandida
 
-    private void expandMacro(String macroName, String line) throws MacrosProcessingError, IOException {
+    private void expandMacro(String macroName, String line, String label) throws MacrosProcessingError, IOException {
+        System.out.println("Expandindo a macro " + macroName + "...");
         // Tira o nome da macro da linha
         int space = line.indexOf(' ');
         line = space > -1 ? line.substring(space + 1) : "";
@@ -326,15 +402,21 @@ public class MacrosProcessor {
             error("Número de parâmetros inválidos na chamada da macro " + macroName + ": " + parameters.length + " passados e " + m.getParameters().length + " requeridos.");
 
         // Cria novos dados de expansão na pilha, ligando-os ao anterior
-        expansionData = new MacrosExpansionData(m.getCode(), 0, expansionData);
+        expansionData = new MacrosExpansionData(macroName, m.getCode(), 0, expansionData);
 
         // Ajusta os parâmetros
         for (int parameter = 0; parameter < m.getParameters().length; parameter ++) {
             expansionData.setParameter(m.getParameters()[parameter], parameters[parameter]);
         }
 
+        if (m.getLabelParameter() != null) {
+            if (label != null) // Se o programador forneceu um nome para o rótulo
+                expansionData.setParameter(m.getLabelParameter(), label);
+            else // Coloca o nome do rótulo com o número de vezes que a macro foi expandida
+                expansionData.setParameter(m.getLabelParameter(), macroName + "_exp" + m.wasExpanded());
+        }
         // Processa o código na macro expandida
-        doProcess();
+        doProcess(label);
 
         // Volta para a macro anterior ou para o arquivo
         expansionData = expansionData.getPrevious();
@@ -346,7 +428,7 @@ public class MacrosProcessor {
         reader = new BufferedReader(new FileReader(input));
         writer = new FileWriter(output);
 
-        doProcess();
+        doProcess(null);
 
         writer.close();
 
@@ -359,8 +441,7 @@ public class MacrosProcessor {
         } catch (IOException error) {
             System.out.println("Erro no arquivo: " + error.getMessage());
         } catch (MacrosProcessingError error) {
-            System.out.println("Erro no processamento das macros: " +
-error.getMessage());
+            System.out.println("Erro no processamento das macros: " + error.getMessage());
         }
     }
 }
