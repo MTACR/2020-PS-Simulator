@@ -119,10 +119,13 @@ public class FirstPass {
 
     public static void checkUsages(ArrayList<Segment> segments) throws Exception { //Provavelmente desnecessario, deve ser possivel fazer esse teste em uma etada posterior do ligador
         for (Segment segUse : segments) {
+
             for (Map.Entry use : segUse.usageTable.entrySet()) {
                 String key = (String) use.getKey();
                 boolean found = false;
+
                 for (Segment segDef : segments) {
+
                     if (segUse != segDef) { //Bem provavelmente desnecessario
                         if (segDef.definitionTable.get(key) != null) {
                             found = true;
