@@ -11,6 +11,12 @@ public class Definition {
         this.reallocmode = reallocmode;
     }
 
+    public void offset(int offset){
+        if(reallocmode == 'r'){
+            address += offset;
+        }
+    }
+
     @Override
     public String toString() {
         return "Definition {" +
