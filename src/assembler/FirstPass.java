@@ -176,6 +176,7 @@ public class FirstPass {
                         if (extrs.contains(symbol.label.toUpperCase())) {
                             labels.replace(symbol.label, new Pair<>(address, '+'));
                             s.operator = "EXTR";
+                            extrs.remove(symbol.label.toUpperCase());
                         } else
                             labels.replace(symbol.label, new Pair<>(address, 'r'));
 
@@ -187,6 +188,9 @@ public class FirstPass {
                 }
             }
         }
+
+        if (!extrs.isEmpty())
+            throw new RuntimeException("Símbolos globais não existem: " + extrs);
 
         symbols.addAll(labels2Alloc);
 
