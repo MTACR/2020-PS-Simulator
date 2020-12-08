@@ -15,7 +15,7 @@ public class FirstPass {
     public static SymbolsTable getSymbolsTable(File file) {
         List<Symbol> symbols = new ArrayList<>();
         Map<String, Pair<Integer, Character>> labels = new TreeMap<>();
-        List<String> extrs = new ArrayList<>();
+        List<String> extdef = new ArrayList<>();
 
         int address = 0;
         int line = 1;
@@ -50,7 +50,7 @@ public class FirstPass {
 
                     if (table0.contains(lineArr[0])) {
                         if (lineArr[0].equals("EXTR"))
-                            throw new RuntimeException("Instrução necessita label em " + line);
+                            throw new RuntimeException("Instrução exige um label em " + line);
 
                         symbols.add(new Symbol(line, address, "", lineArr[0], "", ""));
                         address += 1;
@@ -65,30 +65,29 @@ public class FirstPass {
 
                     if (table0.contains(lineArr[1])) {
 
-                        if (lineArr[1].equals("EXTR")) {
-                            if (!extrs.contains(lineArr[0].toUpperCase()))
-                                extrs.add(lineArr[0].toUpperCase());
+                        symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
 
-                            else throw new RuntimeException("Símbolo redefinido: " + lineArr[0] + " em " + line);
+                        if (!labels.containsKey(lineArr[0]))
+                            labels.put(lineArr[0], new Pair<>(address, 'r'));
 
-                        } else {
-                            symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
-                        }
+                        else throw new RuntimeException("Símbolo redefinido: " + lineArr[0] + " em " + line);
 
-                        if (!labels.containsKey(lineArr[0])) {
-                            if (!lineArr[1].equals("EXTR"))
-                                labels.put(lineArr[0], new Pair<>(address, 'r'));
-
-                        } else throw new RuntimeException("Símbolo redefinido: " + lineArr[0] + " em " + line);
-
-                        if (!lineArr[1].equals("EXTR"))
-                            address += 1;
-
+                        address += 1;
                     }
 
                     else if (table1.contains(lineArr[0])) {
-                        symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
-                        address += 2;
+
+                        if (lineArr[0].equals("EXTDEF")) {
+                            if (!extdef.contains(lineArr[1]))
+                                extdef.add(lineArr[1]);
+
+                            else throw new RuntimeException("Símbolo redefinido: " + lineArr[1] + " em " + line);
+
+                        } else
+                            symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
+
+                        if (!lineArr[0].equals("EXTDEF"))
+                            address += 2;
                     }
 
                     else throw new RuntimeException("Instrução inválida em " + line);
@@ -160,6 +159,7 @@ public class FirstPass {
                 switch (symbol.operator) {
 
                     case "SPACE":
+                    case "EXTR":
                         symbol.opd1 = String.valueOf(address++);
 
                         break;
@@ -173,10 +173,11 @@ public class FirstPass {
                     default:
                         Symbol s = new Symbol(line++, address, symbol.label, "LABEL", String.valueOf(labels.get(symbol.label).getKey()), "");
 
-                        if (extrs.contains(symbol.label.toUpperCase())) {
+                        if (extdef.contains(symbol.label)) {
                             labels.replace(symbol.label, new Pair<>(address, '+'));
-                            s.operator = "EXTR";
-                            extrs.remove(symbol.label.toUpperCase());
+                            s.operator = "EXTDEF"; //n é necessário, mas serve pra não se confundir
+                            extdef.remove(symbol.label);
+
                         } else
                             labels.replace(symbol.label, new Pair<>(address, 'r'));
 
@@ -189,8 +190,8 @@ public class FirstPass {
             }
         }
 
-        if (!extrs.isEmpty())
-            throw new RuntimeException("Símbolos globais não existem: " + extrs);
+        if (!extdef.isEmpty())
+            throw new RuntimeException("Símbolos globais não existem: " + extdef);
 
         symbols.addAll(labels2Alloc);
 
