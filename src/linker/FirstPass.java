@@ -17,48 +17,23 @@ import java.util.Map;
 public class FirstPass {
     public static ArrayList<Segment> readSegments(String[] fileNames){ //Protótipo de leitura de leitura, considerando que as tabelas de definição e uso estão no inicio do arquivo
         ArrayList<Segment> segments = new ArrayList<>();
-        for(String fileName : fileNames) {
+        for(String fileNameObj : fileNames) {
             DefinitionTable definitionTable = new DefinitionTable();
             UsageTable usageTable = new UsageTable();
             ArrayList<ObjectCode> lines = new ArrayList<>();
             int length = 0;
 
+            String fileNameLst = fileNameObj.replace(".obj",".lst");
+
             try {
-                File file = new File(fileName);
-                try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                    String line = reader.readLine();
+                File fileObj = new File(fileNameObj);
+                File fileLst = new File(fileNameLst);
+                String line;
+                String[] sl;
 
-                    String[] sl;
+                try (BufferedReader readerObj = new BufferedReader(new FileReader(fileObj))) {
 
-                    if (line.trim().equals("DEFTAB")) {
-                        while ((line = reader.readLine()) != null) {
-                            if (!line.trim().equals("DEFEND")) {
-                                sl = line.split(" ");
-                                Definition def = new Definition(sl[0], Integer.parseInt(sl[1]), sl[2].charAt(0));
-                                System.out.println(def.toString());
-                                definitionTable.put(def.symbol, def);
-                            } else {
-                                break;
-                            }
-                        }
-                        line = reader.readLine();
-                    }
-
-                    if (line.trim().equals("USETAB")) {
-                        while ((line = reader.readLine()) != null) {
-                            if (!line.trim().equals("USEEND")) {
-                                sl = line.split(" ");
-                                Usage use = new Usage(sl[0], Integer.parseInt(sl[1]), sl[2].charAt(0));
-                                System.out.println(use.toString());
-                                usageTable.put(use.symbol, use);
-                            } else {
-                                break;
-                            }
-                        }
-                        line = reader.readLine();
-                    }
-
-                    while (line != null) {
+                    while ((line = readerObj.readLine()) != null) {
                         sl = line.split(" ");
 
                         int address = Integer.parseInt(sl[0]);
@@ -78,65 +53,93 @@ public class FirstPass {
                         ObjectCode oc = new ObjectCode(address, size, words);
                         System.out.println(oc.printWords());
                         lines.add(oc);
-
-                        line = reader.readLine();
                     }
                 }
+
+                try (BufferedReader readerLst = new BufferedReader(new FileReader(fileLst))) {
+
+                    while((line = readerLst.readLine()) != null){
+                        sl = line.split(" ");
+                        char flag = sl[2].charAt(0);
+
+                        if(flag == 'a' || flag == 'r'){
+                            Definition def = new Definition(sl[0], Integer.parseInt(sl[1]), flag);
+                            definitionTable.put(def.symbol, def);
+                        } else {
+                            if(flag == '+' || flag == '-'){
+                                Usage use = new Usage(sl[0], Integer.parseInt(sl[1]), flag);
+                                usageTable.put(use.symbol, use);
+                            } else {
+                                throw new IOException("Undefined flag: " + flag);
+                            }
+                        }
+                    }
+                }
+
             } catch (IOException | NumberFormatException e) {
                 final JPanel panel = new JPanel();
                 JOptionPane.showMessageDialog(panel, "Arquivo inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
             }
 
-
-            segments.add(new Segment(fileName, definitionTable, usageTable, lines, length));
+            segments.add(new Segment(fileNameObj, definitionTable, usageTable, lines, length));
         }
         return segments;
     }
 
-    public static DefinitionTable unifyDefinitions(ArrayList<Segment> segments) throws Exception {
-        DefinitionTable tgs = (DefinitionTable) segments.get(0).definitionTable.clone(); //Tabela de Símbolos Globais (TSG): Armazena todos os símbolos globais definidos. União das tabelas de definição dos diferentes segmentos.
-        int offset = segments.get(0).length;
+    public static DefinitionTable unifyDefinitions(ArrayList<Segment> segments) {
+        DefinitionTable tgs = null;
 
-        for(int i = 1; i < segments.size(); i++){
-            Segment seg = segments.get(i);
+        try {
+            tgs = (DefinitionTable) segments.get(0).definitionTable.clone(); //Tabela de Símbolos Globais (TSG): Armazena todos os símbolos globais definidos. União das tabelas de definição dos diferentes segmentos.
+            int offset = segments.get(0).length;
 
-            for(Map.Entry defEntry : seg.definitionTable.entrySet()) {
-                Definition def = (Definition) defEntry.getValue();
+            for (int i = 1; i < segments.size(); i++) {
+                Segment seg = segments.get(i);
 
-                if(tgs.get(def.symbol) == null){
-                    def.offset(offset);
-                    tgs.put(def.symbol, def);
+                for (Map.Entry defEntry : seg.definitionTable.entrySet()) {
+                    Definition def = (Definition) defEntry.getValue();
 
-                } else {
-                    throw new Exception("Redefined Symbol in " + seg.fileName + ": " + def.symbol);
+                    if (tgs.get(def.symbol) == null) {
+                        def.offset(offset);
+                        tgs.put(def.symbol, def);
+
+                    } else {
+                        throw new Exception("Redefined Symbol in " + seg.fileName + ": " + def.symbol);
+                    }
                 }
-            }
 
-            offset += seg.length;
+                offset += seg.length;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
         return tgs;
     }
 
-    public static void checkUsages(ArrayList<Segment> segments) throws Exception { //Provavelmente desnecessario, deve ser possivel fazer esse teste em uma etada posterior do ligador
-        for (Segment segUse : segments) {
+    public static void checkUsages(ArrayList<Segment> segments){ //Provavelmente desnecessario, deve ser possivel fazer esse teste em uma etada posterior do ligador
+        try {
+            for (Segment segUse : segments) {
 
-            for (Map.Entry use : segUse.usageTable.entrySet()) {
-                String key = (String) use.getKey();
-                boolean found = false;
+                for (Map.Entry use : segUse.usageTable.entrySet()) {
+                    String key = (String) use.getKey();
+                    boolean found = false;
 
-                for (Segment segDef : segments) {
+                    for (Segment segDef : segments) {
 
-                    if (segUse != segDef) { //Bem provavelmente desnecessario
-                        if (segDef.definitionTable.get(key) != null) {
-                            found = true;
-                            break;
+                        if (segUse != segDef) { //Bem provavelmente desnecessario
+                            if (segDef.definitionTable.get(key) != null) {
+                                found = true;
+                                break;
+                            }
                         }
                     }
-                }
-                if (!found) {
-                    throw new Exception("Undefined Symbol in " + segUse.fileName + ": " + key + "'s definition not found");
+                    if (!found) {
+                        throw new Exception("Undefined Symbol in " + segUse.fileName + ": " + key + "'s definition not found");
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
