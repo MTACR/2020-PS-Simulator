@@ -1,4 +1,4 @@
-        READ    A
+
 L1      WRITE   A
 A       EXTR
-EXTDEF          L1
+

@@ -164,8 +164,8 @@ public class FirstPass {
                         break;
 
                     case "EXTR":
-                        symbol.opd1 = String.valueOf(address);
-                        labels.replace(symbol.label, new Pair<>(address, '-'));
+                        symbol.opd1 = String.valueOf(0);
+                        labels.replace(symbol.label, new Pair<>(symbol.address, '-'));
 
                         address++;
 
