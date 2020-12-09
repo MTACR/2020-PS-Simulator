@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class FirstPass {
-    public static ArrayList<Segment> readSegments(String[] fileNames){ //Protótipo de leitura de leitura, considerando que as tabelas de definição e uso estão no inicio do arquivo
+    public static ArrayList<Segment> readSegments(String[] fileNames){ //Protótipo de leitura de leitura, considerando que as tabelas de definição e uso estão em um arquivo diferente do código objeto
         ArrayList<Segment> segments = new ArrayList<>();
         for(String fileNameObj : fileNames) {
             DefinitionTable definitionTable = new DefinitionTable();
@@ -51,7 +51,6 @@ public class FirstPass {
                             words.add(new Pair(op, mode));
                         }
                         ObjectCode oc = new ObjectCode(address, size, words);
-                        System.out.println(oc.printWords());
                         lines.add(oc);
                     }
                 }
@@ -86,6 +85,8 @@ public class FirstPass {
         return segments;
     }
 
+    //Unifica as tabelas de definições dos vários segmentos em única tabela (tabela de símbolos globais)
+    //Tabela de definições é copiada para a TSG (1ª tabela copiada sem alterações, na 2ª tabela o valor dos endereços é adicionado do tamanho do primeiro segmento)
     public static DefinitionTable unifyDefinitions(ArrayList<Segment> segments) {
         DefinitionTable tgs = null;
 
@@ -116,6 +117,7 @@ public class FirstPass {
         return tgs;
     }
 
+    //Checa se as entradas na tabela de uso bate com as da definição, buscando por indefinidas
     public static void checkUsages(ArrayList<Segment> segments){ //Provavelmente desnecessario, deve ser possivel fazer esse teste em uma etada posterior do ligador
         try {
             for (Segment segUse : segments) {

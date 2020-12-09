@@ -275,7 +275,7 @@ public class SecondPass {
     public static void main(String[] args) {
         System.out.printf("%-10s %-10s %-10s\n", "Address", "Size", "Machine");
         pass(new File("input/firstpass")).forEach(objectCode -> {
-            System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.word);
+            System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.words);
         });
     }
 
