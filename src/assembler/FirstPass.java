@@ -83,9 +83,9 @@ public class FirstPass {
                                     extdef.add(lineArr[1]);
 
                                 else throw new RuntimeException("Símbolo redefinido: " + lineArr[1] + " em " + line);
+                            }
 
-                            } else
-                                symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
+                            symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
 
                             if (!lineArr[0].equals("EXTDEF"))
                                 address += 2;
@@ -169,10 +169,12 @@ public class FirstPass {
                         break;
 
                     case "EXTR":
-                        symbol.opd1 = String.valueOf(0);
-                        labels.replace(symbol.label, new Pair<>(symbol.address, '-'));
+                        if (labels.containsKey(symbol.label)) {
+                            symbol.opd1 = String.valueOf(0);
+                            labels.replace(symbol.label, new Pair<>(symbol.address, '-'));
 
-                        address++;
+                        } else throw new RuntimeException("Símbols global não existe: " + symbol.label);
+                        //address++;
 
                         break;
 
@@ -183,27 +185,24 @@ public class FirstPass {
                         break;
 
                     default:
-                        Symbol s = new Symbol(line++, address, symbol.label, "LABEL", String.valueOf(labels.get(symbol.label).getKey()), "");
-
-                        if (extdef.contains(symbol.label)) {
-                            labels.replace(symbol.label, new Pair<>(address, '+'));
-                            s.operator = "EXTDEF"; //n é necessário, mas serve pra não se confundir
-                            extdef.remove(symbol.label);
-
-                        } else
-                            labels.replace(symbol.label, new Pair<>(address, 'r'));
-
-                        labels2Alloc.add(s);
+                        labels2Alloc.add(new Symbol(line++, address, symbol.label, "LABEL", String.valueOf(labels.get(symbol.label).getKey()), ""));
+                        labels.replace(symbol.label, new Pair<>(address, 'r'));
 
                         address++;
 
                         break;
                 }
+
+            }  else if (symbol.operator.equals("EXTDEF")) {
+                if (labels.containsKey(symbol.opd1))
+                    labels.replace(symbol.opd1, new Pair<>(symbol.address, '+'));
+
+                else throw new RuntimeException("Símbolos global não existe: " + symbol.opd1);
             }
         }
 
-        if (!extdef.isEmpty())
-            throw new RuntimeException("Símbolos globais não existem: " + extdef);
+        //if (!extdef.isEmpty())
+            //throw new RuntimeException("Símbolos globais não existem: " + extdef);
 
         symbols.addAll(labels2Alloc);
 

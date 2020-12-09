@@ -127,7 +127,7 @@ public class SecondPass {
                         break;
 
                     case "EXTDEF":
-                        vars.put(symbol.address, new Pair(Integer.parseInt(opd1), '+'));
+                        //vars.put(symbol.address, labels.get(opd1));
 
                         break;
 
@@ -162,6 +162,8 @@ public class SecondPass {
             words.add(new Pair<>(pair.getKey(), pair.getValue()));
             objects.add(new ObjectCode(addr, 1, words));
         });
+
+        Collections.sort(objects, Comparator.comparingInt(o -> o.address));
 
         File obj = new File("output/MASMAPRG.obj");
 
