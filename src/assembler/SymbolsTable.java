@@ -15,6 +15,10 @@ public class SymbolsTable {
         this.labels = labels;
     }
 
+    public static final List<String> table = Arrays.asList(
+            "ADD", "BR", "BRNEG", "BRPOS", "BRZERO", "CALL", "COPY", "DIVIDE", "LOAD", "MULT", "READ", "RET", "STOP",
+            "STORE", "SUB", "WRITE", "CONST", "END", "EXTDEF", "EXTR", "INIT", "PROC", "SPACE", "STACK", "START");
+
     public static final List<String> table0 = Arrays.asList(
             "RET", "STOP", "END", "EXTR", "SPACE", "MACRO");
 

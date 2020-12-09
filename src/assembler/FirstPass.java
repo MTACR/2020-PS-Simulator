@@ -8,10 +8,6 @@ import static assembler.SymbolsTable.*;
 
 public class FirstPass {
 
-    /*private static final List<String> table = Arrays.asList(
-            "ADD", "BR", "BRNEG", "BRPOS", "BRZERO", "CALL", "COPY", "DIVIDE", "LOAD", "MULT", "READ", "RET", "STOP",
-            "STORE", "SUB", "WRITE", "CONST", "END", "EXTDEF", "EXTR", "INIT", "PROC", "SPACE", "STACK", "START");*/
-
     public static SymbolsTable getSymbolsTable(File file) {
         List<Symbol> symbols = new ArrayList<>();
         Map<String, Pair<Integer, Character>> labels = new TreeMap<>();
@@ -38,112 +34,121 @@ public class FirstPass {
                     string = string.substring(0, string.indexOf("*"));
 
                 //ignora linhas em branco
-                if (string.isEmpty())
+                if (string.isEmpty()) {
+                    line++;
                     continue;
+                }
 
                 //divide linha quando acha um espaço
                 String[] lineArr = string.split(" ");
                 for (int i = 0; i < lineArr.length; i++)
                     lineArr[i] = lineArr[i].trim();
 
-                if (lineArr.length == 1) {
+                switch (lineArr.length) {
 
-                    if (table0.contains(lineArr[0])) {
-                        if (lineArr[0].equals("EXTR"))
-                            throw new RuntimeException("Instrução exige um label em " + line);
+                    case 1:
 
-                        symbols.add(new Symbol(line, address, "", lineArr[0], "", ""));
-                        address += 1;
+                        if (table0.contains(lineArr[0])) {
+                            if (lineArr[0].equals("EXTR"))
+                                throw new RuntimeException("Instrução exige um label em " + line);
 
-                    } else throw new RuntimeException("Instrução inválida em " + line);
-
-                    line++;
-                    continue;
-                }
-
-                if (lineArr.length == 2) {
-
-                    if (table0.contains(lineArr[1])) {
-
-                        symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
-
-                        if (!labels.containsKey(lineArr[0]))
-                            labels.put(lineArr[0], new Pair<>(address, 'r'));
-
-                        else throw new RuntimeException("Símbolo redefinido: " + lineArr[0] + " em " + line);
-
-                        address += 1;
-                    }
-
-                    else if (table1.contains(lineArr[0])) {
-
-                        if (lineArr[0].equals("EXTDEF")) {
-                            if (!extdef.contains(lineArr[1]))
-                                extdef.add(lineArr[1]);
-
-                            else throw new RuntimeException("Símbolo redefinido: " + lineArr[1] + " em " + line);
-
-                        } else
-                            symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
-
-                        if (!lineArr[0].equals("EXTDEF"))
-                            address += 2;
-                    }
-
-                    else throw new RuntimeException("Instrução inválida em " + line);
-
-                    line++;
-                    continue;
-                }
-
-                if (lineArr.length == 3) {
-
-                    if (table1.contains(lineArr[1])) {
-                        symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], ""));
-
-                        if (!labels.containsKey(lineArr[0]))
-                            labels.put(lineArr[0], new Pair<>(address, 'r'));
-
-                        else throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
-
-                        if (lineArr[1].equals("CONST"))
+                            symbols.add(new Symbol(line, address, "", lineArr[0], "", ""));
                             address += 1;
-                        else
-                            address += 2;
-                    }
 
-                    else if (table2.contains(lineArr[0])) {
-                        symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], lineArr[2]));
-                        address += 3;
-                    }
+                        } else throw new RuntimeException("Instrução inválida em " + line);
 
-                    else throw new RuntimeException("Instrução inválida em " + line);
+                        break;
 
-                    line++;
-                    continue;
+                    case 2:
+
+                        if (table0.contains(lineArr[1])) {
+
+                            if (table.contains(lineArr[0]))
+                                throw new RuntimeException("Label inválida " + line);
+
+                            symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
+
+                            if (!labels.containsKey(lineArr[0]))
+                                labels.put(lineArr[0], new Pair<>(address, 'r'));
+
+                            else throw new RuntimeException("Símbolo redefinido: " + lineArr[0] + " em " + line);
+
+                            address += 1;
+                        }
+
+                        else if (table1.contains(lineArr[0])) {
+
+                            if (lineArr[0].equals("EXTDEF")) {
+                                if (!extdef.contains(lineArr[1]))
+                                    extdef.add(lineArr[1]);
+
+                                else throw new RuntimeException("Símbolo redefinido: " + lineArr[1] + " em " + line);
+
+                            } else
+                                symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
+
+                            if (!lineArr[0].equals("EXTDEF"))
+                                address += 2;
+                        }
+
+                        else throw new RuntimeException("Instrução inválida em " + line);
+
+                        break;
+
+                    case 3:
+
+                        if (table1.contains(lineArr[1])) {
+
+                            if (table.contains(lineArr[0]) || table.contains(lineArr[2]))
+                                throw new RuntimeException("Label inválida em " + line);
+
+                            symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], ""));
+
+                            if (!labels.containsKey(lineArr[0]))
+                                labels.put(lineArr[0], new Pair<>(address, 'r'));
+
+                            else throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
+
+                            if (lineArr[1].equals("CONST"))
+                                address += 1;
+                            else
+                                address += 2;
+                        }
+
+                        else if (table2.contains(lineArr[0])) {
+                            symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], lineArr[2]));
+                            address += 3;
+                        }
+
+                        else throw new RuntimeException("Instrução inválida em " + line);
+
+                        break;
+
+                    case 4:
+
+                        if (table2.contains(lineArr[1])) {
+
+                            if (table.contains(lineArr[0]) || table.contains(lineArr[2]) || table.contains(lineArr[3]))
+                                throw new RuntimeException("Label inválida " + line);
+
+                            symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], lineArr[3]));
+
+                            if (!labels.containsKey(lineArr[0]))
+                                labels.put(lineArr[0], new Pair<>(address, 'r'));
+
+                            else throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
+
+                            address += 3;
+                        }
+
+                        else throw new RuntimeException("Instrução inválida em " + line);
+
+                        break;
+
+                    default: throw new RuntimeException("Erro de sintaxe em " + line);
                 }
 
-                if (lineArr.length == 4) {
-
-                    if (table2.contains(lineArr[1])) {
-                        symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], lineArr[3]));
-
-                        if (!labels.containsKey(lineArr[0]))
-                            labels.put(lineArr[0], new Pair<>(address, 'r'));
-
-                        else throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
-
-                        address += 3;
-                    }
-
-                    else throw new RuntimeException("Instrução inválida em " + line);
-
-                    line++;
-                    continue;
-                }
-
-                if (lineArr.length > 4)
-                    throw new RuntimeException("Erro de sintaxe em " + line);
+                line++;
             }
 
             reader.close();

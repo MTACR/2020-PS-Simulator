@@ -110,7 +110,7 @@ public class SecondPass {
                         break;
 
                     case "EXTR":
-                        vars.put(symbol.address, new Pair(0, '-'));
+                        vars.put(symbol.address, new Pair(0, '-')); //'-' ;(
 
                         break;
 
