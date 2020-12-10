@@ -265,7 +265,7 @@ public class FirstPass {
         // Adiciona à lista de símbolos as variáveis a serem alocadas
         symbols.addAll(labels2Alloc);
 
-        String string = "<definition>\n";
+        String string = "";
 
         // Lista de variáveis externas que devem ser removidas do mapa de labels
         List<String> ext2Remove = new ArrayList<>();
@@ -300,14 +300,9 @@ public class FirstPass {
         try {
             FileWriter out = new FileWriter(tbl);
 
-            string += "</definition>\n";
-            string += "<usage>\n";
-
             // Gera a tabela de usos
             for (Usage usage : extuseVars)
                 string += usage.symbol + " " + usage.locationCounter + " " + usage.opsign + "\n";
-
-            string += "</usage>\n";
 
             out.write(string);
             out.close();
