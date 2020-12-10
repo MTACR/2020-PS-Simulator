@@ -3,12 +3,14 @@ package assembler;
 import java.util.regex.Pattern;
 
 public class Symbol {
-    public int line;
-    public int address;
-    public String label;
-    public String operator;
+    public final int line;
+    public final int address;
+    public final String label;
+    public final String operator;
+
     public String opd1;
     public String opd2;
+    public ObjectCode objectCode;
 
     public Symbol(int line, int address, String label, String operator, String opd1, String opd2) {
         this.line = line;
@@ -28,8 +30,19 @@ public class Symbol {
             throw new RuntimeException(" Erro de sintaxe em " + opd2);
     }
 
-    //TODO na verdade as vars usam SUfixo
+    public String printMachineCode() {
+        String s = operator;
 
+        if (!opd1.isEmpty())
+            s += " " + opd1;
+
+        if (!opd2.isEmpty())
+            s += " " + opd2;
+
+        return s;
+    }
+
+    //TODO na verdade as vars usam SUfixo
     private static boolean isLabelValid(String s) {
         if (s.isEmpty())
             return true;

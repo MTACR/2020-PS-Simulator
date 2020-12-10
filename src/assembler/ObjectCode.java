@@ -1,14 +1,16 @@
 package assembler;
 
 import javafx.util.Pair;
+
+import java.util.Arrays;
 import java.util.List;
 
 public class ObjectCode {
     public int address;
     public int size;
-    public List<Pair<Integer, Character>> words;
+    public Pair<Integer, Character>[] words;
 
-    public ObjectCode(int address, int size, List<Pair<Integer, Character>> words) {
+    public ObjectCode(int address, int size, Pair<Integer, Character>... words) {
         this.address = address;
         this.size = size;
         this.words = words;
@@ -18,7 +20,7 @@ public class ObjectCode {
         String out = "";
 
         for (int i = 0; i < size; i++) {
-            out += words.get(i).getKey() + " " + words.get(i).getValue() + " ";
+            out += words[i].getKey() + " " + words[i].getValue() + " ";
         }
 
         return out;
@@ -27,13 +29,11 @@ public class ObjectCode {
     public void offset(int offset){
         address += offset;
 
-        for(int i = 0; i < words.size(); i++){
-            Pair<Integer, Character> currentWord = words.get(i);
+        for(int i = 0; i < words.length; i++){
+            Pair<Integer, Character> currentWord = words[i];
 
-            if("r".equals(currentWord.getValue())){ //Fui obrigado a recorrer a gambiarra
-                Pair<Integer, Character> newWord = new Pair<Integer, Character>(currentWord.getKey() + offset, currentWord.getValue());
-                words.set(i, newWord);
-            }
+            if (currentWord.getValue() == 'r')
+                words[i] = new Pair<>(currentWord.getKey() + offset, currentWord.getValue());
         }
     }
 
@@ -41,7 +41,7 @@ public class ObjectCode {
     public String toString() {
         return address +
                 " " + size +
-                " " + words;
+                " " + Arrays.toString(words);
     }
 }
 

@@ -1,6 +1,5 @@
-L1      WRITE   A
+        WRITE   A
 A       EXTR
         EXTDEF B
-B SPACE
-C CONST 1
+        READ A
 

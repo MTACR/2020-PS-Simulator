@@ -41,15 +41,16 @@ public class FirstPass {
 
                         length += size;
 
-                        List<Pair<Integer, Character>> words = new ArrayList<>();
+                        Pair<Integer, Character>[] words = new Pair[(size * 2) + 2];
 
                         for (int i = 2; i < (size * 2) + 2; ) {
                             int op = Integer.parseInt(sl[i]);
                             i++;
                             String mode = sl[i];
                             i++;
-                            words.add(new Pair(op, mode));
+                            words[i] = new Pair(op, mode);
                         }
+
                         ObjectCode oc = new ObjectCode(address, size, words);
                         lines.add(oc);
                     }

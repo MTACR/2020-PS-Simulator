@@ -12,6 +12,8 @@ public class FirstPass {
         List<Symbol> symbols = new ArrayList<>();
         Map<String, Pair<Integer, Character>> labels = new TreeMap<>();
         List<String> extdef = new ArrayList<>();
+        List<String> extr = new ArrayList<>();
+        List<Pair<String, Integer>> usages = new ArrayList<>();
 
         int address = 0;
         int line = 1;
@@ -49,6 +51,7 @@ public class FirstPass {
                     case 1:
 
                         if (table0.contains(lineArr[0])) {
+
                             if (lineArr[0].equals("EXTR"))
                                 throw new RuntimeException("Instrução exige um label em " + line);
 
@@ -63,17 +66,28 @@ public class FirstPass {
 
                         if (table0.contains(lineArr[1])) {
 
-                            if (table.contains(lineArr[0]))
-                                throw new RuntimeException("Label inválida " + line);
+                            if (lineArr[1].equals("EXTR")) {
+                                if (!extr.contains(lineArr[0])) {
+                                    extr.add(lineArr[0]);
+                                    labels.put(lineArr[0], new Pair<>(0, 'r'));
+                                }
 
-                            symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
+                                else throw new RuntimeException("Símbolo redefinido: " + lineArr[0] + " em " + line);
 
-                            if (!labels.containsKey(lineArr[0]))
-                                labels.put(lineArr[0], new Pair<>(address, 'r'));
+                            } else {
 
-                            else throw new RuntimeException("Símbolo redefinido: " + lineArr[0] + " em " + line);
+                                if (table.contains(lineArr[0]))
+                                    throw new RuntimeException("Label inválida " + line);
 
-                            address += 1;
+                                symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
+
+                                if (!labels.containsKey(lineArr[0]))
+                                    labels.put(lineArr[0], new Pair<>(address, 'r'));
+
+                                else throw new RuntimeException("Símbolo redefinido: " + lineArr[0] + " em " + line);
+
+                                address += 1;
+                            }
                         }
 
                         else if (table1.contains(lineArr[0])) {
@@ -83,12 +97,13 @@ public class FirstPass {
                                     extdef.add(lineArr[1]);
 
                                 else throw new RuntimeException("Símbolo redefinido: " + lineArr[1] + " em " + line);
-                            }
 
-                            symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
+                            } else {
 
-                            if (!lineArr[0].equals("EXTDEF"))
+                                symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
+
                                 address += 2;
+                            }
                         }
 
                         else throw new RuntimeException("Instrução inválida em " + line);
@@ -116,6 +131,7 @@ public class FirstPass {
                         }
 
                         else if (table2.contains(lineArr[0])) {
+
                             symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], lineArr[2]));
                             address += 3;
                         }
@@ -168,16 +184,6 @@ public class FirstPass {
 
                         break;
 
-                    case "EXTR":
-                        if (labels.containsKey(symbol.label)) {
-                            symbol.opd1 = String.valueOf(0);
-                            labels.replace(symbol.label, new Pair<>(symbol.address, '-'));
-
-                        } else throw new RuntimeException("Símbols global não existe: " + symbol.label);
-                        //address++;
-
-                        break;
-
                     case "CONST":
                         symbol.opd2 = symbol.opd1;
                         symbol.opd1 = String.valueOf(address++);
@@ -192,32 +198,42 @@ public class FirstPass {
 
                         break;
                 }
-
-            }  else if (symbol.operator.equals("EXTDEF")) {
-                if (labels.containsKey(symbol.opd1))
-                    labels.replace(symbol.opd1, new Pair<>(symbol.address, '+'));
-
-                else throw new RuntimeException("Símbolos global não existe: " + symbol.opd1);
             }
-        }
 
-        //if (!extdef.isEmpty())
-            //throw new RuntimeException("Símbolos globais não existem: " + extdef);
+            if (extr.contains(symbol.opd1))
+                usages.add(new Pair<>(symbol.opd1, symbol.address));
+
+            if (extr.contains(symbol.opd2))
+                usages.add(new Pair<>(symbol.opd2, symbol.address));
+        }
 
         symbols.addAll(labels2Alloc);
 
-        File lst = new File("output/MASMAPRG.lst");
+        File tbl = new File("output/" + file.getName() + ".tbl");
 
         try {
-            FileWriter out = new FileWriter(lst);
-            String string = "";
+            FileWriter out = new FileWriter(tbl);
+            String string = "<definition>\n";
 
             for (Map.Entry<String, Pair<Integer, Character>> entry : labels.entrySet()) {
                 String label = entry.getKey();
                 Pair<Integer, Character> addr = entry.getValue();
 
-                string += label + " " + addr.getKey() + " " + addr.getValue() + "\n";
+                if (!extr.contains(label))
+                    string += label + " " + addr.getKey() + " " + addr.getValue() + "\n";
             }
+
+            string += "</definition>\n";
+            string += "<usage>\n";
+
+            for (Pair<String, Integer> usage : usages) {
+                String label = usage.getKey();
+                Integer addr = usage.getValue();
+
+                string += label + " " + addr + " " + "+" + "\n"; //TODO offset
+            }
+
+            string += "</usage>\n";
 
             out.write(string);
             out.close();
