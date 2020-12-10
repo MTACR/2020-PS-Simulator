@@ -50,7 +50,7 @@ public class Symbol {
         if (startsWithNumber(s))
             return false;
 
-        return !Pattern.compile("[^A-Za-z0-9]").matcher(s).find();
+        return !Pattern.compile("[^A-Za-z0-9-_]").matcher(s).find();
     }
 
     private static boolean isOpdValid(String s) {

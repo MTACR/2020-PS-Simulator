@@ -1,14 +1,27 @@
 package assembler;
 
+import macros.MacrosProcessor;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Assembler {
+
+    public static void main(String[] args) {
+        args = new String[]{"input/testemacro.asm"};
+
+        MacrosProcessor processor = new MacrosProcessor();
+
+        File input = new File(args[0]);
+        File output = new File("input/testemacro.asm.proc");
+
+        processor.process(input, output);
+
+        SecondPass.pass(output);
+
+
+    }
 
 	// ------------------------------------------------
 	// CÓDIGO VELHO ABAIXO
