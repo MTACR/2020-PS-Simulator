@@ -26,7 +26,7 @@ public class ObjectCode {
         return out;
     }
 
-    public void offset(int offset){
+    public void offset(int offset) {
         address += offset;
 
         for(int i = 0; i < words.length; i++){

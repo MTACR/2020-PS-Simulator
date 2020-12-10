@@ -19,53 +19,12 @@ public class Assembler {
         processor.process(input, output);
 
         SecondPass.pass(output);
-
-
     }
 
 	// ------------------------------------------------
 	// CÓDIGO VELHO ABAIXO
 	// ------------------------------------------------
-
-	//transforma o opcode de String pra inteiro
-	/*private static int getOpcode(String opcode) {
-		switch (opcode.toLowerCase()) {
-			case "br":
-				return 0;
-			case "brpos":
-				return 1;
-			case "add":
-				return 2;
-			case "load":
-				return 3;
-			case "brzero":
-				return 4;
-			case "brneg":
-				return 5;
-			case "sub":
-				return 6;
-			case "store":
-				return 7;
-			case "write":
-				return 8;
-			case "ret":
-				return 9;
-			case "divide":
-				return 10;
-			case "stop":
-				return 11;
-			case "read":
-				return 12;
-			case "copy":
-				return 13;
-			case "mult":
-				return 14;
-			case "call":
-				return 15;
-		}
-		
-		return -1;
-	}
+    /*
 	
 	//retorna o modo de endereçamento (0 p/ direto, 1 p/ indireto ou 2 p/ imediato)
 	//no assembly, direto é '$' antes da posição; indireto é '*' antes da posição; imediato é só o numero.

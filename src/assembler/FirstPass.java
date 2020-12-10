@@ -1,6 +1,7 @@
 package assembler;
 
 import javafx.util.Pair;
+import linker.Usage;
 
 import java.io.*;
 import java.util.*;
@@ -13,8 +14,10 @@ public class FirstPass {
         Map<String, Pair<Integer, Character>> labels = new TreeMap<>();
         List<String> extdef = new ArrayList<>();
         List<String> extr = new ArrayList<>();
-        List<Pair<String, Integer>> usages = new ArrayList<>();
+        List<Usage> usages = new ArrayList<>();
 
+        boolean hasStart = false;
+        boolean hasEnd = false;
         int address = 0;
         int line = 1;
 
@@ -25,23 +28,17 @@ public class FirstPass {
             while ((string = reader.readLine()) != null) {
                 string = string.toUpperCase().replaceAll("\\s+"," ").trim();
 
-                //TODO receber arquivo sem , do processador de macros
-                //string = string.replace(",", "");
-
                 if (string.length() > 80)
                     throw new RuntimeException("Linha muito longa em" + line);
 
-                //ignora comentários
                 if (string.contains("*"))
                     string = string.substring(0, string.indexOf("*"));
 
-                //ignora linhas em branco
                 if (string.isEmpty()) {
                     line++;
                     continue;
                 }
 
-                //divide linha quando acha um espaço
                 String[] lineArr = string.split(" ");
                 for (int i = 0; i < lineArr.length; i++)
                     lineArr[i] = lineArr[i].trim();
@@ -51,6 +48,11 @@ public class FirstPass {
                     case 1:
 
                         if (table0.contains(lineArr[0])) {
+
+                            if (lineArr[0].equals("END")) {
+                                hasEnd = true;
+                                break;
+                            }
 
                             if (lineArr[0].equals("EXTR"))
                                 throw new RuntimeException("Instrução exige um label em " + line);
@@ -92,10 +94,15 @@ public class FirstPass {
 
                         else if (table1.contains(lineArr[0])) {
 
+                            if (lineArr[0].equals("START")) {
+                                hasStart = true;
+                                break;
+                            }
+
                             if (lineArr[0].equals("EXTDEF")) {
                                 if (!extdef.contains(lineArr[1])) {
                                     extdef.add(lineArr[1]);
-                                    usages.add(new Pair<>(lineArr[1], address));
+                                    usages.add(new Usage(lineArr[1], address, '?'));
                                 }
 
                                 else throw new RuntimeException("Símbolo redefinido: " + lineArr[1] + " em " + line);
@@ -174,9 +181,14 @@ public class FirstPass {
             e.printStackTrace();
         }
 
+        if (!hasStart)
+            throw new RuntimeException("Modulo não possui início declarado");
+
+        if (!hasEnd)
+            throw new RuntimeException("Modulo não possui fim declarado");
+
         List<Symbol> labels2Alloc = new ArrayList<>();
 
-        // Aloca endereço para variáveis
         for (Symbol symbol : symbols) {
             if (!symbol.label.isEmpty()) {
                 switch (symbol.operator) {
@@ -184,7 +196,7 @@ public class FirstPass {
                     case "SPACE":
                         symbol.opd1 = String.valueOf(address++);
 
-                        System.out.println("SPACE: " + labels.get(symbol.label));
+                        //System.out.println("SPACE: " + symbol.label + " in " + labels.get(symbol.label));
 
                         break;
 
@@ -192,7 +204,7 @@ public class FirstPass {
                         symbol.opd2 = symbol.opd1;
                         symbol.opd1 = String.valueOf(address++);
 
-                        System.out.println("CONST: " + labels.get(symbol.label));
+                        //System.out.println("CONST: " + symbol.label + " in " + labels.get(symbol.label));
 
                         break;
 
@@ -200,7 +212,7 @@ public class FirstPass {
                         labels2Alloc.add(new Symbol(line++, address, symbol.label, "LABEL", String.valueOf(labels.get(symbol.label).getKey()), ""));
                         labels.replace(symbol.label, new Pair<>(address, 'r'));
 
-                        System.out.println("LABEL: " + labels.get(symbol.label));
+                        //System.out.println("LABEL: " + symbol.label + " in " + labels.get(symbol.label));
 
                         address++;
 
@@ -208,11 +220,20 @@ public class FirstPass {
                 }
             }
 
-            if (extr.contains(symbol.opd1))
-                usages.add(new Pair<>(symbol.opd1, symbol.address));
+            if (extr.contains(symbol.opd1)) {
+                if (symbol.flag1 != null) {
+                    usages.add(new Usage(symbol.opd1, symbol.address + 1, symbol.flag1));
+                    symbol.opd1 = String.valueOf(symbol.offset1);
+                } else
+                    usages.add(new Usage(symbol.opd1, symbol.address + 1, '+'));
+            }
 
             if (extr.contains(symbol.opd2))
-                usages.add(new Pair<>(symbol.opd2, symbol.address));
+                if (symbol.flag2 != null) {
+                    usages.add(new Usage(symbol.opd2, symbol.address + 2, symbol.flag2));
+                    symbol.opd2 = String.valueOf(symbol.offset2);
+                } else
+                    usages.add(new Usage(symbol.opd2, symbol.address + 2, '+'));
         }
 
         symbols.addAll(labels2Alloc);
@@ -232,7 +253,7 @@ public class FirstPass {
         if (!extdef.isEmpty())
             throw new RuntimeException("Simbolo global não definido " + extdef);
 
-        File tbl = new File("output/" + file.getName() + ".tbl");
+        File tbl = new File("output/" + file.getName().substring(0, file.getName().indexOf('.')) + ".tbl");
 
         try {
             FileWriter out = new FileWriter(tbl);
@@ -240,14 +261,11 @@ public class FirstPass {
             string += "</definition>\n";
             string += "<usage>\n";
 
-            for (Pair<String, Integer> usage : usages) {
-                String label = usage.getKey();
-                Integer addr = usage.getValue();
-
-                if (extr.contains(label))
-                    string += label + " " + addr + " " + "+" + "\n"; //TODO offset
+            for (Usage usage : usages) {
+                if (extr.contains(usage.symbol))
+                    string += usage.symbol + " " + usage.locationCounter + " " + usage.opsign + "\n";
                 else
-                    string += label + " " + addr + " " + "r" + "\n";
+                    string += usage.symbol + " " + usage.locationCounter + " " + "r" + "\n";
             }
 
             string += "</usage>\n";

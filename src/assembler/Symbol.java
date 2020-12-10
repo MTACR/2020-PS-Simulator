@@ -4,21 +4,49 @@ import java.util.regex.Pattern;
 
 public class Symbol {
     public final int line;
-    public final int address;
     public final String label;
     public final String operator;
+    public final Character flag1;
+    public final int offset1;
+    public final Character flag2;
+    public final int offset2;
 
+    public int address;
     public String opd1;
     public String opd2;
     public ObjectCode objectCode;
 
     public Symbol(int line, int address, String label, String operator, String opd1, String opd2) {
-        this.line = line;
-        this.address = address;
-        this.label = label;
-        this.operator = operator;
-        this.opd1 = opd1;
-        this.opd2 = opd2;
+
+        if (opd1.contains("+")) {
+            flag1 = '+';
+            offset1 = Integer.parseInt(opd1.substring(opd1.indexOf("+") + 1));
+            opd1 = opd1.substring(0, opd1.indexOf("+"));
+
+        } else if (opd1.contains("-")) {
+            flag1 = '-';
+            offset1 = Integer.parseInt(opd1.substring(opd1.indexOf("-") + 1));
+            opd1 = opd1.substring(0, opd1.indexOf("-"));
+
+        } else {
+            flag1 = null;
+            offset1 = 0;
+        }
+
+        if (opd2.contains("+")) {
+            flag2 = '+';
+            offset2 = Integer.parseInt(opd2.substring(opd2.indexOf("+") + 1));
+            opd2 = opd2.substring(0, opd2.indexOf("+"));
+
+        } else if (opd2.contains("-")) {
+            flag2 = '-';
+            offset2 = Integer.parseInt(opd2.substring(opd2.indexOf("-") + 1));
+            opd2 = opd2.substring(0, opd2.indexOf("-"));
+
+        } else {
+            flag2 = null;
+            offset2 = 0;
+        }
 
         if (!isLabelValid(label))
             throw new RuntimeException(" Erro de sintaxe em " + label);
@@ -28,6 +56,13 @@ public class Symbol {
 
         if (!isOpdValid(opd2))
             throw new RuntimeException(" Erro de sintaxe em " + opd2);
+
+        this.line = line;
+        this.address = address;
+        this.label = label;
+        this.operator = operator;
+        this.opd1 = opd1;
+        this.opd2 = opd2;
     }
 
     public String printMachineCode() {

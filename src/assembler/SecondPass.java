@@ -153,7 +153,7 @@ public class SecondPass {
 
         //Collections.sort(objects, Comparator.comparingInt(o -> o.address));
 
-        File obj = new File("output/" + file.getName() + ".obj");
+        File obj = new File("output/" + file.getName().substring(0, file.getName().indexOf('.')) + ".obj");
         //File lst = new File("output/" + file.getName() + ".lst"); //se bobear é mais fácil printar isso depois do ligador
 
         try {
@@ -274,7 +274,7 @@ public class SecondPass {
 
     public static void main(String[] args) {
         System.out.printf("%-10s %-10s %-10s\n", "Address", "Size", "Machine");
-        pass(new File("input/testemacro.asm.proc")).forEach(objectCode -> {
+        pass(new File("input/firstpass.asm")).forEach(objectCode -> {
             System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.printWords());
         });
     }

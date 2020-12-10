@@ -1,8 +1,8 @@
 <definition>
-B 4 r
+B 5 r
+C 4 r
 </definition>
 <usage>
-B 2 r
-A 0 +
-A 2 +
+B 4 r
+A 3 +
 </usage>

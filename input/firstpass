@@ -1,5 +1,0 @@
-        WRITE   A
-A       EXTR
-        EXTDEF B
-B       READ A
-
