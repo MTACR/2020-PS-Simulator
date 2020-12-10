@@ -138,10 +138,16 @@ public class SecondPass {
                 words[0] = new Pair<>(op, 'a');
 
                 if (addrOpd1 != -1)
-                    words[1] = new Pair<>(addrOpd1, 'r');
+                    if (labels.containsKey(opd1))
+                        words[1] = new Pair<>(addrOpd1, 'r');
+                    else
+                        words[1] = new Pair<>(addrOpd1, 'a');
 
                 if (addrOpd2 != -1)
-                    words[2] = new Pair<>(addrOpd2, 'r');
+                    if (labels.containsKey(opd2))
+                        words[2] = new Pair<>(addrOpd2, 'r');
+                    else
+                        words[2] = new Pair<>(addrOpd2, 'a');
 
                 ObjectCode objectCode = new ObjectCode(symbol.address, size, words);
                 objects.add(objectCode);

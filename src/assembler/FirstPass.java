@@ -223,22 +223,28 @@ public class FirstPass {
             if (extr.contains(symbol.opd1)) {
                 if (symbol.flag1 != null) {
                     usages.add(new Usage(symbol.opd1, symbol.address + 1, symbol.flag1));
-                    symbol.opd1 = String.valueOf(symbol.offset1);
                 } else
                     usages.add(new Usage(symbol.opd1, symbol.address + 1, '+'));
+
+                symbol.opd1 = String.valueOf(symbol.offset1);
             }
 
-            if (extr.contains(symbol.opd2))
+            if (extr.contains(symbol.opd2)) {
                 if (symbol.flag2 != null) {
                     usages.add(new Usage(symbol.opd2, symbol.address + 2, symbol.flag2));
-                    symbol.opd2 = String.valueOf(symbol.offset2);
+
                 } else
                     usages.add(new Usage(symbol.opd2, symbol.address + 2, '+'));
+
+                symbol.opd2 = String.valueOf(symbol.offset2);
+            }
         }
 
         symbols.addAll(labels2Alloc);
 
         String string = "<definition>\n";
+
+        List<String> ext2Remove = new ArrayList<>();
 
         for (Map.Entry<String, Pair<Integer, Character>> entry : labels.entrySet()) {
             String label = entry.getKey();
@@ -246,8 +252,14 @@ public class FirstPass {
 
             if (!extr.contains(label))
                 string += label + " " + addr.getKey() + " " + addr.getValue() + "\n";
+            else
+                ext2Remove.add(label);
 
             extdef.remove(label);
+        }
+
+        for (String s : ext2Remove) {
+            labels.remove(s);
         }
 
         if (!extdef.isEmpty())
@@ -281,7 +293,7 @@ public class FirstPass {
 
     public static void main(String[] args) {
         System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s\n", "Line", "Address", "Label", "Operator", "Opd1", "Op2");
-        getSymbolsTable(new File("input/testemacro.asm.proc")).symbols.forEach(symbol -> {
+        getSymbolsTable(new File("input/firstpass.asm")).symbols.forEach(symbol -> {
             System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s\n", symbol.line, symbol.address, symbol.label, symbol.operator, symbol.opd1, symbol.opd2);
         });
     }
