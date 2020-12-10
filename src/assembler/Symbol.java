@@ -29,7 +29,7 @@ public class Symbol {
             opd1 = opd1.substring(0, opd1.indexOf("-"));
 
         } else {
-            flag1 = null;
+            flag1 = '+';
             offset1 = 0;
         }
 
@@ -44,7 +44,7 @@ public class Symbol {
             opd2 = opd2.substring(0, opd2.indexOf("-"));
 
         } else {
-            flag2 = null;
+            flag2 = '+';
             offset2 = 0;
         }
 

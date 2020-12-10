@@ -10,11 +10,20 @@ import static assembler.SymbolsTable.*;
 public class FirstPass {
 
     public static SymbolsTable getSymbolsTable(File file) {
+        // Lista de símbolos válidos, ou seja, uma linha de um arquivo, com os campos propriamente organizados
         List<Symbol> symbols = new ArrayList<>();
+
+        // Mapa de labels/variáveis
         Map<String, Pair<Integer, Character>> labels = new TreeMap<>();
-        List<String> extdef = new ArrayList<>();
-        List<String> extr = new ArrayList<>();
-        List<Usage> usages = new ArrayList<>();
+
+        // Lista de definições externas
+        List<String> extdefLabels = new ArrayList<>();
+
+        // Lista de usos externos
+        List<String> extuseLabels = new ArrayList<>();
+
+        // Lista de variáveis sendo usadas
+        List<Usage> extuseVars = new ArrayList<>();
 
         boolean hasStart = false;
         boolean hasEnd = false;
@@ -43,6 +52,12 @@ public class FirstPass {
                 for (int i = 0; i < lineArr.length; i++)
                     lineArr[i] = lineArr[i].trim();
 
+                // até aqui foram verificações de formatação da string
+
+                // esse switch decide a quantidade de tokens na linha sendo processada
+                // as table* são listas que contém todos tokens válidos, organizados por quantidade de parâmetros
+                // ou seja, table0 -> 0 parâmetros, table1 -> 1 parâmetro, etc.
+
                 switch (lineArr.length) {
 
                     case 1:
@@ -68,9 +83,10 @@ public class FirstPass {
 
                         if (table0.contains(lineArr[1])) {
 
+                            // Se o 2 token for EXTR, adiciona 1 token às labels e aos usos externos
                             if (lineArr[1].equals("EXTR")) {
-                                if (!extr.contains(lineArr[0])) {
-                                    extr.add(lineArr[0]);
+                                if (!extuseLabels.contains(lineArr[0])) {
+                                    extuseLabels.add(lineArr[0]);
                                     labels.put(lineArr[0], new Pair<>(0, 'r'));
                                 }
 
@@ -83,6 +99,7 @@ public class FirstPass {
 
                                 symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
 
+                                // Se token 1 for label, adiciona ás labels
                                 if (!labels.containsKey(lineArr[0]))
                                     labels.put(lineArr[0], new Pair<>(address, 'r'));
 
@@ -99,18 +116,18 @@ public class FirstPass {
                                 break;
                             }
 
+                            // Se token 1 for EXTDEF, adiciona labels às definições externas
+                            // E à lista de variáveis em uso
                             if (lineArr[0].equals("EXTDEF")) {
-                                if (!extdef.contains(lineArr[1])) {
-                                    extdef.add(lineArr[1]);
-                                    usages.add(new Usage(lineArr[1], address, '?'));
+                                if (!extdefLabels.contains(lineArr[1])) {
+                                    extdefLabels.add(lineArr[1]);
+                                    //usages.add(new Usage(lineArr[1], address, '?'));
                                 }
 
                                 else throw new RuntimeException("Símbolo redefinido: " + lineArr[1] + " em " + line);
 
                             } else {
-
                                 symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
-
                                 address += 2;
                             }
                         }
@@ -128,11 +145,13 @@ public class FirstPass {
 
                             symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], ""));
 
+                            // Se token 1 for label, adiciona ás labels
                             if (!labels.containsKey(lineArr[0]))
                                 labels.put(lineArr[0], new Pair<>(address, 'r'));
 
                             else throw new RuntimeException("Símbolo redefinido: " + lineArr[0]);
 
+                            // Se token 2 for CONST, soma apenas 1 endereço
                             if (lineArr[1].equals("CONST"))
                                 address += 1;
                             else
@@ -158,6 +177,7 @@ public class FirstPass {
 
                             symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], lineArr[3]));
 
+                            // Se token 1 for label, adiciona ás labels
                             if (!labels.containsKey(lineArr[0]))
                                 labels.put(lineArr[0], new Pair<>(address, 'r'));
 
@@ -187,12 +207,17 @@ public class FirstPass {
         if (!hasEnd)
             throw new RuntimeException("Modulo não possui fim declarado");
 
+        // Lista de labels, que são na verdade variáveis, para serem alocadas na memória
         List<Symbol> labels2Alloc = new ArrayList<>();
 
+        // Percorre todos os símbolos à fim de lidar com alocação das labels, que ocorrerá no segundo passo
         for (Symbol symbol : symbols) {
+
+            // Se possui label, verifica se é declarção de variável ou label
             if (!symbol.label.isEmpty()) {
                 switch (symbol.operator) {
 
+                    // Se for declaração, opd1 = novo endereço válido
                     case "SPACE":
                         symbol.opd1 = String.valueOf(address++);
 
@@ -200,6 +225,7 @@ public class FirstPass {
 
                         break;
 
+                    // Se for constante, opd2 = valor da constante e opd1 = novo endereço válido
                     case "CONST":
                         symbol.opd2 = symbol.opd1;
                         symbol.opd1 = String.valueOf(address++);
@@ -208,8 +234,11 @@ public class FirstPass {
 
                         break;
 
+                    // Se for label, cria um novo símbolo com operador LABEL e adiciona à lista de alocações e
+                    // ao mapa de labels
                     default:
-                        labels2Alloc.add(new Symbol(line++, address, symbol.label, "LABEL", String.valueOf(labels.get(symbol.label).getKey()), ""));
+                        labels2Alloc.add(new Symbol(line++, address, symbol.label, "LABEL",
+                                String.valueOf(labels.get(symbol.label).getKey()), ""));
                         labels.replace(symbol.label, new Pair<>(address, 'r'));
 
                         //System.out.println("LABEL: " + symbol.label + " in " + labels.get(symbol.label));
@@ -220,50 +249,51 @@ public class FirstPass {
                 }
             }
 
-            if (extr.contains(symbol.opd1)) {
-                if (symbol.flag1 != null) {
-                    usages.add(new Usage(symbol.opd1, symbol.address + 1, symbol.flag1));
-                } else
-                    usages.add(new Usage(symbol.opd1, symbol.address + 1, '+'));
-
+            // Se a lista de uso possui a label definida no opd, se adiciona label à lista de usos,
+            // e opd = offset
+            if (extuseLabels.contains(symbol.opd1)) {
+                extuseVars.add(new Usage(symbol.opd1, symbol.address + 1, symbol.flag1));
                 symbol.opd1 = String.valueOf(symbol.offset1);
             }
 
-            if (extr.contains(symbol.opd2)) {
-                if (symbol.flag2 != null) {
-                    usages.add(new Usage(symbol.opd2, symbol.address + 2, symbol.flag2));
-
-                } else
-                    usages.add(new Usage(symbol.opd2, symbol.address + 2, '+'));
-
+            if (extuseLabels.contains(symbol.opd2)) {
+                extuseVars.add(new Usage(symbol.opd2, symbol.address + 2, symbol.flag2));
                 symbol.opd2 = String.valueOf(symbol.offset2);
             }
         }
 
+        // Adiciona à lista de símbolos as variáveis a serem alocadas
         symbols.addAll(labels2Alloc);
 
         String string = "<definition>\n";
 
+        // Lista de variáveis externas que devem ser removidas do mapa de labels
         List<String> ext2Remove = new ArrayList<>();
 
+        // Percorre mapa de labels, criando o arquivo de usos/definições
         for (Map.Entry<String, Pair<Integer, Character>> entry : labels.entrySet()) {
             String label = entry.getKey();
             Pair<Integer, Character> addr = entry.getValue();
 
-            if (!extr.contains(label))
+            // Se definições externas possui label, salva no arquivo
+            if (extdefLabels.contains(label)) {
                 string += label + " " + addr.getKey() + " " + addr.getValue() + "\n";
-            else
+                extdefLabels.remove(label);
+
+            // Se usos externos possui label, marca para ser removido
+            // Isso serve para que no segundo passo labels externas não sejam encontrdas e o offset receba flag 'a'
+            } else if (extuseLabels.contains(label)) {
                 ext2Remove.add(label);
-
-            extdef.remove(label);
+            }
         }
 
-        for (String s : ext2Remove) {
+        // Remove todos símbolos externos do mapa
+        for (String s : ext2Remove)
             labels.remove(s);
-        }
 
-        if (!extdef.isEmpty())
-            throw new RuntimeException("Simbolo global não definido " + extdef);
+        // Caso ainda haja algum símbolo, significa que ele não foi usado
+        if (!extdefLabels.isEmpty())
+            throw new RuntimeException("Simbolo global não definido " + extdefLabels);
 
         File tbl = new File("output/" + file.getName().substring(0, file.getName().indexOf('.')) + ".tbl");
 
@@ -273,12 +303,9 @@ public class FirstPass {
             string += "</definition>\n";
             string += "<usage>\n";
 
-            for (Usage usage : usages) {
-                if (extr.contains(usage.symbol))
-                    string += usage.symbol + " " + usage.locationCounter + " " + usage.opsign + "\n";
-                else
-                    string += usage.symbol + " " + usage.locationCounter + " " + "r" + "\n";
-            }
+            // Gera a tabela de usos
+            for (Usage usage : extuseVars)
+                string += usage.symbol + " " + usage.locationCounter + " " + usage.opsign + "\n";
 
             string += "</usage>\n";
 

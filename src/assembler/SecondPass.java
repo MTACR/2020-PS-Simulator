@@ -151,7 +151,7 @@ public class SecondPass {
 
                 ObjectCode objectCode = new ObjectCode(symbol.address, size, words);
                 objects.add(objectCode);
-                //symbol.objectCode = objectCode; //usado pra printar aquilo lst
+                //symbol.objectCode = objectCode; //usado pra printar arquivo lst
             }
         }
 

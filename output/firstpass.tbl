@@ -1,8 +1,6 @@
 <definition>
 B 5 r
-C 4 r
 </definition>
 <usage>
-B 4 r
 A 3 +
 </usage>
