@@ -1,5 +1,5 @@
         WRITE   A
 A       EXTR
         EXTDEF B
-        READ A
+B       READ A
 

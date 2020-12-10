@@ -93,8 +93,10 @@ public class FirstPass {
                         else if (table1.contains(lineArr[0])) {
 
                             if (lineArr[0].equals("EXTDEF")) {
-                                if (!extdef.contains(lineArr[1]))
+                                if (!extdef.contains(lineArr[1])) {
                                     extdef.add(lineArr[1]);
+                                    usages.add(new Pair<>(lineArr[1], address));
+                                }
 
                                 else throw new RuntimeException("Símbolo redefinido: " + lineArr[1] + " em " + line);
 
@@ -209,19 +211,25 @@ public class FirstPass {
 
         symbols.addAll(labels2Alloc);
 
+        String string = "<definition>\n";
+
+        for (Map.Entry<String, Pair<Integer, Character>> entry : labels.entrySet()) {
+            String label = entry.getKey();
+            Pair<Integer, Character> addr = entry.getValue();
+
+            if (!extr.contains(label))
+                string += label + " " + addr.getKey() + " " + addr.getValue() + "\n";
+
+            extdef.remove(label);
+        }
+
+        if (!extdef.isEmpty())
+            throw new RuntimeException("Simbolo global não definido " + extdef);
+
         File tbl = new File("output/" + file.getName() + ".tbl");
 
         try {
             FileWriter out = new FileWriter(tbl);
-            String string = "<definition>\n";
-
-            for (Map.Entry<String, Pair<Integer, Character>> entry : labels.entrySet()) {
-                String label = entry.getKey();
-                Pair<Integer, Character> addr = entry.getValue();
-
-                if (!extr.contains(label))
-                    string += label + " " + addr.getKey() + " " + addr.getValue() + "\n";
-            }
 
             string += "</definition>\n";
             string += "<usage>\n";
@@ -230,7 +238,10 @@ public class FirstPass {
                 String label = usage.getKey();
                 Integer addr = usage.getValue();
 
-                string += label + " " + addr + " " + "+" + "\n"; //TODO offset
+                if (extr.contains(label))
+                    string += label + " " + addr + " " + "+" + "\n"; //TODO offset
+                else
+                    string += label + " " + addr + " " + "r" + "\n";
             }
 
             string += "</usage>\n";
