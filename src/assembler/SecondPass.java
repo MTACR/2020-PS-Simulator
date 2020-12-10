@@ -103,18 +103,14 @@ public class SecondPass {
             if (o == -1) {
                 switch (operator) {
                     case "SPACE":
-                        //words.add(new Pair<>(Integer.parseInt(opd1), 'r'));
-                        //words.add(labels.get(opd1));
                         vars.put(Integer.parseInt(opd1), new Pair(0, 'a'));
-                        objects.add(new ObjectCode(symbol.address, 1, labels.get(opd1)));
+                        objects.add(new ObjectCode(symbol.address, 1, new Pair<>(Integer.parseInt(opd1), 'r')));
 
                         break;
 
                     case "CONST":
-                        //words.add(new Pair<>(Integer.parseInt(opd1), 'r'));
-                       // words.add(labels.get(opd1));
                         vars.put(Integer.parseInt(opd1), new Pair(Integer.parseInt(opd2), 'a'));
-                        objects.add(new ObjectCode(symbol.address, 1, labels.get(opd1)));
+                        objects.add(new ObjectCode(symbol.address, 1, new Pair<>(Integer.parseInt(opd1), 'r')));
 
                         break;
 
@@ -149,39 +145,35 @@ public class SecondPass {
 
                 ObjectCode objectCode = new ObjectCode(symbol.address, size, words);
                 objects.add(objectCode);
-                symbol.objectCode = objectCode; //usado pra printar aquilo lst
+                //symbol.objectCode = objectCode; //usado pra printar aquilo lst
             }
         }
 
-        vars.forEach((addr, pair) -> {
-            //List<Pair<Integer, Character>> words = new ArrayList<>();
-            //words.add(new Pair<>(pair.getKey(), pair.getValue()));
-            objects.add(new ObjectCode(addr, 1, new Pair<>(pair.getKey(), pair.getValue())));
-        });
+        vars.forEach((addr, pair) -> objects.add(new ObjectCode(addr, 1, new Pair<>(pair.getKey(), pair.getValue()))));
 
-        Collections.sort(objects, Comparator.comparingInt(o -> o.address));
+        //Collections.sort(objects, Comparator.comparingInt(o -> o.address));
 
         File obj = new File("output/" + file.getName() + ".obj");
-        File lst = new File("output/" + file.getName() + ".lst"); //se bobear é mais fácil printar isso depois do ligador
+        //File lst = new File("output/" + file.getName() + ".lst"); //se bobear é mais fácil printar isso depois do ligador
 
         try {
             FileWriter outObj = new FileWriter(obj);
-            FileWriter outLst = new FileWriter(lst);
+            //FileWriter outLst = new FileWriter(lst);
             String sObj = "";
-            String sLst = "";
+            //String sLst = "";
 
             for (ObjectCode objectCode : objects)
                 sObj += objectCode.address + " " + objectCode.size + " " + objectCode.printWords() + "\n";
 
-            for (Symbol symbol : symbols)
-                if (symbol.objectCode != null)
-                    sLst += symbol.address + " " + symbol.objectCode.printWords() + symbol.line + " " + symbol.printMachineCode() + "\n";
+            //for (Symbol symbol : symbols)
+                //if (symbol.objectCode != null)
+                    //sLst += symbol.address + " " + symbol.objectCode.printWords() + symbol.line + " " + symbol.printMachineCode() + "\n";
 
             outObj.write(sObj);
             outObj.close();
 
-            outLst.write(sLst);
-            outLst.close();
+            //outLst.write(sLst);
+            //outLst.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -282,7 +274,7 @@ public class SecondPass {
 
     public static void main(String[] args) {
         System.out.printf("%-10s %-10s %-10s\n", "Address", "Size", "Machine");
-        pass(new File("input/firstpass")).forEach(objectCode -> {
+        pass(new File("input/testemacro.asm.proc")).forEach(objectCode -> {
             System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.printWords());
         });
     }

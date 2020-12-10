@@ -184,17 +184,23 @@ public class FirstPass {
                     case "SPACE":
                         symbol.opd1 = String.valueOf(address++);
 
+                        System.out.println("SPACE: " + labels.get(symbol.label));
+
                         break;
 
                     case "CONST":
                         symbol.opd2 = symbol.opd1;
                         symbol.opd1 = String.valueOf(address++);
 
+                        System.out.println("CONST: " + labels.get(symbol.label));
+
                         break;
 
                     default:
                         labels2Alloc.add(new Symbol(line++, address, symbol.label, "LABEL", String.valueOf(labels.get(symbol.label).getKey()), ""));
                         labels.replace(symbol.label, new Pair<>(address, 'r'));
+
+                        System.out.println("LABEL: " + labels.get(symbol.label));
 
                         address++;
 
@@ -257,7 +263,7 @@ public class FirstPass {
 
     public static void main(String[] args) {
         System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s\n", "Line", "Address", "Label", "Operator", "Opd1", "Op2");
-        getSymbolsTable(new File("input/firstpass")).symbols.forEach(symbol -> {
+        getSymbolsTable(new File("input/testemacro.asm.proc")).symbols.forEach(symbol -> {
             System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s\n", symbol.line, symbol.address, symbol.label, symbol.operator, symbol.opd1, symbol.opd2);
         });
     }
