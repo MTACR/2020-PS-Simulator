@@ -26,7 +26,8 @@ public class ObjectCode {
         return out;
     }
 
-    public void offset(int offset) {
+    //INUTIL
+    /*public void offset(int offset) {
         address += offset;
 
         for(int i = 0; i < words.length; i++){
@@ -35,7 +36,7 @@ public class ObjectCode {
             if (currentWord.getValue() == 'r')
                 words[i] = new Pair<>(currentWord.getKey() + offset, currentWord.getValue());
         }
-    }
+    }*/
 
     @Override
     public String toString() {

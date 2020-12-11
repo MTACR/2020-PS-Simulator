@@ -1,30 +1,57 @@
 package linker;
 
 import assembler.ObjectCode;
+import linker.auxiliar.DefinitionTable;
 
 import java.util.ArrayList;
 
 public class SecondPass {
-    //Atualiza os endereços para refletir a união dos segmentos
-    public static ArrayList<ObjectCode> updateAddresses(ArrayList<Segment> segments){
-        ArrayList<ObjectCode> updated = new ArrayList<>();
+    //Atualiza os endereços para refletir a união dos segmentos, já define o inicio do programa (com base no primeiro endereço do primeiro segmento) e seta o tamanho da pilha
+    public static ArrayList<Line> updateAddresses(ArrayList<Segment> segments, int offset){
+        ArrayList<Line> updated = new ArrayList<>();
 
-        Segment seg = segments.get(0);
-        updated = (ArrayList<ObjectCode>) seg.lines.clone();
-        int offset = seg.length;
+        for (int i = 0; i < offset; i++){
+            updated.add(new Line(0, 'a', false));   //Cria o cabeçalho e a pilha
+        }
+        updated.get(0).word = offset;       //Armazena o inicio do programa na posição 0 Necessario?. Na verdade, não dá pra deduzir pelo tamanho da pilha
+        updated.get(2).word = offset - 3;   //Armazena o tamanho da pilha no endereço 2
 
-        for(int i = 1; i < segments.size(); i++){
-            seg = segments.get(i);
+        for(Segment seg : segments){
 
-            //TODO: offset da usageTable
+            for(Usage usage : seg.usageTable.values()){
+                usage.offset(offset);
+            }
 
-            for(ObjectCode oc : seg.lines){
-                oc.offset(offset);
-                updated.add(oc);
+            for(Line line : seg.lines){
+                line.offset(offset);
+                updated.add(line);
             }
             offset += seg.length;
         }
 
         return updated;
+    }
+
+    //Atualizar as referências externas baseado na TSG e tabelas
+    //de uso (o endereço é atualizado)
+    public static void updateReferences(ArrayList<Line> lines, ArrayList<Segment> segments, DefinitionTable tgs){
+        for(Segment seg : segments){
+            for(Usage use : seg.usageTable.values()){
+                Definition def = tgs.get(use.symbol);
+                Line line = lines.get(use.locationCounter);
+
+                try {
+                    if (use.opsign == '+') {
+                        line.word = def.address + line.word;
+                    } else {
+                        line.word = def.address - line.word;
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    System.out.println("Undefined Symbol in " + seg.fileName + ": " + use.symbol + "'s definition not found");
+                    System.out.println("Ou pode ser dado algum problema da linha não existir");
+                }
+            }
+        }
     }
 }

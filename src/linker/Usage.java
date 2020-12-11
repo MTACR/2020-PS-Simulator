@@ -11,6 +11,10 @@ public class Usage {
         this.opsign = opsign;
     }
 
+    public void offset(int offset){
+        locationCounter += offset;
+    }
+
     @Override
     public String toString() {
         return "Usage {" +
