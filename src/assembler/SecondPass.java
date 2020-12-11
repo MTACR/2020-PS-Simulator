@@ -40,14 +40,11 @@ public class SecondPass {
             String opd1 = symbol.opd1;
             String opd2 = symbol.opd2;
 
-            //System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s\n", symbol.line, symbol.address, symbol.label, symbol.operator, symbol.opd1, symbol.opd2);
-
             int modeOpd1 = -1;
             int modeOpd2 = -1;
             int addrOpd1 = -1;
             int addrOpd2 = -1;
             int size = 0;
-            //List<Pair<Integer, Character>> words = new ArrayList<>();
 
             if (labels.containsKey(opd1)) {
                 modeOpd1 = 0;
@@ -137,7 +134,7 @@ public class SecondPass {
 
                 words[0] = new Pair<>(op, 'a');
 
-                if (addrOpd1 != -1)
+                if (addrOpd1 != -1) {
                     if (labels.containsKey(opd1)) {
                         if (symbol.flag1 == '-')
                             addrOpd1 -= symbol.offset1;
@@ -146,10 +143,22 @@ public class SecondPass {
 
                         words[1] = new Pair<>(addrOpd1, 'r');
 
-                    } else
-                        words[1] = new Pair<>(addrOpd1, 'a');
+                    } else {
+                        //TODO verificar modos de endereçamento
+                        switch (ADDRMODE.values()[modeOpd1]) {
+                            case DIRETO:
+                            case INDIRETO:
+                                words[1] = new Pair<>(addrOpd1, 'r');
+                                break;
 
-                if (addrOpd2 != -1)
+                            case IMEDIATO:
+                                words[1] = new Pair<>(addrOpd1, 'a');
+                                break;
+                        }
+                    }
+                }
+
+                if (addrOpd2 != -1) {
                     if (labels.containsKey(opd2)) {
                         if (symbol.flag2 == '-')
                             addrOpd2 -= symbol.offset2;
@@ -158,86 +167,44 @@ public class SecondPass {
 
                         words[2] = new Pair<>(addrOpd2, 'r');
 
-                    } else
-                        words[2] = new Pair<>(addrOpd2, 'a');
+                    } else {
+                        //TODO verificar modos de endereçamento
+                        switch (ADDRMODE.values()[modeOpd2]) {
+                            case DIRETO:
+                            case INDIRETO:
+                                words[2] = new Pair<>(addrOpd2, 'r');
+                                break;
 
-                ObjectCode objectCode = new ObjectCode(symbol.address, size, words);
-                objects.add(objectCode);
-                //symbol.objectCode = objectCode; //usado pra printar arquivo lst
+                            case IMEDIATO:
+                                words[2] = new Pair<>(addrOpd2, 'a');
+                                break;
+                        }
+                    }
+                }
+
+                objects.add(new ObjectCode(symbol.address, size, words));
             }
         }
 
         vars.forEach((addr, pair) -> objects.add(new ObjectCode(addr, 1, new Pair<>(pair.getKey(), pair.getValue()))));
 
-        //Collections.sort(objects, Comparator.comparingInt(o -> o.address));
-
         File obj = new File("output/" + file.getName().substring(0, file.getName().indexOf('.')) + ".obj");
-        //File lst = new File("output/" + file.getName() + ".lst"); //se bobear é mais fácil printar isso depois do ligador
 
         try {
             FileWriter outObj = new FileWriter(obj);
-            //FileWriter outLst = new FileWriter(lst);
             String sObj = "";
-            //String sLst = "";
 
             for (ObjectCode objectCode : objects)
                 sObj += objectCode.address + " " + objectCode.size + " " + objectCode.printWords() + "\n";
 
-            //for (Symbol symbol : symbols)
-                //if (symbol.objectCode != null)
-                    //sLst += symbol.address + " " + symbol.objectCode.printWords() + symbol.line + " " + symbol.printMachineCode() + "\n";
-
             outObj.write(sObj);
             outObj.close();
-
-            //outLst.write(sLst);
-            //outLst.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return objects;
     }
-
-    /*private static String opcodeBinary(int opcode, int addrOpd1, int addrOpd2) {
-        String opcodeBin = Integer.toBinaryString(opcode);
-        opcodeBin = fillBinary(opcodeBin, 4, 'l');
-
-        //adicionar mais um bit porque a descrição do trabalho tá confusa
-        opcodeBin = '0' + opcodeBin;
-
-        //bit 5
-        if (addrOpd1 == 1) opcodeBin = '1' + opcodeBin;
-        else opcodeBin = '0' + opcodeBin;
-
-        //bit 6
-        if (addrOpd2 == 1) opcodeBin = '1' + opcodeBin;
-        else opcodeBin = '0' + opcodeBin;
-
-        //bit 7
-        if (addrOpd1 == 2 || addrOpd2 == 2) opcodeBin = '1' + opcodeBin;
-        else opcodeBin = '0' + opcodeBin;
-
-        opcodeBin = fillBinary(opcodeBin, 16, 'l');
-
-        return opcodeBin + "\n";
-    }
-
-    private static String fillBinary(String numBinary, int size, char fill) {
-        String aux = "";
-
-        while (numBinary.length() + aux.length() < size) aux += '0';
-
-        if (fill == 'l') return aux + numBinary;
-        else return numBinary + aux;
-    }
-
-    private static String opdBinary(int addr) {
-        String opdBin = Integer.toBinaryString(addr);
-        opdBin = fillBinary(opdBin, 16, 'l');
-
-        return opdBin + '\n';
-    }*/
 
     private static ADDRMODE getAddrMode(String opd) {
         if (opd.charAt(0) == '#') 		return IMEDIATO; //imediato

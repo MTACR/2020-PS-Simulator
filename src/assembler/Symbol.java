@@ -14,7 +14,6 @@ public class Symbol {
     public int address;
     public String opd1;
     public String opd2;
-    public ObjectCode objectCode;
 
     public Symbol(int line, int address, String label, String operator, String opd1, String opd2) {
 
