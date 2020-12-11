@@ -323,9 +323,11 @@ public class MacrosProcessor {
 
     // Processa um arquivo contendo macros, gerando a saída num arquivo
 
-    public void process(File input, File output) {
+    public File process(File file) {
+        File output = new File(file.getName().substring(0, file.getName().indexOf(".")) + ".proc");
+
         try {
-            reader = new BufferedReader(new FileReader(input));
+            reader = new BufferedReader(new FileReader(file));
             writer = new FileWriter(output);
 
             doProcess(null);
@@ -334,10 +336,12 @@ public class MacrosProcessor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return output;
     }
 
     public static void main(String []args) {
         MacrosProcessor processor = new MacrosProcessor();
-        processor.process(new File("input/testemacro.asm"), new File("input/testemacro.asm.proc"));
+        processor.process(new File("input/testemacro.asm"));
     }
 }
