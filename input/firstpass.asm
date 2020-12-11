@@ -1,6 +1,6 @@
 START BAGAÇA
 
-        READ B
+        READ 1
         WRITE  A
 A       EXTR
         EXTDEF B

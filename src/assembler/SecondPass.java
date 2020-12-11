@@ -144,11 +144,25 @@ public class SecondPass {
 
                 int op = o;
 
-                if (modeOpd1 != null)
-                    op += modeOpd1.getValue();
+                if (modeOpd1 != null) {
+                    switch (modeOpd1) {
+                        case INDIRETO: op |= 32;
+                        break;
 
-                if (modeOpd2 != null)
-                    op += modeOpd2.getValue();
+                        case IMEDIATO: op |= 128;
+                        break;
+                    }
+                }
+
+                if (modeOpd2 != null) {
+                    switch (modeOpd2) {
+                        case INDIRETO: op |= 64;
+                            break;
+
+                        case IMEDIATO: op |= 128;
+                            break;
+                    }
+                }
 
                 Pair<Integer, Character>[] words = new Pair[3];
 
