@@ -6,47 +6,15 @@ public class Symbol {
     public final int line;
     public final String label;
     public final String operator;
-    public final Character flag1;
-    public final int offset1;
-    public final Character flag2;
-    public final int offset2;
 
     public int address;
     public String opd1;
     public String opd2;
 
+    public boolean ext1;
+    public boolean ext2;
+
     public Symbol(int line, int address, String label, String operator, String opd1, String opd2) {
-
-        if (opd1.contains("+")) {
-            flag1 = '+';
-            offset1 = Integer.parseInt(opd1.substring(opd1.indexOf("+") + 1));
-            opd1 = opd1.substring(0, opd1.indexOf("+"));
-
-        } else if (opd1.contains("-")) {
-            flag1 = '-';
-            offset1 = Integer.parseInt(opd1.substring(opd1.indexOf("-") + 1));
-            opd1 = opd1.substring(0, opd1.indexOf("-"));
-
-        } else {
-            flag1 = '+';
-            offset1 = 0;
-        }
-
-        if (opd2.contains("+")) {
-            flag2 = '+';
-            offset2 = Integer.parseInt(opd2.substring(opd2.indexOf("+") + 1));
-            opd2 = opd2.substring(0, opd2.indexOf("+"));
-
-        } else if (opd2.contains("-")) {
-            flag2 = '-';
-            offset2 = Integer.parseInt(opd2.substring(opd2.indexOf("-") + 1));
-            opd2 = opd2.substring(0, opd2.indexOf("-"));
-
-        } else {
-            flag2 = '+';
-            offset2 = 0;
-        }
-
         if (!isLabelValid(label))
             throw new RuntimeException(" Erro de sintaxe em " + label);
 
@@ -64,19 +32,6 @@ public class Symbol {
         this.opd2 = opd2;
     }
 
-    public String printMachineCode() {
-        String s = operator;
-
-        if (!opd1.isEmpty())
-            s += " " + opd1;
-
-        if (!opd2.isEmpty())
-            s += " " + opd2;
-
-        return s;
-    }
-
-    //TODO na verdade as vars usam SUfixo
     private static boolean isLabelValid(String s) {
         if (s.isEmpty())
             return true;
@@ -91,12 +46,18 @@ public class Symbol {
         if (s.isEmpty())
             return true;
 
-        if (startsWithNumber(s))
-            return !Pattern.compile("[^0-9]").matcher(s).find();
-
-        if (s.startsWith("#"))
+        if (s.startsWith("#")) {
             if (startsWithNumber(s.substring(1)))
                 return !Pattern.compile("[^0-9]").matcher(s.substring(1)).find();
+        }
+
+        if (s.endsWith(",I")) {
+            System.out.println(s.substring(0, s.indexOf(",I")));
+            return !Pattern.compile("[^0-9]").matcher(s.substring(0, s.indexOf(",I"))).find();
+        }
+
+        if (startsWithNumber(s))
+            return !Pattern.compile("[^0-9]").matcher(s).find();
 
         return !Pattern.compile("[^A-Za-z0-9]").matcher(s).find();
     }

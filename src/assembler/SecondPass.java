@@ -10,6 +10,7 @@ import static assembler.SecondPass.ADDRMODE.*;
 
 public class SecondPass {
 
+    // Tabela dos modos que suportam modo imediato
     private static final List<String> table = Arrays.asList(
             "ADD", "DIVIDE", "LOAD", "MULT", "SUB", "WRITE");
 
@@ -29,10 +30,19 @@ public class SecondPass {
     }
 
     public static List<ObjectCode> pass(File file) {
+        // Informações do passo 1
         SymbolsTable data = getSymbolsTable(file);
+
+        // Lista símbolos (que deverão ser convertidos em código objeto nesse passo)
         List<Symbol> symbols = data.symbols;
+
+        // Mapa de labels intrnas (as externas foram excluídas no passo 1)
         Map<String, Pair<Integer, Character>> labels = data.labels;
+
+        // Mapa de variáveis a serem alocadas
         Map<Integer, Pair<Integer, Character>> vars = new TreeMap<>();
+
+        // Lista de código objeto
         List<ObjectCode> objects = new ArrayList<>();
 
         for (Symbol symbol : symbols) {
@@ -40,14 +50,15 @@ public class SecondPass {
             String opd1 = symbol.opd1;
             String opd2 = symbol.opd2;
 
-            int modeOpd1 = -1;
-            int modeOpd2 = -1;
+            ADDRMODE modeOpd1 = null;
+            ADDRMODE modeOpd2 = null;
             int addrOpd1 = -1;
             int addrOpd2 = -1;
             int size = 0;
 
+            // Se o operando é uma label, obtém seu endereço
             if (labels.containsKey(opd1)) {
-                modeOpd1 = 0;
+                modeOpd1 = DIRETO;
                 addrOpd1 = labels.get(opd1).getKey();
                 size++;
 
@@ -57,11 +68,15 @@ public class SecondPass {
                 if (a == IMEDIATO && !table.contains(operator))
                     throw new RuntimeException("Modo de endereçamento inválido em: " + operator + " " + opd1);
 
-                if (a == IMEDIATO || a == INDIRETO)
-                    opd1 = opd1.substring(1);
-
                 if (a != null) {
-                    modeOpd1 = a.getValue();
+
+                    if (a == IMEDIATO)
+                        opd1 = opd1.substring(1);
+
+                    else if (a == INDIRETO)
+                        opd1 = opd1.substring(0, opd1.indexOf(",I"));
+
+                    modeOpd1 = a;
                     addrOpd1 = Integer.parseInt(opd1);
                 }
 
@@ -71,7 +86,7 @@ public class SecondPass {
             }
 
             if (labels.containsKey(opd2)) {
-                modeOpd2 = 0;
+                modeOpd2 = DIRETO;
                 addrOpd2 = labels.get(opd2).getKey();
                 size++;
 
@@ -81,11 +96,15 @@ public class SecondPass {
                 if (a == IMEDIATO && !operator.equals("COPY"))
                     throw new RuntimeException("Modo de endereçamento inválido em: " + operator + " " + opd2);
 
-                if (a == IMEDIATO || a == INDIRETO)
-                    opd2 = opd2.substring(1);
-
                 if (a != null) {
-                    modeOpd2 = a.getValue();
+
+                    if (a == IMEDIATO)
+                        opd2 = opd2.substring(1);
+
+                    else if (a == INDIRETO)
+                        opd2 = opd2.substring(0, opd2.indexOf(",I"));
+
+                    modeOpd2 = a;
                     addrOpd2 = Integer.parseInt(opd2);
                 }
 
@@ -94,9 +113,9 @@ public class SecondPass {
                 size++;
             }
 
-            //TODO lidar com códigos q n são opcode
             int o = getOpcode(operator);
 
+            // Se instrução não for opcode, será uma instrução (não código objeto) de alocação de espaço
             if (o == -1) {
                 switch (operator) {
                     case "SPACE":
@@ -119,73 +138,81 @@ public class SecondPass {
                     default: throw new RuntimeException("Instrução inválida");
                 }
 
+            // Se for instrução, gera código objeto
             } else {
                 size++;
 
                 int op = o;
 
-                if (modeOpd1 != -1)
-                    op += modeOpd1;
+                if (modeOpd1 != null)
+                    op += modeOpd1.getValue();
 
-                if (modeOpd2 != -1)
-                    op += modeOpd2;
+                if (modeOpd2 != null)
+                    op += modeOpd2.getValue();
 
                 Pair<Integer, Character>[] words = new Pair[3];
 
+                // opcode é absoluto
                 words[0] = new Pair<>(op, 'a');
 
+                // Define modo do operando
+                // Se for label é relativo
+                // Se for símbolo externo é absoluto, pois operando representa offset
+                // Se for direto ou indireto é relativo
+                // Se for imediato é absoluto
                 if (addrOpd1 != -1) {
                     if (labels.containsKey(opd1)) {
-                        if (symbol.flag1 == '-')
-                            addrOpd1 -= symbol.offset1;
-                        else
-                            addrOpd1 += symbol.offset1;
-
                         words[1] = new Pair<>(addrOpd1, 'r');
 
                     } else {
-                        //TODO verificar modos de endereçamento
-                        switch (ADDRMODE.values()[modeOpd1]) {
-                            case DIRETO:
-                            case INDIRETO:
-                                words[1] = new Pair<>(addrOpd1, 'r');
-                                break;
+                        if (symbol.ext1) {
+                            words[1] = new Pair<>(addrOpd1, 'a');
 
-                            case IMEDIATO:
-                                words[1] = new Pair<>(addrOpd1, 'a');
-                                break;
+                        } else {
+                            //TODO verificar modos de endereçamento se está ok
+                            switch (modeOpd1) {
+                                case DIRETO:
+                                case INDIRETO:
+                                    words[1] = new Pair<>(addrOpd1, 'r');
+                                    break;
+
+                                case IMEDIATO:
+                                    words[1] = new Pair<>(addrOpd1, 'a');
+                                    break;
+                            }
                         }
                     }
                 }
 
                 if (addrOpd2 != -1) {
                     if (labels.containsKey(opd2)) {
-                        if (symbol.flag2 == '-')
-                            addrOpd2 -= symbol.offset2;
-                        else
-                            addrOpd2 += symbol.offset2;
-
                         words[2] = new Pair<>(addrOpd2, 'r');
 
                     } else {
-                        //TODO verificar modos de endereçamento
-                        switch (ADDRMODE.values()[modeOpd2]) {
-                            case DIRETO:
-                            case INDIRETO:
-                                words[2] = new Pair<>(addrOpd2, 'r');
-                                break;
+                        //TODO verificar modos de endereçamento se está ok
+                        if (symbol.ext2) {
+                            words[2] = new Pair<>(addrOpd1, 'a');
 
-                            case IMEDIATO:
-                                words[2] = new Pair<>(addrOpd2, 'a');
-                                break;
+                        } else {
+                            switch (modeOpd2) {
+                                case DIRETO:
+                                case INDIRETO:
+                                    words[2] = new Pair<>(addrOpd2, 'r');
+                                    break;
+
+                                case IMEDIATO:
+                                    words[2] = new Pair<>(addrOpd2, 'a');
+                                    break;
+                            }
                         }
                     }
                 }
-
+                // Adiciona à lista de código objeto com endereço, quantidade de palavras e palavras
                 objects.add(new ObjectCode(symbol.address, size, words));
             }
         }
 
+        // Para cada variável alocada, gera um espaço de memória com seu devido endereço e modo
         vars.forEach((addr, pair) -> objects.add(new ObjectCode(addr, 1, new Pair<>(pair.getKey(), pair.getValue()))));
 
         File obj = new File("output/" + file.getName().substring(0, file.getName().indexOf('.')) + ".obj");
@@ -207,14 +234,14 @@ public class SecondPass {
     }
 
     private static ADDRMODE getAddrMode(String opd) {
-        if (opd.charAt(0) == '#') 		return IMEDIATO; //imediato
-        if (opd.charAt(0) == 'I') 	    return INDIRETO; //indireto
+        if (opd.startsWith("#")) 		return IMEDIATO; //imediato
+        if (opd.endsWith(",I")) 	    return INDIRETO; //indireto
 
         try {
             Double.parseDouble(opd);
-                                        return DIRETO; //direto
+                                        return DIRETO;   //direto
         } catch (NumberFormatException nfe) {
-                                        return null; //erro
+                                        return null;     //erro
         }
     }
 

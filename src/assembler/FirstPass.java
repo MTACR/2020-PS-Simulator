@@ -119,10 +119,8 @@ public class FirstPass {
                             // Se token 1 for EXTDEF, adiciona labels às definições externas
                             // E à lista de variáveis em uso
                             if (lineArr[0].equals("EXTDEF")) {
-                                if (!extdefLabels.contains(lineArr[1])) {
+                                if (!extdefLabels.contains(lineArr[1]))
                                     extdefLabels.add(lineArr[1]);
-                                    //usages.add(new Usage(lineArr[1], address, '?'));
-                                }
 
                                 else throw new RuntimeException("Símbolo redefinido: " + lineArr[1] + " em " + line);
 
@@ -221,16 +219,12 @@ public class FirstPass {
                     case "SPACE":
                         symbol.opd1 = String.valueOf(address++);
 
-                        //System.out.println("SPACE: " + symbol.label + " in " + labels.get(symbol.label));
-
                         break;
 
                     // Se for constante, opd2 = valor da constante e opd1 = novo endereço válido
                     case "CONST":
                         symbol.opd2 = symbol.opd1;
                         symbol.opd1 = String.valueOf(address++);
-
-                        //System.out.println("CONST: " + symbol.label + " in " + labels.get(symbol.label));
 
                         break;
 
@@ -241,8 +235,6 @@ public class FirstPass {
                                 String.valueOf(labels.get(symbol.label).getKey()), ""));
                         labels.replace(symbol.label, new Pair<>(address, 'r'));
 
-                        //System.out.println("LABEL: " + symbol.label + " in " + labels.get(symbol.label));
-
                         address++;
 
                         break;
@@ -250,15 +242,17 @@ public class FirstPass {
             }
 
             // Se a lista de uso possui a label definida no opd, se adiciona label à lista de usos,
-            // e opd = offset
+            // e marca a flag de variável externa (isso serve para que o offset (0) seja absoluto no passo 2
             if (extuseLabels.contains(symbol.opd1)) {
-                extuseVars.add(new Usage(symbol.opd1, symbol.address + 1, symbol.flag1));
-                symbol.opd1 = String.valueOf(symbol.offset1);
+                extuseVars.add(new Usage(symbol.opd1, symbol.address + 1, 'g'));
+                symbol.opd1 = String.valueOf(0);
+                symbol.ext1 = true;
             }
 
             if (extuseLabels.contains(symbol.opd2)) {
-                extuseVars.add(new Usage(symbol.opd2, symbol.address + 2, symbol.flag2));
-                symbol.opd2 = String.valueOf(symbol.offset2);
+                extuseVars.add(new Usage(symbol.opd2, symbol.address + 2, 'g'));
+                symbol.opd2 = String.valueOf(0);
+                symbol.ext2 = true;
             }
         }
 
