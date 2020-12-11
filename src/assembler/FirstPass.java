@@ -244,13 +244,13 @@ public class FirstPass {
             // Se a lista de uso possui a label definida no opd, se adiciona label à lista de usos,
             // e marca a flag de variável externa (isso serve para que o offset (0) seja absoluto no passo 2
             if (extuseLabels.contains(symbol.opd1)) {
-                extuseVars.add(new Usage(symbol.opd1, symbol.address + 1, 'g'));
+                extuseVars.add(new Usage(symbol.opd1, symbol.address + 1, '+'));
                 symbol.opd1 = String.valueOf(0);
                 symbol.ext1 = true;
             }
 
             if (extuseLabels.contains(symbol.opd2)) {
-                extuseVars.add(new Usage(symbol.opd2, symbol.address + 2, 'g'));
+                extuseVars.add(new Usage(symbol.opd2, symbol.address + 2, '+'));
                 symbol.opd2 = String.valueOf(0);
                 symbol.ext2 = true;
             }

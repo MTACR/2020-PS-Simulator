@@ -1,9 +1,7 @@
 package assembler;
 
 import javafx.util.Pair;
-
 import java.util.Arrays;
-import java.util.List;
 
 public class ObjectCode {
     public int address;
@@ -26,24 +24,13 @@ public class ObjectCode {
         return out;
     }
 
-    //INUTIL
-    /*public void offset(int offset) {
-        address += offset;
-
-        for(int i = 0; i < words.length; i++){
-            Pair<Integer, Character> currentWord = words[i];
-
-            if (currentWord.getValue() == 'r')
-                words[i] = new Pair<>(currentWord.getKey() + offset, currentWord.getValue());
-        }
-    }*/
-
     @Override
     public String toString() {
         return address +
                 " " + size +
                 " " + Arrays.toString(words);
     }
+
 }
 
 
