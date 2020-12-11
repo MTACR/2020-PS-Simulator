@@ -1,6 +1,6 @@
 package linker;
 
-import assembler.ObjectCode;
+
 import javafx.util.Pair;
 import linker.auxiliar.DefinitionTable;
 import linker.auxiliar.UsageTable;
@@ -20,14 +20,14 @@ public class FirstPass {
         for(String fileNameObj : fileNames) {
             DefinitionTable definitionTable = new DefinitionTable();
             UsageTable usageTable = new UsageTable();
-            ArrayList<ObjectCode> lines = new ArrayList<>();
+            ArrayList<Line> lines = new ArrayList<>();
             int length = 0;
 
-            String fileNameLst = fileNameObj.replace(".obj",".lst");
+            String fileNameTbl = fileNameObj.replace(".obj",".tbl");
 
             try {
                 File fileObj = new File(fileNameObj);
-                File fileLst = new File(fileNameLst);
+                File fileTbl = new File(fileNameTbl);
                 String line;
                 String[] sl;
 
@@ -41,24 +41,25 @@ public class FirstPass {
 
                         length += size;
 
-                        Pair<Integer, Character>[] words = new Pair[(size * 2) + 2];
+                        //Meio gambiarra, mas né
+                        int offset = 2;
 
-                        for (int i = 2; i < (size * 2) + 2; ) {
-                            int op = Integer.parseInt(sl[i]);
-                            i++;
-                            String mode = sl[i];
-                            i++;
-                            words[i] = new Pair(op, mode);
+                        if (size > 1){
+                            lines.add(new Line(Integer.parseInt(sl[2]), sl[3].charAt(0), true));
+                            offset += 2;
                         }
 
-                        ObjectCode oc = new ObjectCode(address, size, words);
-                        lines.add(oc);
+                        for (int i = offset; i < (size * 2) + 2; ) {
+                            int op = Integer.parseInt(sl[i++]);
+                            char mode = sl[i++].charAt(0);
+                            lines.add(new Line(op, mode, false));
+                        }
                     }
                 }
 
-                try (BufferedReader readerLst = new BufferedReader(new FileReader(fileLst))) {
+                try (BufferedReader readerTbl = new BufferedReader(new FileReader(fileTbl))) {
 
-                    while((line = readerLst.readLine()) != null){
+                    while((line = readerTbl.readLine()) != null){
                         sl = line.split(" ");
                         char flag = sl[2].charAt(0);
 
@@ -88,18 +89,13 @@ public class FirstPass {
 
     //Unifica as tabelas de definições dos vários segmentos em única tabela (tabela de símbolos globais)
     //Tabela de definições é copiada para a TSG (1ª tabela copiada sem alterações, na 2ª tabela o valor dos endereços é adicionado do tamanho do primeiro segmento)
-    public static DefinitionTable unifyDefinitions(ArrayList<Segment> segments) {
-        DefinitionTable tgs = null;
+    public static DefinitionTable unifyDefinitions(ArrayList<Segment> segments, int offset) {
+        DefinitionTable tgs = new DefinitionTable();    //Tabela de Símbolos Globais (TSG): Armazena todos os símbolos globais definidos. União das tabelas de definição dos diferentes segmentos.
 
         try {
-            tgs = (DefinitionTable) segments.get(0).definitionTable.clone(); //Tabela de Símbolos Globais (TSG): Armazena todos os símbolos globais definidos. União das tabelas de definição dos diferentes segmentos.
-            int offset = segments.get(0).length;
+            for (Segment seg : segments) {
 
-            for (int i = 1; i < segments.size(); i++) {
-                Segment seg = segments.get(i);
-
-                for (Map.Entry defEntry : seg.definitionTable.entrySet()) {
-                    Definition def = (Definition) defEntry.getValue();
+                for (Definition def : seg.definitionTable.values()) {
 
                     if (tgs.get(def.symbol) == null) {
                         def.offset(offset);
@@ -118,8 +114,9 @@ public class FirstPass {
         return tgs;
     }
 
+    //INUTIL o teste já é feito no updateReferences()
     //Checa se as entradas na tabela de uso bate com as da definição, buscando por indefinidas
-    public static void checkUsages(ArrayList<Segment> segments){ //Provavelmente desnecessario, deve ser possivel fazer esse teste em uma etada posterior do ligador
+    /*public static void checkUsages(ArrayList<Segment> segments){ //Provavelmente desnecessario, deve ser possivel fazer esse teste em uma etada posterior do ligador
         try {
             for (Segment segUse : segments) {
 
@@ -144,6 +141,6 @@ public class FirstPass {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 }
