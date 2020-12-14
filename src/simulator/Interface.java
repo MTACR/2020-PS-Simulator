@@ -625,8 +625,18 @@ public class Interface extends javax.swing.JFrame {
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
-            new Interface().setVisible(true);
+            //new Interface().setVisible(true);
+            instance().setVisible(true);
         });
+    }
+
+    private static Interface instance;
+
+    public static synchronized Interface instance() {
+        if (instance == null)
+            instance = new Interface();
+
+        return instance;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
