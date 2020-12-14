@@ -2,7 +2,6 @@ package assembler;
 
 import javafx.util.Pair;
 import linker.Usage;
-
 import java.io.*;
 import java.util.*;
 import static assembler.SymbolsTable.*;
@@ -12,16 +11,12 @@ public class FirstPass {
     public static SymbolsTable getSymbolsTable(File file) {
         // Lista de símbolos válidos, ou seja, uma linha de um arquivo, com os campos propriamente organizados
         List<Symbol> symbols = new ArrayList<>();
-
         // Mapa de labels/variáveis
         Map<String, Pair<Integer, Character>> labels = new TreeMap<>();
-
         // Lista de definições externas
         List<String> extdefLabels = new ArrayList<>();
-
         // Lista de usos externos
         List<String> extuseLabels = new ArrayList<>();
-
         // Lista de variáveis sendo usadas
         List<Usage> extuseVars = new ArrayList<>();
 
@@ -30,6 +25,7 @@ public class FirstPass {
         boolean hasStack = false;
         int address = 1;
         int line = 1;
+        String name = "";
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -121,6 +117,8 @@ public class FirstPass {
                                     throw new RuntimeException("Início redefinido em " + line);
                                 else
                                     hasStart = true;
+
+                                name = lineArr[1];
 
                                 break;
                             }
@@ -312,7 +310,7 @@ public class FirstPass {
         if (!extdefLabels.isEmpty())
             throw new RuntimeException("Simbolo global não definido " + extdefLabels);
 
-        File tbl = new File("output/" + file.getName().substring(0, file.getName().indexOf('.')) + ".tbl");
+        File tbl = new File("output/" + name + ".tbl");
 
         try {
             FileWriter out = new FileWriter(tbl);
@@ -327,7 +325,7 @@ public class FirstPass {
             e.printStackTrace();
         }
 
-        return new SymbolsTable(symbols, labels);
+        return new SymbolsTable(symbols, labels, name);
     }
 
     public static void main(String[] args) {

@@ -1,7 +1,6 @@
 package assembler;
 
 import javafx.util.Pair;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -9,10 +8,12 @@ import java.util.Map;
 public class SymbolsTable {
     public List<Symbol> symbols;
     public Map<String, Pair<Integer, Character>> labels;
+    public String name;
 
-    public SymbolsTable(List<Symbol> symbols, Map<String, Pair<Integer, Character>> labels) {
+    public SymbolsTable(List<Symbol> symbols, Map<String, Pair<Integer, Character>> labels, String name) {
         this.symbols = symbols;
         this.labels = labels;
+        this.name = name;
     }
 
     public static final List<String> table = Arrays.asList(

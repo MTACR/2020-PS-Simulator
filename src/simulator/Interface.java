@@ -104,9 +104,10 @@ public class Interface extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Simulador");
         setSize(new java.awt.Dimension(640, 300));
 
-        registersPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        registersPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(0));
 
         pcLabel.setText("PC");
 
@@ -272,7 +273,7 @@ public class Interface extends javax.swing.JFrame {
 
         memoryLabel.setText("Memória");
 
-        MemoryScrollPane.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        MemoryScrollPane.setBorder(javax.swing.BorderFactory.createBevelBorder(1));
 
         memoryTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -308,7 +309,7 @@ public class Interface extends javax.swing.JFrame {
             memoryTable.getColumnModel().getColumn(4).setResizable(false);
         }
 
-        ioPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        ioPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(0));
 
         outputLabel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         outputLabel.setText("00000");
