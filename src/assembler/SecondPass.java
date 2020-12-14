@@ -18,7 +18,7 @@ public class SecondPass {
         DIRETO, INDIRETO, IMEDIATO
     }
 
-    public static File pass(File file) {
+    public static List<ObjectCode> pass(File file) {
         // Informações do passo 1
         SymbolsTable data = getSymbolsTable(file);
         // Lista símbolos (que deverão ser convertidos em código objeto nesse passo)
@@ -221,10 +221,10 @@ public class SecondPass {
         // Para cada variável alocada, gera um espaço de memória com seu devido endereço e modo
         vars.forEach((addr, pair) -> objects.add(new ObjectCode(addr, 1, new Pair<>(pair.getKey(), pair.getValue()))));
 
-        File output = new File("output/" + data.name + ".obj");
+        File obj = new File("output/" + data.name + ".obj");
 
         try {
-            FileWriter outObj = new FileWriter(output);
+            FileWriter outObj = new FileWriter(obj);
             String sObj = "";
 
             for (ObjectCode objectCode : objects)
@@ -236,7 +236,7 @@ public class SecondPass {
             e.printStackTrace();
         }
 
-        return output;
+        return objects;
     }
 
     private static ADDRMODE getAddrMode(String opd) {
@@ -290,11 +290,11 @@ public class SecondPass {
         return -1;
     }
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         System.out.printf("%-10s %-10s %-10s\n", "Address", "Size", "Machine");
         pass(new File("input/firstpass.asm")).forEach(objectCode -> {
             System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.printWords());
         });
-    }*/
+    }
 
 }

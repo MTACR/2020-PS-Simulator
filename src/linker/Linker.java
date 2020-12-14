@@ -3,7 +3,6 @@ package linker;
 import assembler.ObjectCode;
 import linker.auxiliar.DefinitionTable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -51,22 +50,4 @@ public class Linker {
             }
         }
     }
-
-    public static void link(File[] files) {
-        int offset = 3;
-
-        //TODO iniciar arquivos aqui
-        //ArrayList<Segment> segments = readSegments(files);
-
-        //offset += tamanho da pilha
-
-        //DefinitionTable tgs = unifyDefinitions(segments, offset);
-        //checkUsages(segments);
-
-        //SecondPass
-        //ArrayList<Line> lines = updateAddresses(segments, offset);
-
-        //updateReferences(lines, segments, tgs);
-    }
-
 }
