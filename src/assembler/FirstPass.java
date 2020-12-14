@@ -95,7 +95,7 @@ public class FirstPass {
 
                             } else {
 
-                                if (table.contains(lineArr[0]))
+                                if (tablev.contains(lineArr[0]))
                                     throw new RuntimeException("Label inválida " + line);
 
                                 symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
@@ -156,7 +156,7 @@ public class FirstPass {
 
                         if (table1.contains(lineArr[1])) {
 
-                            if (table.contains(lineArr[0]) || table.contains(lineArr[2]))
+                            if (tablev.contains(lineArr[0]) || tablev.contains(lineArr[2]))
                                 throw new RuntimeException("Label inválida em " + line);
 
                             symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], ""));
@@ -188,7 +188,7 @@ public class FirstPass {
 
                         if (table2.contains(lineArr[1])) {
 
-                            if (table.contains(lineArr[0]) || table.contains(lineArr[2]) || table.contains(lineArr[3]))
+                            if (tablev.contains(lineArr[0]) || tablev.contains(lineArr[2]) || tablev.contains(lineArr[3]))
                                 throw new RuntimeException("Label inválida " + line);
 
                             symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], lineArr[3]));

@@ -1,6 +1,7 @@
 package simulator;
 
 import assembler.Assembler;
+import gui.CustomDocumentFilter;
 
 import java.awt.*;
 import java.io.File;
@@ -510,6 +511,8 @@ public class Interface extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(mainSplit)
         );
+
+        ((AbstractDocument) codeTextPane.getDocument()).setDocumentFilter(new CustomDocumentFilter(codeTextPane));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

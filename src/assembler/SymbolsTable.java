@@ -16,7 +16,11 @@ public class SymbolsTable {
         this.name = name;
     }
 
-    public static final List<String> table = Arrays.asList(
+    public static final List<String> tablea = Arrays.asList(
+            "ADD", "BR", "BRNEG", "BRPOS", "BRZERO", "CALL", "COPY", "DIVIDE", "LOAD", "MULT", "READ", "RET", "STOP",
+            "STORE", "SUB", "WRITE", "CONST", "END", "EXTDEF", "EXTR", "SPACE", "STACK", "START", "MACRO", "MEND");
+
+    public static final List<String> tablev = Arrays.asList(
             "ADD", "BR", "BRNEG", "BRPOS", "BRZERO", "CALL", "COPY", "DIVIDE", "LOAD", "MULT", "READ", "RET", "STOP",
             "STORE", "SUB", "WRITE", "CONST", "END", "EXTDEF", "EXTR", "SPACE", "STACK", "START");
 
