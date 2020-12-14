@@ -20,11 +20,11 @@ public class CustomDocumentFilter extends DocumentFilter {
     private final JTextPane pane;
     private final StyledDocument styledDocument;
     private final StyleContext styleContext = StyleContext.getDefaultStyleContext();
-    private final AttributeSet reservedAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
+    private final AttributeSet reservedAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, new Color(22, 84, 248));
     private final AttributeSet commonAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
-    private final AttributeSet commentsAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.LIGHT_GRAY);
-    private final AttributeSet symbolsAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.PINK);
-    private final AttributeSet numbersAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLUE);
+    private final AttributeSet commentsAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, new Color(27, 175, 89));
+    private final AttributeSet symbolsAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, new Color(243, 153, 22));
+    private final AttributeSet numbersAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, new Color(210, 30, 80));
 
     Pattern reserved = buildReservedPattern();
     Pattern comments = buildCommentsPattern();

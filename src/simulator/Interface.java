@@ -28,9 +28,8 @@ public class Interface extends javax.swing.JFrame {
     public Interface() {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(true);
-        //setLook();
         initComponents();
-        //initProcessor(null);
+        setLook();
     }
 
     // Atualiza os valores dos Registradores na interface.
@@ -124,10 +123,12 @@ public class Interface extends javax.swing.JFrame {
         setTitle("Simulador");
         setSize(new java.awt.Dimension(640, 300));
 
-        mainSplit.setDividerLocation(800);
+        mainSplit.setDividerLocation(1000);
+        mainSplit.setResizeWeight(1.0);
 
-        editorSplit.setDividerLocation(400);
+        editorSplit.setDividerLocation(1000);
         editorSplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        editorSplit.setResizeWeight(0.8);
 
         codeTextPane.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
         codeTextPane.setText("START TESTE\n*\nMACRO\nSCALE &RP\nMACRO\nMULTSC &A,&B,&C\nLOAD &A\nMULT &B\n*SHIFTR &RP\nSTORE &C\nMEND\nMACRO\nDIVSC &A,&B,&C\nLOAD &A\nDIV &B\n*SHIFTL &RP\nSTORE &C\nMEND\nMEND\n*\nMACRO\n&LAB DISCR &A,&B,&C,&D\n&LAB MULTSC &A,&C,TEMP1\nMULTSC TEMP1,4,TEMP1\nMULTSC &A,&B,TEMP2\nSUB TEMP1\nSTORE &D\nMEND\n*\nREAD A\nREAD B\nREAD C\nSCALE 3\nDISCR A,B,C,D\nWRITE D\nSTOP\n*\nA SPACE\nB SPACE\nC SPACE\nD SPACE\nTEMP1 SPACE\nTEMP2 SPACE\n*\nEND\n");
@@ -148,7 +149,7 @@ public class Interface extends javax.swing.JFrame {
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(codePaneLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -173,14 +174,14 @@ public class Interface extends javax.swing.JFrame {
                         .addContainerGap())
                     .addGroup(outputPaneLayout.createSequentialGroup()
                         .addComponent(asmOutLabel)
-                        .addGap(0, 566, Short.MAX_VALUE))))
+                        .addGap(0, 864, Short.MAX_VALUE))))
         );
         outputPaneLayout.setVerticalGroup(
             outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(outputPaneLayout.createSequentialGroup()
                 .addComponent(asmOutLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(asmOutScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                .addComponent(asmOutScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 16, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -460,7 +461,7 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(2, 2, 2)
                 .addComponent(memoryLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
+                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(opPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -499,14 +500,12 @@ public class Interface extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 692, Short.MAX_VALUE))
+                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplit)
+            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 635, Short.MAX_VALUE)
         );
-
-        ((AbstractDocument) codeTextPane.getDocument()).setDocumentFilter(new CustomDocumentFilter(codeTextPane));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -754,6 +753,8 @@ public class Interface extends javax.swing.JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+
+        ((AbstractDocument) codeTextPane.getDocument()).setDocumentFilter(new CustomDocumentFilter(codeTextPane));
     }
 
     public void updateGUI() {
