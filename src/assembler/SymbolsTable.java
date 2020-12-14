@@ -17,16 +17,16 @@ public class SymbolsTable {
 
     public static final List<String> table = Arrays.asList(
             "ADD", "BR", "BRNEG", "BRPOS", "BRZERO", "CALL", "COPY", "DIVIDE", "LOAD", "MULT", "READ", "RET", "STOP",
-            "STORE", "SUB", "WRITE", "CONST", "END", "EXTDEF", "EXTR", "INIT", "PROC", "SPACE", "STACK", "START");
+            "STORE", "SUB", "WRITE", "CONST", "END", "EXTDEF", "EXTR", "SPACE", "STACK", "START");
 
     public static final List<String> table0 = Arrays.asList(
-            "RET", "STOP", "END", "EXTR", "SPACE", "MACRO");
+            "RET", "STOP", "END", "EXTR", "SPACE");//, "MACRO");
 
     public static final List<String> table1 = Arrays.asList(
             "ADD", "BR", "BRNEG", "BRPOS", "BRZERO", "CALL", "DIVIDE", "LOAD", "MULT", "READ",
-            "STORE", "SUB", "WRITE", "CONST", "EXTDEF", "INIT", "STACK", "START");
+            "STORE", "SUB", "WRITE", "CONST", "EXTDEF", "STACK", "START");
 
     public static final List<String> table2 = Arrays.asList(
-            "COPY", "PROC");
+            "COPY");
 
 }

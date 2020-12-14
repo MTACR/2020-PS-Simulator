@@ -15,18 +15,7 @@ public class SecondPass {
             "ADD", "DIVIDE", "LOAD", "MULT", "SUB", "WRITE");
 
     enum ADDRMODE {
-        DIRETO(0), INDIRETO(1), IMEDIATO(2);
-
-        private final int op;
-
-        ADDRMODE(int op) {
-            this.op = op;
-        }
-
-        public int getValue()
-        {
-            return op;
-        }
+        DIRETO, INDIRETO, IMEDIATO
     }
 
     public static List<ObjectCode> pass(File file) {
@@ -135,6 +124,11 @@ public class SecondPass {
 
                         break;
 
+                    case "STACK":
+                        objects.add(new ObjectCode(symbol.address, 1, new Pair<>(Integer.parseInt(opd1), 'a')));
+
+                        break;
+
                     default: throw new RuntimeException("Instrução inválida");
                 }
 
@@ -159,7 +153,9 @@ public class SecondPass {
                         case INDIRETO: op |= 64;
                             break;
 
-                        case IMEDIATO: op |= 128;
+                        case IMEDIATO:
+                            assert ((op & 128) != 0);
+                            op |= 128;
                             break;
                     }
                 }

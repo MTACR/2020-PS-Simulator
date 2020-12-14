@@ -27,7 +27,8 @@ public class FirstPass {
 
         boolean hasStart = false;
         boolean hasEnd = false;
-        int address = 0;
+        boolean hasStack = false;
+        int address = 1;
         int line = 1;
 
         try {
@@ -65,7 +66,11 @@ public class FirstPass {
                         if (table0.contains(lineArr[0])) {
 
                             if (lineArr[0].equals("END")) {
-                                hasEnd = true;
+                                if (hasEnd)
+                                    throw new RuntimeException("Fim redefinido em " + line);
+                                else
+                                    hasEnd = true;
+
                                 break;
                             }
 
@@ -112,7 +117,11 @@ public class FirstPass {
                         else if (table1.contains(lineArr[0])) {
 
                             if (lineArr[0].equals("START")) {
-                                hasStart = true;
+                                if (hasStart)
+                                    throw new RuntimeException("Início redefinido em " + line);
+                                else
+                                    hasStart = true;
+
                                 break;
                             }
 
@@ -123,6 +132,17 @@ public class FirstPass {
                                     extdefLabels.add(lineArr[1]);
 
                                 else throw new RuntimeException("Símbolo redefinido: " + lineArr[1] + " em " + line);
+
+                            } else if (lineArr[0].equals("STACK")) {
+                                if (hasStack)
+                                    throw new RuntimeException("Tamanho da stack redefinido em " + line);
+                                else
+                                    hasStack = true;
+
+                                if (Integer.parseInt(lineArr[1]) > 10 || Integer.parseInt(lineArr[1]) < 0)
+                                    throw new RuntimeException("Tamanho de pilha inválido em " + line);
+
+                                symbols.add(0, new Symbol(line, 0, "", lineArr[0], lineArr[1], ""));
 
                             } else {
                                 symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
@@ -258,6 +278,9 @@ public class FirstPass {
 
         // Adiciona à lista de símbolos as variáveis a serem alocadas
         symbols.addAll(labels2Alloc);
+
+        if (!hasStack)
+            symbols.add(0, new Symbol(0, 0, "", "STACK", "10", ""));
 
         String string = "";
 
