@@ -6,11 +6,29 @@
     </Component>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <SubComponents>
+        <Menu class="javax.swing.JMenu" name="jMenu4">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Arquivo"/>
+          </Properties>
+          <SubComponents>
+            <Menu class="javax.swing.JMenu" name="menuNewFile">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Novo Arquivo"/>
+              </Properties>
+              <Events>
+                <EventHandler event="menuKeyPressed" listener="javax.swing.event.MenuKeyListener" parameters="javax.swing.event.MenuKeyEvent" handler="menuNewFileMenuKeyPressed"/>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="menuNewFileMouseClicked"/>
+              </Events>
+            </Menu>
+            <Menu class="javax.swing.JMenu" name="menuOpenFile">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Abrir Arquivo"/>
+              </Properties>
+            </Menu>
+          </SubComponents>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu1">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\Projects\PS-1\res\open.png"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Abrir Bin&#xe1;rio"/>
           </Properties>
           <Events>
@@ -27,9 +45,6 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu3">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\Projects\PS-1\res\run.png"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Executar"/>
           </Properties>
           <Events>
@@ -68,13 +83,13 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-              <Component id="mainSplit" pref="976" max="32767" attributes="0"/>
+              <Component id="mainSplit" pref="683" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="mainSplit" alignment="0" pref="635" max="32767" attributes="0"/>
+          <Component id="mainSplit" alignment="0" pref="434" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -122,7 +137,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Component id="codePaneTabs" pref="538" max="32767" attributes="0"/>
+                          <Component id="codePaneTabs" pref="325" max="32767" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -185,7 +200,7 @@
                               </Group>
                               <Group type="102" attributes="0">
                                   <Component id="asmOutLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="864" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="159" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -196,7 +211,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="asmOutLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="asmOutScroll" pref="64" max="32767" attributes="0"/>
+                          <Component id="asmOutScroll" pref="67" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -244,7 +259,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="MemoryScrollPane" pref="0" max="32767" attributes="0"/>
+                          <Component id="MemoryScrollPane" pref="386" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="memoryLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -285,7 +300,7 @@
                       <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                       <Component id="memoryLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="MemoryScrollPane" pref="409" max="32767" attributes="0"/>
+                      <Component id="MemoryScrollPane" pref="196" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="opPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -370,29 +385,31 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="pcLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="spLabel" min="-2" max="-2" attributes="0"/>
-                              <Component id="pcValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="spValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="pcValueLabel" alignment="0" pref="59" max="32767" attributes="0"/>
+                              <Component id="spValueLabel" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="accLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="mopValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="mopLabel" min="-2" max="-2" attributes="0"/>
-                              <Component id="accValueLabel" min="-2" max="-2" attributes="0"/>
+                              <Component id="accValueLabel" alignment="0" pref="59" max="32767" attributes="0"/>
+                              <Component id="mopValueLabel" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="reValueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="reLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="riLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="riValueLabel" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="riValueLabel" pref="59" max="32767" attributes="0"/>
+                                      <Component id="reValueLabel" alignment="1" max="32767" attributes="0"/>
+                                  </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="riTextLabel" min="-2" pref="71" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="riLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>

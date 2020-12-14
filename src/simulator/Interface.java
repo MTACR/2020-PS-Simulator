@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import javax.swing.JViewport;
 import javax.swing.Timer;
 import javax.swing.text.*;
@@ -24,12 +25,16 @@ public class Interface extends javax.swing.JFrame {
     private Timer instructionTimer; // Temporizador que vai fazer o processador executar o programa inteiro no modo 0
     private boolean abort;
     private boolean running;
+    private int newFileCount;
 
     public Interface() {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(true);
-        initComponents();
         setLook();
+        initComponents();
+        newFileCount = 0;
+        ((AbstractDocument) codeTextPane.getDocument()).setDocumentFilter(new CustomDocumentFilter(codeTextPane));
+
     }
 
     // Atualiza os valores dos Registradores na interface.
@@ -115,6 +120,9 @@ public class Interface extends javax.swing.JFrame {
         resetButton = new javax.swing.JButton();
         stepButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
+        jMenu4 = new javax.swing.JMenu();
+        menuNewFile = new javax.swing.JMenu();
+        menuOpenFile = new javax.swing.JMenu();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
@@ -149,7 +157,7 @@ public class Interface extends javax.swing.JFrame {
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(codePaneLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
+                .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -174,14 +182,14 @@ public class Interface extends javax.swing.JFrame {
                         .addContainerGap())
                     .addGroup(outputPaneLayout.createSequentialGroup()
                         .addComponent(asmOutLabel)
-                        .addGap(0, 864, Short.MAX_VALUE))))
+                        .addGap(0, 159, Short.MAX_VALUE))))
         );
         outputPaneLayout.setVerticalGroup(
             outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(outputPaneLayout.createSequentialGroup()
                 .addComponent(asmOutLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(asmOutScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+                .addComponent(asmOutScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -264,26 +272,27 @@ public class Interface extends javax.swing.JFrame {
             registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(registersPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(pcLabel)
                     .addComponent(spLabel)
-                    .addComponent(pcValueLabel)
-                    .addComponent(spValueLabel))
+                    .addComponent(pcValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
+                    .addComponent(spValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(accLabel)
-                    .addComponent(mopValueLabel)
                     .addComponent(mopLabel)
-                    .addComponent(accValueLabel))
+                    .addComponent(accValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
+                    .addComponent(mopValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(reValueLabel)
                     .addComponent(reLabel)
+                    .addComponent(riLabel)
                     .addGroup(registersPanelLayout.createSequentialGroup()
-                        .addComponent(riValueLabel)
+                        .addGroup(registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(riValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
+                            .addComponent(reValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(riTextLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(riLabel))
+                        .addComponent(riTextLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         registersPanelLayout.setVerticalGroup(
@@ -430,7 +439,7 @@ public class Interface extends javax.swing.JFrame {
             .addGroup(simulatorLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(simulatorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(MemoryScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
                     .addGroup(simulatorLayout.createSequentialGroup()
                         .addComponent(memoryLabel)
                         .addGap(0, 0, Short.MAX_VALUE))
@@ -461,14 +470,37 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(2, 2, 2)
                 .addComponent(memoryLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
+                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(opPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         mainSplit.setRightComponent(simulator);
 
-        jMenu1.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\open.png")); // NOI18N
+        jMenu4.setText("Arquivo");
+
+        menuNewFile.setText("Novo Arquivo");
+        menuNewFile.addMenuKeyListener(new javax.swing.event.MenuKeyListener() {
+            public void menuKeyPressed(javax.swing.event.MenuKeyEvent evt) {
+                menuNewFileMenuKeyPressed(evt);
+            }
+            public void menuKeyReleased(javax.swing.event.MenuKeyEvent evt) {
+            }
+            public void menuKeyTyped(javax.swing.event.MenuKeyEvent evt) {
+            }
+        });
+        menuNewFile.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menuNewFileMouseClicked(evt);
+            }
+        });
+        jMenu4.add(menuNewFile);
+
+        menuOpenFile.setText("Abrir Arquivo");
+        jMenu4.add(menuOpenFile);
+
+        menuBar.add(jMenu4);
+
         jMenu1.setText("Abrir Binário");
         jMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -485,7 +517,6 @@ public class Interface extends javax.swing.JFrame {
         });
         menuBar.add(jMenu2);
 
-        jMenu3.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\run.png")); // NOI18N
         jMenu3.setText("Executar");
         jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -502,11 +533,11 @@ public class Interface extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE))
+                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 683, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 635, Short.MAX_VALUE)
+            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
         );
 
         pack();
@@ -636,6 +667,26 @@ public class Interface extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jMenu3MouseClicked
 
+    private void menuNewFileMenuKeyPressed(javax.swing.event.MenuKeyEvent evt) {//GEN-FIRST:event_menuNewFileMenuKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuNewFileMenuKeyPressed
+
+    private void menuNewFileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuNewFileMouseClicked
+        codePaneTabs.add("novo"+newFileCount+".asm",newTab());
+        newFileCount++;
+    }//GEN-LAST:event_menuNewFileMouseClicked
+
+    private JScrollPane newTab(){
+        JScrollPane tab = new JScrollPane();
+        JTextPane text = new JTextPane();
+        text.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
+        text.setText("");
+	tab.setViewportView(text);
+        AbstractDocument doc = (AbstractDocument) text.getDocument();
+        doc.setDocumentFilter(new CustomDocumentFilter(text));
+        return tab;
+    }
+    
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
             //new Interface().setVisible(true);
@@ -699,12 +750,15 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
     private javax.swing.JRadioButton jRadioButtonMode0;
     private javax.swing.JRadioButton jRadioButtonMode1;
     private javax.swing.JSplitPane mainSplit;
     private javax.swing.JLabel memoryLabel;
     private javax.swing.JTable memoryTable;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenu menuNewFile;
+    private javax.swing.JMenu menuOpenFile;
     private javax.swing.JLabel mopLabel;
     private javax.swing.JLabel mopValueLabel;
     private javax.swing.JLabel opModeLabel;
@@ -756,7 +810,6 @@ public class Interface extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        ((AbstractDocument) codeTextPane.getDocument()).setDocumentFilter(new CustomDocumentFilter(codeTextPane));
     }
 
     public void updateGUI() {
