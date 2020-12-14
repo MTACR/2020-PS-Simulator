@@ -634,6 +634,7 @@ public class Interface extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             //new Interface().setVisible(true);
             instance().setVisible(true);
+            instance().setExtendedState(instance().getExtendedState() | JFrame.MAXIMIZED_BOTH);
         });
     }
 
@@ -647,6 +648,8 @@ public class Interface extends javax.swing.JFrame {
     }
 
     public void printError(String message) {
+        System.err.println(message);
+
         StyledDocument doc = jTextPane1.getStyledDocument();
 
         Style style = jTextPane1.addStyle("Error", null);
@@ -657,6 +660,8 @@ public class Interface extends javax.swing.JFrame {
     }
 
     public void printMessage(String message) {
+        System.out.println(message);
+
         StyledDocument doc = jTextPane1.getStyledDocument();
 
         Style style = jTextPane1.addStyle("Message", null);

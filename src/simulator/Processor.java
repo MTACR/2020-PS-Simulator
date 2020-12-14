@@ -81,12 +81,12 @@ public class Processor {
     private boolean nextInstruction() {
         if (ri != 11) { // Se ri=11(STOP), parar execução
             if (pc == 0) {
-                System.err.println("Stack overflow");
+                Interface.instance().printError("Stack overflow");
                 return false;
             }
 
             if (pc > memory.size() || pc < 0) {
-                System.err.println("Program counter out of memory bounds");
+                Interface.instance().printError("Program counter out of memory bounds");
                 return false;
             }
 
@@ -156,7 +156,7 @@ public class Processor {
             case CALL:
                 return call(f1);
             default:
-                System.err.println("Invalid opcode");
+                Interface.instance().printError("Invalid opcode");
                 return false;
         }
         return true;

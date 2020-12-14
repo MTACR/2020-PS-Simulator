@@ -24,7 +24,7 @@ public class Memory {
     public boolean push(short word) {  //insere na pilha
         //sp++
         if (sp > stackSize + 2) { //verifica se a pilha está cheia
-            System.err.println("Stack overflow " + sp + "size: " + stackSize);
+            Interface.instance().printError("Stack overflow " + sp + "size: " + stackSize);
             sp = 0; //"causando um desvio para o endereço 0 (zero)"
             return false;
         } else {
@@ -37,7 +37,7 @@ public class Memory {
     public short pop() { //retira da pilha
         //System.err.println("sp" + sp + " zero: " + stackZero + " valorPilha " + memory[sp]);
         if (sp <= stackZero) { //verifica se a pilha está vazia 
-            System.err.println("Stack underflow");
+            Interface.instance().printError("Stack underflow");
             sp = memory[2];
             return 0; // -1 iria dar OutOfBoundsException
         } else {

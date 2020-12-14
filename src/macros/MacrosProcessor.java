@@ -346,4 +346,5 @@ public class MacrosProcessor {
         MacrosProcessor processor = new MacrosProcessor();
         processor.process(new File("input/testemacro.asm"));
     }
+
 }

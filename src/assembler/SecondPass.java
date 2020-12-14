@@ -18,7 +18,7 @@ public class SecondPass {
         DIRETO, INDIRETO, IMEDIATO
     }
 
-    public static File pass(File file) {
+    public static File pass(File file) throws RuntimeException {
         // Informações do passo 1
         SymbolsTable data = getSymbolsTable(file);
         // Lista símbolos (que deverão ser convertidos em código objeto nesse passo)

@@ -1,7 +1,7 @@
 package assembler;
 
-import linker.Linker;
 import macros.MacrosProcessor;
+import simulator.Interface;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,11 @@ public class Assembler {
         List<File> files2Link = new ArrayList<>();
 
         for (File file : files) {
-            files2Link.add(SecondPass.pass(new MacrosProcessor().process(file)));
+            try {
+                files2Link.add(SecondPass.pass(new MacrosProcessor().process(file)));
+            } catch (RuntimeException e) {
+                Interface.instance().printError(e.getMessage());
+            }
         }
 
         //Linker.link((File[]) files2Link.toArray());
