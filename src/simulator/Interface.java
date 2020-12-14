@@ -33,7 +33,7 @@ public class Interface extends javax.swing.JFrame {
         setLook();
         initComponents();
         newFileCount = 0;
-        ((AbstractDocument) codeTextPane.getDocument()).setDocumentFilter(new CustomDocumentFilter(codeTextPane));
+        //((AbstractDocument) codeTextPane.getDocument()).setDocumentFilter(new CustomDocumentFilter(codeTextPane));
 
     }
 
@@ -676,20 +676,20 @@ public class Interface extends javax.swing.JFrame {
         newFileCount++;
     }//GEN-LAST:event_menuNewFileMouseClicked
 
-    private JScrollPane newTab(){
+    private JScrollPane newTab() {
         JScrollPane tab = new JScrollPane();
         JTextPane text = new JTextPane();
         text.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
         text.setText("");
-	tab.setViewportView(text);
-        AbstractDocument doc = (AbstractDocument) text.getDocument();
-        doc.setDocumentFilter(new CustomDocumentFilter(text));
+	    tab.setViewportView(text);
+        //AbstractDocument doc = (AbstractDocument) text.getDocument();
+        //doc.setDocumentFilter(new CustomDocumentFilter(text));
+        ((AbstractDocument) text.getDocument()).setDocumentFilter(new CustomDocumentFilter(text));
         return tab;
     }
     
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
-            //new Interface().setVisible(true);
             instance().setVisible(true);
             instance().setExtendedState(instance().getExtendedState() | JFrame.MAXIMIZED_BOTH);
         });
