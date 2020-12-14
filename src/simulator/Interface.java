@@ -85,12 +85,12 @@ public class Interface extends javax.swing.JFrame {
         editorSplit = new javax.swing.JSplitPane();
         codePane = new javax.swing.JPanel();
         codePaneTabs = new javax.swing.JTabbedPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextPane2 = new javax.swing.JTextPane();
+        codeScrollPane = new javax.swing.JScrollPane();
+        codeTextPane = new javax.swing.JTextPane();
         outputPane = new javax.swing.JPanel();
-        assOutputLabel = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
+        asmOutLabel = new javax.swing.JLabel();
+        asmOutScroll = new javax.swing.JScrollPane();
+        asmOutText = new javax.swing.JTextPane();
         simulator = new javax.swing.JPanel();
         ioLabel = new javax.swing.JLabel();
         ioPanel = new javax.swing.JPanel();
@@ -120,7 +120,7 @@ public class Interface extends javax.swing.JFrame {
         jRadioButtonMode1 = new javax.swing.JRadioButton();
         resetButton = new javax.swing.JButton();
         stepButton = new javax.swing.JButton();
-        jMenuBar2 = new javax.swing.JMenuBar();
+        menuBar = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
@@ -129,16 +129,16 @@ public class Interface extends javax.swing.JFrame {
         setTitle("Simulador");
         setSize(new java.awt.Dimension(640, 300));
 
-        mainSplit.setDividerLocation(300);
+        mainSplit.setDividerLocation(800);
 
         editorSplit.setDividerLocation(400);
         editorSplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
-        jTextPane2.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
-        jTextPane2.setText("START TESTE\n*\nMACRO\nSCALE &RP\nMACRO\nMULTSC &A,&B,&C\nLOAD &A\nMULT &B\n*SHIFTR &RP\nSTORE &C\nMEND\nMACRO\nDIVSC &A,&B,&C\nLOAD &A\nDIV &B\n*SHIFTL &RP\nSTORE &C\nMEND\nMEND\n*\nMACRO\n&LAB DISCR &A,&B,&C,&D\n&LAB MULTSC &A,&C,TEMP1\nMULTSC TEMP1,4,TEMP1\nMULTSC &A,&B,TEMP2\nSUB TEMP1\nSTORE &D\nMEND\n*\nREAD A\nREAD B\nREAD C\nSCALE 3\nDISCR A,B,C,D\nWRITE D\nSTOP\n*\nA SPACE\nB SPACE\nC SPACE\nD SPACE\nTEMP1 SPACE\nTEMP2 SPACE\n*\nEND\n");
-        jScrollPane2.setViewportView(jTextPane2);
+        codeTextPane.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
+        codeTextPane.setText("START TESTE\n*\nMACRO\nSCALE &RP\nMACRO\nMULTSC &A,&B,&C\nLOAD &A\nMULT &B\n*SHIFTR &RP\nSTORE &C\nMEND\nMACRO\nDIVSC &A,&B,&C\nLOAD &A\nDIV &B\n*SHIFTL &RP\nSTORE &C\nMEND\nMEND\n*\nMACRO\n&LAB DISCR &A,&B,&C,&D\n&LAB MULTSC &A,&C,TEMP1\nMULTSC TEMP1,4,TEMP1\nMULTSC &A,&B,TEMP2\nSUB TEMP1\nSTORE &D\nMEND\n*\nREAD A\nREAD B\nREAD C\nSCALE 3\nDISCR A,B,C,D\nWRITE D\nSTOP\n*\nA SPACE\nB SPACE\nC SPACE\nD SPACE\nTEMP1 SPACE\nTEMP2 SPACE\n*\nEND\n");
+        codeScrollPane.setViewportView(codeTextPane);
 
-        codePaneTabs.addTab("arquivo.asm", jScrollPane2);
+        codePaneTabs.addTab("arquivo.asm", codeScrollPane);
 
         javax.swing.GroupLayout codePaneLayout = new javax.swing.GroupLayout(codePane);
         codePane.setLayout(codePaneLayout);
@@ -161,10 +161,10 @@ public class Interface extends javax.swing.JFrame {
 
         outputPane.setPreferredSize(new java.awt.Dimension(534, 100));
 
-        assOutputLabel.setText("Saída do Montador");
+        asmOutLabel.setText("Saída do Montador");
 
-        jTextPane1.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
-        jScrollPane1.setViewportView(jTextPane1);
+        asmOutText.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
+        asmOutScroll.setViewportView(asmOutText);
 
         javax.swing.GroupLayout outputPaneLayout = new javax.swing.GroupLayout(outputPane);
         outputPane.setLayout(outputPaneLayout);
@@ -174,18 +174,18 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(outputPaneLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
+                        .addComponent(asmOutScroll)
                         .addContainerGap())
                     .addGroup(outputPaneLayout.createSequentialGroup()
-                        .addComponent(assOutputLabel)
-                        .addGap(0, 111, Short.MAX_VALUE))))
+                        .addComponent(asmOutLabel)
+                        .addGap(0, 566, Short.MAX_VALUE))))
         );
         outputPaneLayout.setVerticalGroup(
             outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(outputPaneLayout.createSequentialGroup()
-                .addComponent(assOutputLabel)
+                .addComponent(asmOutLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                .addComponent(asmOutScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -478,7 +478,7 @@ public class Interface extends javax.swing.JFrame {
                 jMenu1MouseClicked(evt);
             }
         });
-        jMenuBar2.add(jMenu1);
+        menuBar.add(jMenu1);
 
         jMenu2.setText("Abrir Código");
         jMenu2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -486,7 +486,7 @@ public class Interface extends javax.swing.JFrame {
                 jMenu2MouseClicked(evt);
             }
         });
-        jMenuBar2.add(jMenu2);
+        menuBar.add(jMenu2);
 
         jMenu3.setText("Executar");
         jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -494,9 +494,9 @@ public class Interface extends javax.swing.JFrame {
                 jMenu3MouseClicked(evt);
             }
         });
-        jMenuBar2.add(jMenu3);
+        menuBar.add(jMenu3);
 
-        setJMenuBar(jMenuBar2);
+        setJMenuBar(menuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -650,9 +650,9 @@ public class Interface extends javax.swing.JFrame {
     public void printError(String message) {
         System.err.println(message);
 
-        StyledDocument doc = jTextPane1.getStyledDocument();
+        StyledDocument doc = asmOutText.getStyledDocument();
 
-        Style style = jTextPane1.addStyle("Error", null);
+        Style style = asmOutText.addStyle("Error", null);
         StyleConstants.setForeground(style, Color.red);
 
         try { doc.insertString(doc.getLength(), message + "\n", style); }
@@ -662,9 +662,9 @@ public class Interface extends javax.swing.JFrame {
     public void printMessage(String message) {
         System.out.println(message);
 
-        StyledDocument doc = jTextPane1.getStyledDocument();
+        StyledDocument doc = asmOutText.getStyledDocument();
 
-        Style style = jTextPane1.addStyle("Message", null);
+        Style style = asmOutText.addStyle("Message", null);
         StyleConstants.setForeground(style, Color.DARK_GRAY);
 
         try { doc.insertString(doc.getLength(), message + "\n", style); }
@@ -672,33 +672,33 @@ public class Interface extends javax.swing.JFrame {
     }
 
     public void clearTerminal() {
-        jTextPane1.setDocument(new DefaultStyledDocument());
+        asmOutText.setDocument(new DefaultStyledDocument());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane MemoryScrollPane;
     private javax.swing.JLabel accLabel;
     private javax.swing.JLabel accValueLabel;
-    private javax.swing.JLabel assOutputLabel;
+    private javax.swing.JLabel asmOutLabel;
+    private javax.swing.JScrollPane asmOutScroll;
+    private javax.swing.JTextPane asmOutText;
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JPanel codePane;
     private javax.swing.JTabbedPane codePaneTabs;
+    private javax.swing.JScrollPane codeScrollPane;
+    private javax.swing.JTextPane codeTextPane;
     private javax.swing.JSplitPane editorSplit;
     private javax.swing.JLabel ioLabel;
     private javax.swing.JPanel ioPanel;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JRadioButton jRadioButtonMode0;
     private javax.swing.JRadioButton jRadioButtonMode1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JTextPane jTextPane2;
     private javax.swing.JSplitPane mainSplit;
     private javax.swing.JLabel memoryLabel;
     private javax.swing.JTable memoryTable;
+    private javax.swing.JMenuBar menuBar;
     private javax.swing.JLabel mopLabel;
     private javax.swing.JLabel mopValueLabel;
     private javax.swing.JLabel opModeLabel;
