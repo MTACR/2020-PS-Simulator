@@ -672,7 +672,9 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_menuNewFileMenuKeyPressed
 
     private void menuNewFileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuNewFileMouseClicked
-        codePaneTabs.add("novo"+newFileCount+".asm",newTab());
+        JScrollPane tab = newTab();
+        codePaneTabs.add("novo"+newFileCount+".asm",tab);
+        codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
         newFileCount++;
     }//GEN-LAST:event_menuNewFileMouseClicked
 
