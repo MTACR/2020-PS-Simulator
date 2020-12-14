@@ -13,10 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.Timer;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.*;
 
 public class Interface extends javax.swing.JFrame {
 
@@ -607,7 +604,7 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenu2MouseClicked
 
     private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
-        printMessage("Compilando");
+        printMessage("Montando...");
 
         File[] files = new File[codePaneTabs.getTabCount()];
         
@@ -628,8 +625,9 @@ public class Interface extends javax.swing.JFrame {
             }
         }
 
+        Assembler.assemble(files);
+        tmp.delete();
 
-        //tmp.delete();
     }//GEN-LAST:event_jMenu3MouseClicked
 
     public static void main(String args[]) {
@@ -666,6 +664,10 @@ public class Interface extends javax.swing.JFrame {
 
         try { doc.insertString(doc.getLength(), message + "\n", style); }
         catch (BadLocationException e){}
+    }
+
+    public void clearTerminal() {
+        jTextPane1.setDocument(new DefaultStyledDocument());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -1,5 +1,7 @@
 package macros;
 
+import simulator.Interface;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -288,7 +290,7 @@ public class MacrosProcessor {
 // Expande uma macro. Line é a linha com o comando de expansão e label é a label na qual essa macro deve ser expandida
 
     private void expandMacro(String macroName, String line, String label) {
-        System.out.println("Expandindo a macro " + macroName + "...");
+        Interface.instance().printMessage("Expandindo a macro " + macroName + "...");
         // Tira o nome da macro da linha
         int space = line.indexOf(' ');
         line = space > -1 ? line.substring(space + 1) : "";

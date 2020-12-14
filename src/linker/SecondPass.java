@@ -2,6 +2,7 @@ package linker;
 
 import assembler.ObjectCode;
 import linker.auxiliar.DefinitionTable;
+import simulator.Interface;
 
 import java.util.ArrayList;
 
@@ -48,8 +49,8 @@ public class SecondPass {
                     }
                 } catch (NullPointerException e) {
                     e.printStackTrace();
-                    System.out.println("Undefined Symbol in " + seg.fileName + ": " + use.symbol + "'s definition not found");
-                    System.out.println("Ou pode ser dado algum problema da linha não existir");
+                    Interface.instance().printMessage("Undefined Symbol in " + seg.fileName + ": " + use.symbol + "'s definition not found");
+                    Interface.instance().printMessage("Ou pode ser dado algum problema da linha não existir");
                 }
             }
         }

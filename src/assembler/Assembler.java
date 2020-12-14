@@ -15,7 +15,7 @@ public class Assembler {
             files2Link.add(SecondPass.pass(new MacrosProcessor().process(file)));
         }
 
-        Linker.link((File[]) files2Link.toArray());
+        //Linker.link((File[]) files2Link.toArray());
     }
 
 	// ------------------------------------------------

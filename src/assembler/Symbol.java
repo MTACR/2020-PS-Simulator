@@ -1,5 +1,7 @@
 package assembler;
 
+import simulator.Interface;
+
 import java.util.regex.Pattern;
 
 public class Symbol {
@@ -52,7 +54,7 @@ public class Symbol {
         }
 
         if (s.endsWith(",I")) {
-            System.out.println(s.substring(0, s.indexOf(",I")));
+            Interface.instance().printMessage(s.substring(0, s.indexOf(",I")));
             return !Pattern.compile("[^0-9]").matcher(s.substring(0, s.indexOf(",I"))).find();
         }
 

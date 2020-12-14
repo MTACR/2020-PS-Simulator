@@ -5,6 +5,8 @@
  */
 package loader;
 
+import simulator.Interface;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -46,7 +48,7 @@ public class Loader {
                 int i = 0;
                 while ((line = reader.readLine()) != null) {
                     line = fillBinary(Integer.toBinaryString(Integer.parseInt(line)));
-                    System.out.println(line);
+                    Interface.instance().printMessage(line);
                     writer.write(line + "\n");
                 }
                 writer.close();

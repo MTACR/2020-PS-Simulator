@@ -2,6 +2,7 @@ package linker;
 
 import assembler.ObjectCode;
 import linker.auxiliar.DefinitionTable;
+import simulator.Interface;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,20 +35,20 @@ public class Linker {
         updateReferences(lines, segments, tgs);
 
         //Prints
-        System.out.println("Código");
+        Interface.instance().printMessage("Código");
         for(int i = 0; i < lines.size(); i++){
             System.out.println(i + " " + lines.get(i).toString());
         }
 
-        System.out.println("Definições");
+        Interface.instance().printMessage("Definições");
         for(Definition def : tgs.values()) {
-            System.out.println(def.toString());
+            Interface.instance().printMessage(def.toString());
         }
 
-        System.out.println("Usos");
+        Interface.instance().printMessage("Usos");
         for(Segment seg : segments){
             for(Usage use : seg.usageTable.values()){
-                System.out.println(use.toString());
+                Interface.instance().printMessage(use.toString());
             }
         }
     }
