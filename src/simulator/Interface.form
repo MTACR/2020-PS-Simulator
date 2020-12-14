@@ -8,6 +8,9 @@
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="jMenu1">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="2" name="D:\Projects\PS-1\res\open.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Abrir Bin&#xe1;rio"/>
           </Properties>
           <Events>
@@ -24,6 +27,9 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu3">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="2" name="D:\Projects\PS-1\res\run.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Executar"/>
           </Properties>
           <Events>
@@ -116,7 +122,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Component id="codePaneTabs" pref="630" max="32767" attributes="0"/>
+                          <Component id="codePaneTabs" pref="538" max="32767" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -190,7 +196,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="asmOutLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="asmOutScroll" pref="16" max="32767" attributes="0"/>
+                          <Component id="asmOutScroll" pref="64" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>

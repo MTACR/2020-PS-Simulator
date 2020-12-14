@@ -149,7 +149,7 @@ public class Interface extends javax.swing.JFrame {
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(codePaneLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+                .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -181,7 +181,7 @@ public class Interface extends javax.swing.JFrame {
             .addGroup(outputPaneLayout.createSequentialGroup()
                 .addComponent(asmOutLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(asmOutScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 16, Short.MAX_VALUE)
+                .addComponent(asmOutScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -468,6 +468,7 @@ public class Interface extends javax.swing.JFrame {
 
         mainSplit.setRightComponent(simulator);
 
+        jMenu1.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\open.png")); // NOI18N
         jMenu1.setText("Abrir Binário");
         jMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -484,6 +485,7 @@ public class Interface extends javax.swing.JFrame {
         });
         menuBar.add(jMenu2);
 
+        jMenu3.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\run.png")); // NOI18N
         jMenu3.setText("Executar");
         jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {

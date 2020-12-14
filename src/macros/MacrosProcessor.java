@@ -243,6 +243,8 @@ public class MacrosProcessor {
         while ((line = getNextLine()) != null) {
             boolean writeLineToFile = true;
 
+            line = line.toUpperCase().replaceAll("\\s,+"," ").trim(); //TODO funcionou?
+
             if (line.toUpperCase().equals("MACRO")) {
                 writeLineToFile = false;
                 processMacro();
