@@ -5,6 +5,7 @@ import assembler.Assembler;
 import java.io.File;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.Timer;
 
 public class Interface extends javax.swing.JFrame {
@@ -17,6 +18,8 @@ public class Interface extends javax.swing.JFrame {
     private boolean running;
 
     public Interface() {
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setVisible(true);
         setLook();
         initComponents();
         initProcessor(null);
@@ -71,15 +74,18 @@ public class Interface extends javax.swing.JFrame {
     private void initComponents() {
 
         buttonGroup = new javax.swing.ButtonGroup();
-        main = new javax.swing.JSplitPane();
-        editor = new javax.swing.JSplitPane();
-        jPanel1 = new javax.swing.JPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jLabel1 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        mainSplit = new javax.swing.JSplitPane();
+        editorSplit = new javax.swing.JSplitPane();
+        codePane = new javax.swing.JPanel();
+        codePaneTabs = new javax.swing.JTabbedPane();
+        codeTabScroll = new javax.swing.JScrollPane();
         jEditorPane3 = new javax.swing.JEditorPane();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        codeTabScroll1 = new javax.swing.JScrollPane();
+        jEditorPane5 = new javax.swing.JEditorPane();
+        codeTabScroll2 = new javax.swing.JScrollPane();
+        jEditorPane6 = new javax.swing.JEditorPane();
+        outputPane = new javax.swing.JPanel();
+        assOutputLabel = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jEditorPane4 = new javax.swing.JEditorPane();
         simulator = new javax.swing.JPanel();
@@ -114,72 +120,85 @@ public class Interface extends javax.swing.JFrame {
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
+        jMenu3 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Simulador");
         setSize(new java.awt.Dimension(640, 300));
 
-        editor.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        mainSplit.setBorder(null);
+        mainSplit.setDividerLocation(200);
 
-        jLabel1.setText("CODIGO");
-        jTabbedPane1.addTab("tab1", jLabel1);
+        editorSplit.setBorder(null);
+        editorSplit.setDividerLocation(400);
+        editorSplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
-        jScrollPane3.setViewportView(jEditorPane3);
+        codeTabScroll.setBorder(null);
+        codeTabScroll.setViewportView(jEditorPane3);
 
-        jTabbedPane1.addTab("tab2", jScrollPane3);
+        codePaneTabs.addTab("tab2", codeTabScroll);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        codeTabScroll1.setBorder(null);
+        codeTabScroll1.setViewportView(jEditorPane5);
+
+        codePaneTabs.addTab("tab2", codeTabScroll1);
+
+        codeTabScroll2.setBorder(null);
+        codeTabScroll2.setViewportView(jEditorPane6);
+
+        codePaneTabs.addTab("tab2", codeTabScroll2);
+
+        javax.swing.GroupLayout codePaneLayout = new javax.swing.GroupLayout(codePane);
+        codePane.setLayout(codePaneLayout);
+        codePaneLayout.setHorizontalGroup(
+            codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(codePaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
+                .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        codePaneLayout.setVerticalGroup(
+            codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(codePaneLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
-        editor.setTopComponent(jPanel1);
+        editorSplit.setTopComponent(codePane);
 
-        jPanel2.setPreferredSize(new java.awt.Dimension(534, 100));
+        outputPane.setPreferredSize(new java.awt.Dimension(534, 100));
 
-        jLabel2.setText("Saída do Montador");
+        assOutputLabel.setText("Saída do Montador");
 
         jScrollPane4.setViewportView(jEditorPane4);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout outputPaneLayout = new javax.swing.GroupLayout(outputPane);
+        outputPane.setLayout(outputPaneLayout);
+        outputPaneLayout.setHorizontalGroup(
+            outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(outputPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                .addGroup(outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                    .addGroup(outputPaneLayout.createSequentialGroup()
+                        .addComponent(assOutputLabel)
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        outputPaneLayout.setVerticalGroup(
+            outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(outputPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
+                .addComponent(assOutputLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        editor.setRightComponent(jPanel2);
+        editorSplit.setRightComponent(outputPane);
 
-        main.setLeftComponent(editor);
+        mainSplit.setLeftComponent(editorSplit);
 
-        simulator.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         simulator.setEnabled(false);
 
         ioLabel.setText("Saída");
@@ -433,8 +452,8 @@ public class Interface extends javax.swing.JFrame {
                             .addComponent(registersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(simulatorLayout.createSequentialGroup()
                         .addComponent(memoryLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 470, Short.MAX_VALUE))
-                    .addComponent(MemoryScrollPane)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 656, Short.MAX_VALUE))
+                    .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 706, Short.MAX_VALUE)
                     .addComponent(opPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -452,12 +471,12 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(2, 2, 2)
                 .addComponent(memoryLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(opPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        main.setRightComponent(simulator);
+        mainSplit.setRightComponent(simulator);
 
         jMenu1.setText("Abrir Binário");
         jMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -475,6 +494,18 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenuBar2.add(jMenu2);
 
+        jMenu3.setText("Executar");
+        jMenu3.addMenuKeyListener(new javax.swing.event.MenuKeyListener() {
+            public void menuKeyPressed(javax.swing.event.MenuKeyEvent evt) {
+                jMenu3MenuKeyPressed(evt);
+            }
+            public void menuKeyReleased(javax.swing.event.MenuKeyEvent evt) {
+            }
+            public void menuKeyTyped(javax.swing.event.MenuKeyEvent evt) {
+            }
+        });
+        jMenuBar2.add(jMenu3);
+
         setJMenuBar(jMenuBar2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -483,14 +514,11 @@ public class Interface extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 922, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(mainSplit)
         );
 
         pack();
@@ -585,6 +613,11 @@ public class Interface extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenu2MouseClicked
 
+    private void jMenu3MenuKeyPressed(javax.swing.event.MenuKeyEvent evt) {//GEN-FIRST:event_jMenu3MenuKeyPressed
+        // TODO add your handling code here:
+        aaaa
+    }//GEN-LAST:event_jMenu3MenuKeyPressed
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
             new Interface().setVisible(true);
@@ -595,25 +628,28 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JScrollPane MemoryScrollPane;
     private javax.swing.JLabel accLabel;
     private javax.swing.JLabel accValueLabel;
+    private javax.swing.JLabel assOutputLabel;
     private javax.swing.ButtonGroup buttonGroup;
-    private javax.swing.JSplitPane editor;
+    private javax.swing.JPanel codePane;
+    private javax.swing.JTabbedPane codePaneTabs;
+    private javax.swing.JScrollPane codeTabScroll;
+    private javax.swing.JScrollPane codeTabScroll1;
+    private javax.swing.JScrollPane codeTabScroll2;
+    private javax.swing.JSplitPane editorSplit;
     private javax.swing.JLabel ioLabel;
     private javax.swing.JPanel ioPanel;
     private javax.swing.JEditorPane jEditorPane3;
     private javax.swing.JEditorPane jEditorPane4;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JEditorPane jEditorPane5;
+    private javax.swing.JEditorPane jEditorPane6;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JRadioButton jRadioButtonMode0;
     private javax.swing.JRadioButton jRadioButtonMode1;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JSplitPane main;
+    private javax.swing.JSplitPane mainSplit;
     private javax.swing.JLabel memoryLabel;
     private javax.swing.JTable memoryTable;
     private javax.swing.JLabel mopLabel;
@@ -621,6 +657,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel opModeLabel;
     private javax.swing.JPanel opPanel;
     private static javax.swing.JLabel outputLabel;
+    private javax.swing.JPanel outputPane;
     private javax.swing.JLabel outputStreamLabel;
     private javax.swing.JLabel pcLabel;
     private javax.swing.JLabel pcValueLabel;
