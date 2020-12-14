@@ -26,7 +26,6 @@ public class CustomDocumentFilter extends DocumentFilter {
     private final AttributeSet symbolsAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.PINK);
     private final AttributeSet numbersAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLUE);
 
-    // Use a regular expression to find the words you are looking for
     Pattern reserved = buildReservedPattern();
     Pattern comments = buildCommentsPattern();
     Pattern symbols = buildSymbolsPattern();
@@ -85,7 +84,7 @@ public class CustomDocumentFilter extends DocumentFilter {
         styledDocument.setCharacterAttributes(0, pane.getText().length(), commonAttrSet, true);
 
         Matcher matcher;
-        
+
         matcher = reserved.matcher(pane.getText());
         while (matcher.find())
             styledDocument.setCharacterAttributes(matcher.start(), matcher.end() - matcher.start(), reservedAttrSet, false);

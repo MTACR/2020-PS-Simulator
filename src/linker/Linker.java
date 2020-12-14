@@ -6,6 +6,7 @@ import simulator.Interface;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,8 +54,8 @@ public class Linker {
         }
     }
 
-    public static void link(File[] files) {
-        int offset = 3;
+    public static File link(List<File> files) {
+        //int offset = 3;
         //TODO iniciar arquivos aqui
         //ArrayList<Segment> segments = readSegments(files);
         //offset += tamanho da pilha
@@ -63,6 +64,8 @@ public class Linker {
         //SecondPass
         //ArrayList<Line> lines = updateAddresses(segments, offset);
         //updateReferences(lines, segments, tgs);
+
+        return null;
     }
 
 }

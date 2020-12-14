@@ -1,5 +1,6 @@
 package assembler;
 
+import linker.Linker;
 import macros.MacrosProcessor;
 import simulator.Interface;
 import java.io.File;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class Assembler {
 
-    public static void assemble(File[] files) {
+    public static File assemble(File[] files) {
         List<File> files2Link = new ArrayList<>();
 
         for (File file : files) {
@@ -19,7 +20,7 @@ public class Assembler {
             }
         }
 
-        //Linker.link((File[]) files2Link.toArray());
+        return Linker.link(files2Link);
     }
 
 	// ------------------------------------------------

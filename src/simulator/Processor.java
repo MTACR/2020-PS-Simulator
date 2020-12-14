@@ -46,7 +46,7 @@ public class Processor {
     private byte mop;
 
     private final Memory memory;
-    private final Interface gui;
+    //private final Interface gui;
     private OnStep step;
 
     // Função reflexiva, faz parte da integração com a interface, permitindo a alternancia entre nextInstruction() e parseOpCode()
@@ -60,22 +60,20 @@ public class Processor {
 
     // Construtores
     public Processor(File file) {
-        gui = null;
         memory = new Memory(MEMORY_SIZE);
         memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
         pc = memory.firstPosition();
-
         step = this::nextInstruction;
     }
 
-    public Processor(File file, Interface gui) {
+    /*public Processor(File file, Interface gui) {
         this.gui = gui;
         memory = new Memory(MEMORY_SIZE);
         memory.loadFileToMemory(file);
         pc = memory.firstPosition();
 
         step = this::nextInstruction;
-    }
+    }*/
 
     // Determina a proxima instrução
     private boolean nextInstruction() {
@@ -166,7 +164,7 @@ public class Processor {
     private void write(boolean f1, boolean f3) {
         short word = memory.getWord(pc++, f1, f3);
         re = memory.getAccessed();
-        gui.setOutputLabel(word);
+        Interface.instance().setOutputLabel(word);
     }
 
     // Carrega o endereço do operando e abre uma janela com um campo para a entrada,

@@ -2,6 +2,7 @@ package simulator;
 
 import assembler.Assembler;
 import gui.CustomDocumentFilter;
+import loader.Loader;
 
 import java.awt.*;
 import java.io.File;
@@ -21,7 +22,6 @@ public class Interface extends javax.swing.JFrame {
     private Processor processor;
     private File activeFile;
     private Timer instructionTimer; // Temporizador que vai fazer o processador executar o programa inteiro no modo 0
-    public short out;
     private boolean abort;
     private boolean running;
 
@@ -30,13 +30,7 @@ public class Interface extends javax.swing.JFrame {
         this.setVisible(true);
         //setLook();
         initComponents();
-        initProcessor(null);
-    }
-
-    public Interface(File file) {
-        setLook();
-        initComponents();
-        initProcessor(file);
+        //initProcessor(null);
     }
 
     // Atualiza os valores dos Registradores na interface.
@@ -613,6 +607,7 @@ public class Interface extends javax.swing.JFrame {
         
         File tmp = new File("tmp");
         tmp.mkdir();
+
         for (int i = 0; i < codePaneTabs.getTabCount(); i++) {
             String code = ((JEditorPane)(((JViewport)((JScrollPane)codePaneTabs.getComponent(i)).getComponents()[0]).getComponents()[0])).getText();
             
@@ -628,7 +623,14 @@ public class Interface extends javax.swing.JFrame {
             }
         }
 
-        Assembler.assemble(files);
+        initProcessor(Assembler.assemble(files));
+
+        //Loader.load(exec);
+
+        for (int i = 0; i < files.length; i++)
+            if (files[i].exists())
+                files[i].delete();
+
         tmp.delete();
 
     }//GEN-LAST:event_jMenu3MouseClicked
@@ -728,7 +730,7 @@ public class Interface extends javax.swing.JFrame {
     // Carrega o binário e atualiza a interface
     private void initProcessor(File file) {
         if (file != null) {
-            processor = new Processor(file, this);
+            processor = new Processor(file);
             activeFile = file;
             if (jRadioButtonMode0.isSelected()) {
                 processor.setMop((byte) 0);
@@ -737,7 +739,8 @@ public class Interface extends javax.swing.JFrame {
             }
             updateGUI();
 
-        }
+        } else
+            printError("Arquivo inválido");
     }
 
     private void setLook() {

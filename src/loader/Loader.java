@@ -30,7 +30,7 @@ public class Loader {
         load(file);
     }
 
-    private String fillBinary(String numBinary) {
+    private static String fillBinary(String numBinary) {
         String aux = "";
         while (numBinary.length() + aux.length() < 16) {
             aux += '0';
@@ -38,9 +38,10 @@ public class Loader {
         return aux + numBinary;
     }
 
-    public void load(File file) {
+    public static File load(File file) {
+        File out = new File(file.getPath() + "_bin");
+
         try {
-            File out = new File(file.getPath() + "_bin");
             FileWriter writer = new FileWriter(out);
 
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -57,5 +58,7 @@ public class Loader {
             final JPanel panel = new JPanel();
             JOptionPane.showMessageDialog(panel, "Arquivo inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
         }
+
+        return out;
     }
 }
