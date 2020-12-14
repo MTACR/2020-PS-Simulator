@@ -8,14 +8,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import javax.swing.JEditorPane;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.JViewport;
-import javax.swing.Timer;
 import javax.swing.text.*;
 
 public class Interface extends javax.swing.JFrame {
@@ -33,8 +27,6 @@ public class Interface extends javax.swing.JFrame {
         setLook();
         initComponents();
         newFileCount = 0;
-        //((AbstractDocument) codeTextPane.getDocument()).setDocumentFilter(new CustomDocumentFilter(codeTextPane));
-
     }
 
     // Atualiza os valores dos Registradores na interface.
@@ -645,7 +637,7 @@ public class Interface extends javax.swing.JFrame {
             
             if (!code.isEmpty()) {
                 try {
-                    files[i] = new File("tmp/" + i + ".asm");
+                    files[i] = new File("tmp/" + codePaneTabs.getTitleAt(i));
                     FileWriter writer = new FileWriter(files[i]);
                     writer.write(code);
                     writer.close();
@@ -667,16 +659,16 @@ public class Interface extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jMenu3MouseClicked
 
-    private void menuNewFileMenuKeyPressed(javax.swing.event.MenuKeyEvent evt) {//GEN-FIRST:event_menuNewFileMenuKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_menuNewFileMenuKeyPressed
-
     private void menuNewFileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuNewFileMouseClicked
         JScrollPane tab = newTab();
-        codePaneTabs.add("novo"+newFileCount+".asm",tab);
+        codePaneTabs.add("novo"+newFileCount+".asm", tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
         newFileCount++;
     }//GEN-LAST:event_menuNewFileMouseClicked
+
+    private void menuNewFileMenuKeyPressed(javax.swing.event.MenuKeyEvent evt) {//GEN-FIRST:event_menuNewFileMenuKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuNewFileMenuKeyPressed
 
     private JScrollPane newTab() {
         JScrollPane tab = new JScrollPane();
@@ -684,9 +676,8 @@ public class Interface extends javax.swing.JFrame {
         text.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
         text.setText("");
 	    tab.setViewportView(text);
-        //AbstractDocument doc = (AbstractDocument) text.getDocument();
-        //doc.setDocumentFilter(new CustomDocumentFilter(text));
-        ((AbstractDocument) text.getDocument()).setDocumentFilter(new CustomDocumentFilter(text));
+        AbstractDocument doc = (AbstractDocument) text.getDocument();
+        doc.setDocumentFilter(new CustomDocumentFilter(text));
         return tab;
     }
     
@@ -811,7 +802,6 @@ public class Interface extends javax.swing.JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-
     }
 
     public void updateGUI() {

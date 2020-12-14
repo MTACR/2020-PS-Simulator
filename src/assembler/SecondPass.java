@@ -1,6 +1,8 @@
 package assembler;
 
 import javafx.util.Pair;
+import simulator.Interface;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,6 +31,8 @@ public class SecondPass {
         Map<Integer, Pair<Integer, Character>> vars = new TreeMap<>();
         // Lista de código objeto
         List<ObjectCode> objects = new ArrayList<>();
+
+        Interface.instance().printMessage("Executando segundo passo...");
 
         for (Symbol symbol : symbols) {
             String operator = symbol.operator;

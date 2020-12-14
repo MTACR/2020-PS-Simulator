@@ -14,6 +14,7 @@ public class Assembler {
 
         for (File file : files) {
             try {
+                Interface.instance().printMessage("Montando arquivo " + file.getName());
                 files2Link.add(SecondPass.pass(new MacrosProcessor().process(file)));
             } catch (RuntimeException e) {
                 Interface.instance().printError(e.getMessage());

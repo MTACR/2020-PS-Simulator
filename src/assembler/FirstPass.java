@@ -2,6 +2,8 @@ package assembler;
 
 import javafx.util.Pair;
 import linker.Usage;
+import simulator.Interface;
+
 import java.io.*;
 import java.util.*;
 import static assembler.SymbolsTable.*;
@@ -26,6 +28,8 @@ public class FirstPass {
         int address = 1;
         int line = 1;
         String name = "";
+
+        Interface.instance().printMessage("Executando primeiro passo...");
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
