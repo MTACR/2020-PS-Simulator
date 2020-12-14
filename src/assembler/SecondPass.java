@@ -15,33 +15,18 @@ public class SecondPass {
             "ADD", "DIVIDE", "LOAD", "MULT", "SUB", "WRITE");
 
     enum ADDRMODE {
-        DIRETO(0), INDIRETO(1), IMEDIATO(2);
-
-        private final int op;
-
-        ADDRMODE(int op) {
-            this.op = op;
-        }
-
-        public int getValue()
-        {
-            return op;
-        }
+        DIRETO, INDIRETO, IMEDIATO
     }
 
     public static List<ObjectCode> pass(File file) {
         // Informações do passo 1
         SymbolsTable data = getSymbolsTable(file);
-
         // Lista símbolos (que deverão ser convertidos em código objeto nesse passo)
         List<Symbol> symbols = data.symbols;
-
         // Mapa de labels intrnas (as externas foram excluídas no passo 1)
         Map<String, Pair<Integer, Character>> labels = data.labels;
-
         // Mapa de variáveis a serem alocadas
         Map<Integer, Pair<Integer, Character>> vars = new TreeMap<>();
-
         // Lista de código objeto
         List<ObjectCode> objects = new ArrayList<>();
 
@@ -135,6 +120,11 @@ public class SecondPass {
 
                         break;
 
+                    case "STACK":
+                        objects.add(new ObjectCode(symbol.address, 1, new Pair<>(Integer.parseInt(opd1), 'a')));
+
+                        break;
+
                     default: throw new RuntimeException("Instrução inválida");
                 }
 
@@ -159,7 +149,9 @@ public class SecondPass {
                         case INDIRETO: op |= 64;
                             break;
 
-                        case IMEDIATO: op |= 128;
+                        case IMEDIATO:
+                            assert ((op & 128) == 0);
+                            op |= 128;
                             break;
                     }
                 }
@@ -229,7 +221,7 @@ public class SecondPass {
         // Para cada variável alocada, gera um espaço de memória com seu devido endereço e modo
         vars.forEach((addr, pair) -> objects.add(new ObjectCode(addr, 1, new Pair<>(pair.getKey(), pair.getValue()))));
 
-        File obj = new File("output/" + file.getName().substring(0, file.getName().indexOf('.')) + ".obj");
+        File obj = new File("output/" + data.name + ".obj");
 
         try {
             FileWriter outObj = new FileWriter(obj);

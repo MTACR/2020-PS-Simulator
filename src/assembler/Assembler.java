@@ -5,9 +5,11 @@ import java.io.File;
 
 public class Assembler {
 
-    public static void main(String[] args) {
-        args = new String[]{"input/testemacro.asm"};
-        SecondPass.pass(new MacrosProcessor().process(new File(args[0])));
+    public static void assemble(File[] files) {
+
+        for (File file : files) {
+            SecondPass.pass(new MacrosProcessor().process(file));
+        }
     }
 
 	// ------------------------------------------------

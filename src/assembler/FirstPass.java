@@ -2,7 +2,6 @@ package assembler;
 
 import javafx.util.Pair;
 import linker.Usage;
-
 import java.io.*;
 import java.util.*;
 import static assembler.SymbolsTable.*;
@@ -12,23 +11,21 @@ public class FirstPass {
     public static SymbolsTable getSymbolsTable(File file) {
         // Lista de símbolos válidos, ou seja, uma linha de um arquivo, com os campos propriamente organizados
         List<Symbol> symbols = new ArrayList<>();
-
         // Mapa de labels/variáveis
         Map<String, Pair<Integer, Character>> labels = new TreeMap<>();
-
         // Lista de definições externas
         List<String> extdefLabels = new ArrayList<>();
-
         // Lista de usos externos
         List<String> extuseLabels = new ArrayList<>();
-
         // Lista de variáveis sendo usadas
         List<Usage> extuseVars = new ArrayList<>();
 
         boolean hasStart = false;
         boolean hasEnd = false;
-        int address = 0;
+        boolean hasStack = false;
+        int address = 1;
         int line = 1;
+        String name = "";
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -65,7 +62,11 @@ public class FirstPass {
                         if (table0.contains(lineArr[0])) {
 
                             if (lineArr[0].equals("END")) {
-                                hasEnd = true;
+                                if (hasEnd)
+                                    throw new RuntimeException("Fim redefinido em " + line);
+                                else
+                                    hasEnd = true;
+
                                 break;
                             }
 
@@ -112,7 +113,13 @@ public class FirstPass {
                         else if (table1.contains(lineArr[0])) {
 
                             if (lineArr[0].equals("START")) {
-                                hasStart = true;
+                                if (hasStart)
+                                    throw new RuntimeException("Início redefinido em " + line);
+                                else
+                                    hasStart = true;
+
+                                name = lineArr[1];
+
                                 break;
                             }
 
@@ -123,6 +130,17 @@ public class FirstPass {
                                     extdefLabels.add(lineArr[1]);
 
                                 else throw new RuntimeException("Símbolo redefinido: " + lineArr[1] + " em " + line);
+
+                            } else if (lineArr[0].equals("STACK")) {
+                                if (hasStack)
+                                    throw new RuntimeException("Tamanho da stack redefinido em " + line);
+                                else
+                                    hasStack = true;
+
+                                if (Integer.parseInt(lineArr[1]) > 10 || Integer.parseInt(lineArr[1]) < 0)
+                                    throw new RuntimeException("Tamanho de pilha inválido em " + line);
+
+                                symbols.add(0, new Symbol(line, 0, "", lineArr[0], lineArr[1], ""));
 
                             } else {
                                 symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
@@ -259,6 +277,9 @@ public class FirstPass {
         // Adiciona à lista de símbolos as variáveis a serem alocadas
         symbols.addAll(labels2Alloc);
 
+        if (!hasStack)
+            symbols.add(0, new Symbol(0, 0, "", "STACK", "10", ""));
+
         String string = "";
 
         // Lista de variáveis externas que devem ser removidas do mapa de labels
@@ -289,7 +310,7 @@ public class FirstPass {
         if (!extdefLabels.isEmpty())
             throw new RuntimeException("Simbolo global não definido " + extdefLabels);
 
-        File tbl = new File("output/" + file.getName().substring(0, file.getName().indexOf('.')) + ".tbl");
+        File tbl = new File("output/" + name + ".tbl");
 
         try {
             FileWriter out = new FileWriter(tbl);
@@ -304,7 +325,7 @@ public class FirstPass {
             e.printStackTrace();
         }
 
-        return new SymbolsTable(symbols, labels);
+        return new SymbolsTable(symbols, labels, name);
     }
 
     public static void main(String[] args) {
