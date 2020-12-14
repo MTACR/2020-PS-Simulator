@@ -1,11 +1,17 @@
 package simulator;
 
 import assembler.Assembler;
+import assembler.ObjectCode;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import javax.swing.JEditorPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 import javax.swing.Timer;
 
 public class Interface extends javax.swing.JFrame {
@@ -126,10 +132,8 @@ public class Interface extends javax.swing.JFrame {
         setTitle("Simulador");
         setSize(new java.awt.Dimension(640, 300));
 
-        mainSplit.setBorder(null);
         mainSplit.setDividerLocation(200);
 
-        editorSplit.setBorder(null);
         editorSplit.setDividerLocation(400);
         editorSplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
@@ -495,13 +499,9 @@ public class Interface extends javax.swing.JFrame {
         jMenuBar2.add(jMenu2);
 
         jMenu3.setText("Executar");
-        jMenu3.addMenuKeyListener(new javax.swing.event.MenuKeyListener() {
-            public void menuKeyPressed(javax.swing.event.MenuKeyEvent evt) {
-                jMenu3MenuKeyPressed(evt);
-            }
-            public void menuKeyReleased(javax.swing.event.MenuKeyEvent evt) {
-            }
-            public void menuKeyTyped(javax.swing.event.MenuKeyEvent evt) {
+        jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenu3MouseClicked(evt);
             }
         });
         jMenuBar2.add(jMenu3);
@@ -613,10 +613,29 @@ public class Interface extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenu2MouseClicked
 
-    private void jMenu3MenuKeyPressed(javax.swing.event.MenuKeyEvent evt) {//GEN-FIRST:event_jMenu3MenuKeyPressed
-        // TODO add your handling code here:
-        aaaa
-    }//GEN-LAST:event_jMenu3MenuKeyPressed
+    private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
+        File[] files = new File[codePaneTabs.getTabCount()];
+
+        File tmp = new File("tmp");
+        tmp.mkdir();
+
+        for (int i = 0; i < codePaneTabs.getTabCount(); i++) {
+            String code = ((JEditorPane)(((JViewport)((JScrollPane)codePaneTabs.getComponent(i)).getComponents()[0]).getComponents()[0])).getText();
+            
+            if (!code.isEmpty()) {
+                try {
+                    files[i] = new File("tmp/" + i + ".asm");
+                    FileWriter writer = new FileWriter(files[i]);
+                    writer.write(code);
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        //tmp.delete();
+    }
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {

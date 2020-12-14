@@ -328,11 +328,11 @@ public class FirstPass {
         return new SymbolsTable(symbols, labels, name);
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s\n", "Line", "Address", "Label", "Operator", "Opd1", "Op2");
         getSymbolsTable(new File("input/firstpass.asm")).symbols.forEach(symbol -> {
             System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s\n", symbol.line, symbol.address, symbol.label, symbol.operator, symbol.opd1, symbol.opd2);
         });
-    }
+    }*/
 
 }
