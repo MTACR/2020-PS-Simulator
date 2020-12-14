@@ -1,15 +1,21 @@
 package assembler;
 
+import linker.Linker;
 import macros.MacrosProcessor;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Assembler {
 
     public static void assemble(File[] files) {
+        List<File> files2Link = new ArrayList<>();
 
         for (File file : files) {
-            SecondPass.pass(new MacrosProcessor().process(file));
+            files2Link.add(SecondPass.pass(new MacrosProcessor().process(file)));
         }
+
+        Linker.link((File[]) files2Link.toArray());
     }
 
 	// ------------------------------------------------
