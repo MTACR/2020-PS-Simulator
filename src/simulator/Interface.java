@@ -2,6 +2,7 @@ package simulator;
 
 import assembler.Assembler;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,6 +13,10 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.Timer;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 public class Interface extends javax.swing.JFrame {
 
@@ -602,6 +607,8 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenu2MouseClicked
 
     private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
+        printMessage("Compilando");
+
         File[] files = new File[codePaneTabs.getTabCount()];
         
         File tmp = new File("tmp");
@@ -620,6 +627,8 @@ public class Interface extends javax.swing.JFrame {
                 }
             }
         }
+
+
         //tmp.delete();
     }//GEN-LAST:event_jMenu3MouseClicked
 
@@ -637,6 +646,26 @@ public class Interface extends javax.swing.JFrame {
             instance = new Interface();
 
         return instance;
+    }
+
+    public void printError(String message) {
+        StyledDocument doc = jTextPane1.getStyledDocument();
+
+        Style style = jTextPane1.addStyle("Error", null);
+        StyleConstants.setForeground(style, Color.red);
+
+        try { doc.insertString(doc.getLength(), message + "\n", style); }
+        catch (BadLocationException e){}
+    }
+
+    public void printMessage(String message) {
+        StyledDocument doc = jTextPane1.getStyledDocument();
+
+        Style style = jTextPane1.addStyle("Message", null);
+        StyleConstants.setForeground(style, Color.DARK_GRAY);
+
+        try { doc.insertString(doc.getLength(), message + "\n", style); }
+        catch (BadLocationException e){}
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
