@@ -71,6 +71,23 @@ public class Interface extends javax.swing.JFrame {
     private void initComponents() {
 
         buttonGroup = new javax.swing.ButtonGroup();
+        main = new javax.swing.JSplitPane();
+        editor = new javax.swing.JSplitPane();
+        jPanel1 = new javax.swing.JPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jEditorPane3 = new javax.swing.JEditorPane();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jEditorPane4 = new javax.swing.JEditorPane();
+        simulator = new javax.swing.JPanel();
+        ioLabel = new javax.swing.JLabel();
+        ioPanel = new javax.swing.JPanel();
+        outputLabel = new javax.swing.JLabel();
+        outputStreamLabel = new javax.swing.JLabel();
+        registerLabel = new javax.swing.JLabel();
         registersPanel = new javax.swing.JPanel();
         pcLabel = new javax.swing.JLabel();
         spLabel = new javax.swing.JLabel();
@@ -85,20 +102,15 @@ public class Interface extends javax.swing.JFrame {
         reLabel = new javax.swing.JLabel();
         reValueLabel = new javax.swing.JLabel();
         riTextLabel = new javax.swing.JLabel();
+        memoryLabel = new javax.swing.JLabel();
+        MemoryScrollPane = new javax.swing.JScrollPane();
+        memoryTable = new javax.swing.JTable();
         opPanel = new javax.swing.JPanel();
         opModeLabel = new javax.swing.JLabel();
         jRadioButtonMode0 = new javax.swing.JRadioButton();
         jRadioButtonMode1 = new javax.swing.JRadioButton();
         resetButton = new javax.swing.JButton();
         stepButton = new javax.swing.JButton();
-        registerLabel = new javax.swing.JLabel();
-        memoryLabel = new javax.swing.JLabel();
-        MemoryScrollPane = new javax.swing.JScrollPane();
-        memoryTable = new javax.swing.JTable();
-        ioPanel = new javax.swing.JPanel();
-        outputLabel = new javax.swing.JLabel();
-        outputStreamLabel = new javax.swing.JLabel();
-        ioLabel = new javax.swing.JLabel();
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -107,7 +119,102 @@ public class Interface extends javax.swing.JFrame {
         setTitle("Simulador");
         setSize(new java.awt.Dimension(640, 300));
 
-        registersPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(0));
+        editor.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        jLabel1.setText("CODIGO");
+        jTabbedPane1.addTab("tab1", jLabel1);
+
+        jScrollPane3.setViewportView(jEditorPane3);
+
+        jTabbedPane1.addTab("tab2", jScrollPane3);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
+        );
+
+        editor.setTopComponent(jPanel1);
+
+        jPanel2.setPreferredSize(new java.awt.Dimension(534, 100));
+
+        jLabel2.setText("Saída do Montador");
+
+        jScrollPane4.setViewportView(jEditorPane4);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE))))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        editor.setRightComponent(jPanel2);
+
+        main.setLeftComponent(editor);
+
+        simulator.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        simulator.setEnabled(false);
+
+        ioLabel.setText("Saída");
+
+        ioPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        outputLabel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        outputLabel.setText("00000");
+
+        outputStreamLabel.setText("Output Stream");
+
+        javax.swing.GroupLayout ioPanelLayout = new javax.swing.GroupLayout(ioPanel);
+        ioPanel.setLayout(ioPanelLayout);
+        ioPanelLayout.setHorizontalGroup(
+            ioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ioPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(outputStreamLabel)
+                    .addComponent(outputLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        ioPanelLayout.setVerticalGroup(
+            ioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ioPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(outputStreamLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(outputLabel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        registerLabel.setText("Registradores");
+
+        registersPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         pcLabel.setText("PC");
 
@@ -153,13 +260,13 @@ public class Interface extends javax.swing.JFrame {
                     .addComponent(spLabel)
                     .addComponent(pcValueLabel)
                     .addComponent(spValueLabel))
-                .addGap(0, 123, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(accLabel)
                     .addComponent(mopValueLabel)
                     .addComponent(mopLabel)
                     .addComponent(accValueLabel))
-                .addGap(0, 122, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(reValueLabel)
                     .addComponent(reLabel)
@@ -168,7 +275,7 @@ public class Interface extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(riTextLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(riLabel))
-                .addGap(0, 36, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         registersPanelLayout.setVerticalGroup(
             registersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -196,6 +303,44 @@ public class Interface extends javax.swing.JFrame {
                     .addComponent(reValueLabel))
                 .addContainerGap())
         );
+
+        memoryLabel.setText("Memória");
+
+        MemoryScrollPane.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+
+        memoryTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Endereço", "Valor (+0)", "Valor (+1)", "Valor (+2)", "Valor (+3)"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Short.class, java.lang.Short.class, java.lang.Short.class, java.lang.Short.class, java.lang.Short.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        memoryTable.setMinimumSize(new java.awt.Dimension(60, 60));
+        memoryTable.getTableHeader().setReorderingAllowed(false);
+        MemoryScrollPane.setViewportView(memoryTable);
+        if (memoryTable.getColumnModel().getColumnCount() > 0) {
+            memoryTable.getColumnModel().getColumn(0).setResizable(false);
+            memoryTable.getColumnModel().getColumn(1).setResizable(false);
+            memoryTable.getColumnModel().getColumn(2).setResizable(false);
+            memoryTable.getColumnModel().getColumn(3).setResizable(false);
+            memoryTable.getColumnModel().getColumn(4).setResizable(false);
+        }
 
         opModeLabel.setText("Modo de Operação");
 
@@ -269,75 +414,50 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        registerLabel.setText("Registradores");
-
-        memoryLabel.setText("Memória");
-
-        MemoryScrollPane.setBorder(javax.swing.BorderFactory.createBevelBorder(1));
-
-        memoryTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Endereço", "Valor (+0)", "Valor (+1)", "Valor (+2)", "Valor (+3)"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Short.class, java.lang.Short.class, java.lang.Short.class, java.lang.Short.class, java.lang.Short.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        memoryTable.setMinimumSize(new java.awt.Dimension(60, 60));
-        memoryTable.getTableHeader().setReorderingAllowed(false);
-        MemoryScrollPane.setViewportView(memoryTable);
-        if (memoryTable.getColumnModel().getColumnCount() > 0) {
-            memoryTable.getColumnModel().getColumn(0).setResizable(false);
-            memoryTable.getColumnModel().getColumn(1).setResizable(false);
-            memoryTable.getColumnModel().getColumn(2).setResizable(false);
-            memoryTable.getColumnModel().getColumn(3).setResizable(false);
-            memoryTable.getColumnModel().getColumn(4).setResizable(false);
-        }
-
-        ioPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(0));
-
-        outputLabel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
-        outputLabel.setText("00000");
-
-        outputStreamLabel.setText("Output Stream");
-
-        javax.swing.GroupLayout ioPanelLayout = new javax.swing.GroupLayout(ioPanel);
-        ioPanel.setLayout(ioPanelLayout);
-        ioPanelLayout.setHorizontalGroup(
-            ioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ioPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout simulatorLayout = new javax.swing.GroupLayout(simulator);
+        simulator.setLayout(simulatorLayout);
+        simulatorLayout.setHorizontalGroup(
+            simulatorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(simulatorLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(ioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(outputStreamLabel)
-                    .addComponent(outputLabel))
-                .addGap(15, 15, 15))
-        );
-        ioPanelLayout.setVerticalGroup(
-            ioPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ioPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(outputStreamLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(outputLabel)
+                .addGroup(simulatorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(simulatorLayout.createSequentialGroup()
+                        .addGroup(simulatorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ioLabel)
+                            .addComponent(ioPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(simulatorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(simulatorLayout.createSequentialGroup()
+                                .addComponent(registerLabel)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(registersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(simulatorLayout.createSequentialGroup()
+                        .addComponent(memoryLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 470, Short.MAX_VALUE))
+                    .addComponent(MemoryScrollPane)
+                    .addComponent(opPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
+        simulatorLayout.setVerticalGroup(
+            simulatorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, simulatorLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addGroup(simulatorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(registerLabel)
+                    .addComponent(ioLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(simulatorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(ioPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(registersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(2, 2, 2)
+                .addComponent(memoryLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(opPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
-        ioLabel.setText("Saída");
+        main.setRightComponent(simulator);
 
         jMenu1.setText("Abrir Binário");
         jMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -361,44 +481,16 @@ public class Interface extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(memoryLabel)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(ioLabel)
-                            .addComponent(ioPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(11, 11, 11)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(registerLabel)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(registersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE)
-                    .addComponent(opPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(registerLabel)
-                    .addComponent(ioLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(ioPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(registersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(memoryLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(opPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -504,13 +596,24 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel accLabel;
     private javax.swing.JLabel accValueLabel;
     private javax.swing.ButtonGroup buttonGroup;
+    private javax.swing.JSplitPane editor;
     private javax.swing.JLabel ioLabel;
     private javax.swing.JPanel ioPanel;
+    private javax.swing.JEditorPane jEditorPane3;
+    private javax.swing.JEditorPane jEditorPane4;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JRadioButton jRadioButtonMode0;
     private javax.swing.JRadioButton jRadioButtonMode1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JSplitPane main;
     private javax.swing.JLabel memoryLabel;
     private javax.swing.JTable memoryTable;
     private javax.swing.JLabel mopLabel;
@@ -529,6 +632,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel riLabel;
     private javax.swing.JLabel riTextLabel;
     private javax.swing.JLabel riValueLabel;
+    private javax.swing.JPanel simulator;
     private javax.swing.JLabel spLabel;
     private javax.swing.JLabel spValueLabel;
     private javax.swing.JButton stepButton;
