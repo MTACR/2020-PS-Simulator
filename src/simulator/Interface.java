@@ -45,7 +45,7 @@ public class Interface extends javax.swing.JFrame {
         mainSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
         editorSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
         undo = new UndoManager();
-        DefaultCaret caret = (DefaultCaret)asmOutText.getCaret();
+        DefaultCaret caret = (DefaultCaret) asmOutText.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         asmOutText.setEditable(false);
     }
@@ -93,6 +93,10 @@ public class Interface extends javax.swing.JFrame {
     private void initComponents() {
 
         buttonGroup = new javax.swing.ButtonGroup();
+        toolbar = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jSeparator3 = new javax.swing.JSeparator();
+        jPanel2 = new javax.swing.JPanel();
         mainSplit = new javax.swing.JSplitPane();
         editorSplit = new javax.swing.JSplitPane();
         codePane = new javax.swing.JPanel();
@@ -131,18 +135,19 @@ public class Interface extends javax.swing.JFrame {
         jRadioButtonMode1 = new javax.swing.JRadioButton();
         resetButton = new javax.swing.JButton();
         stepButton = new javax.swing.JButton();
-        toolbar = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jToolBar1 = new javax.swing.JToolBar();
         newFileButton = new javax.swing.JButton();
         openFileButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         undoButton = new javax.swing.JButton();
         redoButton = new javax.swing.JButton();
-        jSeparator3 = new javax.swing.JSeparator();
-        jPanel2 = new javax.swing.JPanel();
+        jToolBar2 = new javax.swing.JToolBar();
         runButton = new javax.swing.JButton();
         run1Button = new javax.swing.JButton();
         reset1Button = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
         jSlider1 = new javax.swing.JSlider();
         menuBar = new javax.swing.JMenuBar();
         jMenu4 = new javax.swing.JMenu();
@@ -158,14 +163,25 @@ public class Interface extends javax.swing.JFrame {
         menuRun = new javax.swing.JMenu();
         menuRunFile = new javax.swing.JMenuItem();
 
+        toolbar.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+
+        jPanel1.setAlignmentX(0.0F);
+        jPanel1.setAlignmentY(0.0F);
+        toolbar.add(jPanel1);
+
+        jSeparator3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jSeparator3.setMinimumSize(new java.awt.Dimension(100, 0));
+        toolbar.add(jSeparator3);
+        toolbar.add(jPanel2);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Simulador");
         setSize(new java.awt.Dimension(640, 300));
 
-        mainSplit.setDividerLocation(1000);
+        mainSplit.setDividerLocation(400);
         mainSplit.setResizeWeight(1.0);
 
-        editorSplit.setDividerLocation(500);
+        editorSplit.setDividerLocation(300);
         editorSplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         editorSplit.setResizeWeight(0.8);
 
@@ -173,11 +189,11 @@ public class Interface extends javax.swing.JFrame {
         codePane.setLayout(codePaneLayout);
         codePaneLayout.setHorizontalGroup(
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
+            .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
         );
         codePaneLayout.setVerticalGroup(
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(codePaneTabs, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+            .addComponent(codePaneTabs, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
         );
 
         editorSplit.setTopComponent(codePane);
@@ -503,109 +519,187 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(2, 2, 2)
                 .addComponent(memoryLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(opPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         mainSplit.setRightComponent(simulator);
 
-        toolbar.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+        java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0);
+        flowLayout1.setAlignOnBaseline(true);
+        jPanel4.setLayout(flowLayout1);
 
-        jPanel1.setAlignmentX(0.0F);
-        jPanel1.setAlignmentY(0.0F);
+        jToolBar1.setRollover(true);
 
-        newFileButton.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\new.png")); // NOI18N
+        newFileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/new.png"))); // NOI18N
         newFileButton.setBorderPainted(false);
         newFileButton.setContentAreaFilled(false);
+        newFileButton.setFocusable(false);
+        newFileButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        newFileButton.setMaximumSize(new java.awt.Dimension(40, 40));
+        newFileButton.setMinimumSize(new java.awt.Dimension(40, 40));
+        newFileButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         newFileButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 newFileButtonMouseClicked(evt);
             }
         });
-        jPanel1.add(newFileButton);
+        newFileButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newFileButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(newFileButton);
 
-        openFileButton.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\open.png")); // NOI18N
+        openFileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/open.png"))); // NOI18N
         openFileButton.setBorderPainted(false);
         openFileButton.setContentAreaFilled(false);
+        openFileButton.setFocusable(false);
+        openFileButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        openFileButton.setMaximumSize(new java.awt.Dimension(40, 40));
+        openFileButton.setMinimumSize(new java.awt.Dimension(40, 40));
+        openFileButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         openFileButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 openFileButtonMouseClicked(evt);
             }
         });
-        jPanel1.add(openFileButton);
+        openFileButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openFileButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(openFileButton);
 
-        saveButton.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\save.png")); // NOI18N
+        saveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/save.png"))); // NOI18N
         saveButton.setBorderPainted(false);
         saveButton.setContentAreaFilled(false);
+        saveButton.setFocusable(false);
+        saveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        saveButton.setMaximumSize(new java.awt.Dimension(40, 40));
+        saveButton.setMinimumSize(new java.awt.Dimension(40, 40));
+        saveButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         saveButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 saveButtonMouseClicked(evt);
             }
         });
-        jPanel1.add(saveButton);
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(saveButton);
 
-        undoButton.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\undo.png")); // NOI18N
+        undoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/undo.png"))); // NOI18N
         undoButton.setBorderPainted(false);
         undoButton.setContentAreaFilled(false);
+        undoButton.setFocusable(false);
+        undoButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        undoButton.setMaximumSize(new java.awt.Dimension(40, 40));
+        undoButton.setMinimumSize(new java.awt.Dimension(40, 40));
+        undoButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         undoButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 undoButtonMouseClicked(evt);
             }
         });
-        jPanel1.add(undoButton);
+        undoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                undoButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(undoButton);
 
-        redoButton.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\redo.png")); // NOI18N
+        redoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/redo.png"))); // NOI18N
         redoButton.setBorderPainted(false);
         redoButton.setContentAreaFilled(false);
+        redoButton.setFocusable(false);
+        redoButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        redoButton.setMaximumSize(new java.awt.Dimension(40, 40));
+        redoButton.setMinimumSize(new java.awt.Dimension(40, 40));
+        redoButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         redoButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 redoButtonMouseClicked(evt);
             }
         });
-        jPanel1.add(redoButton);
+        redoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                redoButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(redoButton);
 
-        toolbar.add(jPanel1);
+        jPanel4.add(jToolBar1);
 
-        jSeparator3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        jSeparator3.setMinimumSize(new java.awt.Dimension(100, 0));
-        toolbar.add(jSeparator3);
+        jToolBar2.setRollover(true);
 
-        runButton.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\run.png")); // NOI18N
+        runButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/run.png"))); // NOI18N
         runButton.setBorderPainted(false);
         runButton.setContentAreaFilled(false);
+        runButton.setFocusable(false);
+        runButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        runButton.setMaximumSize(new java.awt.Dimension(40, 40));
+        runButton.setMinimumSize(new java.awt.Dimension(40, 40));
+        runButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         runButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 runButtonMouseClicked(evt);
             }
         });
-        jPanel2.add(runButton);
+        runButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                runButtonActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(runButton);
 
-        run1Button.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\step.png")); // NOI18N
+        run1Button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/step.png"))); // NOI18N
         run1Button.setBorderPainted(false);
         run1Button.setContentAreaFilled(false);
+        run1Button.setFocusable(false);
+        run1Button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        run1Button.setMaximumSize(new java.awt.Dimension(40, 40));
+        run1Button.setMinimumSize(new java.awt.Dimension(40, 40));
+        run1Button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         run1Button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 run1ButtonMouseClicked(evt);
             }
         });
-        jPanel2.add(run1Button);
+        jToolBar2.add(run1Button);
 
-        reset1Button.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\reset.png")); // NOI18N
+        reset1Button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/reset.png"))); // NOI18N
         reset1Button.setBorderPainted(false);
         reset1Button.setContentAreaFilled(false);
+        reset1Button.setFocusable(false);
+        reset1Button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        reset1Button.setMaximumSize(new java.awt.Dimension(40, 40));
+        reset1Button.setMinimumSize(new java.awt.Dimension(40, 40));
+        reset1Button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         reset1Button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 reset1ButtonMouseClicked(evt);
             }
         });
-        jPanel2.add(reset1Button);
+        jToolBar2.add(reset1Button);
 
-        toolbar.add(jPanel2);
+        jPanel3.setLayout(new java.awt.BorderLayout());
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Velocidade de Execução");
+        jLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jPanel3.add(jLabel1, java.awt.BorderLayout.PAGE_START);
 
         jSlider1.setToolTipText("Velocidade");
         jSlider1.setName("Velocidade"); // NOI18N
-        toolbar.add(jSlider1);
+        jPanel3.add(jSlider1, java.awt.BorderLayout.CENTER);
+
+        jToolBar2.add(jPanel3);
+
+        jPanel4.add(jToolBar2);
 
         jMenu4.setText("Arquivo");
         jMenu4.addActionListener(new java.awt.event.ActionListener() {
@@ -614,7 +708,7 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         menuNew.setText("Novo");
         menuNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -623,7 +717,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuNew);
 
-        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         menuOpen.setText("Abrir ...");
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -632,7 +726,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuOpen);
 
-        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
         menuClose.setText("Fechar");
         menuClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -652,7 +746,7 @@ public class Interface extends javax.swing.JFrame {
         jSeparator1.setEnabled(false);
         jMenu4.add(jSeparator1);
 
-        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         menuSave.setText("Salvar");
         menuSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -704,15 +798,19 @@ public class Interface extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplit, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1077, Short.MAX_VALUE)
-            .addComponent(toolbar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 738, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(toolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE))
+                .addGap(0, 0, 0)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE))
         );
 
         pack();
@@ -802,7 +900,7 @@ public class Interface extends javax.swing.JFrame {
         // Abre o menu para escolher um arquivo, se for válido carrega no processador e atualiza interface
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        fileChooser.setFileFilter(new FileNameExtensionFilter("*.asm", "asm"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("*.asm", "asm"));//não necessariamente
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
@@ -906,12 +1004,11 @@ public class Interface extends javax.swing.JFrame {
         tmp.mkdir();
 
         for (int i = 0; i < codePaneTabs.getTabCount(); i++) {
-            String code = ((JEditorPane)(((JViewport)((JScrollPane)codePaneTabs.getComponent(i)).getComponents()[0]).getComponents()[0])).getText();
+            String code = ((JEditorPane) (((JViewport) ((JScrollPane) codePaneTabs.getComponent(i)).getComponents()[0]).getComponents()[0])).getText();
 
             /*JViewport viewport = ((JScrollPane) codePaneTabs.getTabComponentAt(i)).getViewport();
             JTextPane textPane = (JTextPane) viewport.getView();
             String code = textPane.getText();*/
-            
             if (!code.isEmpty()) {
                 try {
                     File file = new File("tmp/" + codePaneTabs.getTitleAt(i));
@@ -920,7 +1017,6 @@ public class Interface extends javax.swing.JFrame {
                     writer.write(code);
                     writer.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
 
@@ -928,8 +1024,9 @@ public class Interface extends javax.swing.JFrame {
 
         initProcessor(Assembler.assemble(files));
 
-        for (File file : files)
+        files.forEach((file) -> {
             file.delete();
+        });
     }//GEN-LAST:event_menuRunFileActionPerformed
 
     private void cleanAsmOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanAsmOutBtnActionPerformed
@@ -968,10 +1065,40 @@ public class Interface extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_reset1ButtonMouseClicked
 
+    private void newFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileButtonActionPerformed
+        // TODO add your handling code here:
+        menuNewActionPerformed(evt);
+    }//GEN-LAST:event_newFileButtonActionPerformed
+
+    private void openFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileButtonActionPerformed
+        // TODO add your handling code here:
+        menuOpenActionPerformed(evt);
+    }//GEN-LAST:event_openFileButtonActionPerformed
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        // TODO add your handling code here:
+        menuSaveActionPerformed(evt);
+    }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
+        // TODO add your handling code here:
+        JViewport viewport = ((JScrollPane) codePaneTabs.getSelectedComponent()).getViewport();
+        JTextPane textPane = (JTextPane) viewport.getView();
+    }//GEN-LAST:event_undoButtonActionPerformed
+
+    private void redoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_redoButtonActionPerformed
+
+    private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
+        // TODO add your handling code here:
+        menuRunFileActionPerformed(evt);
+    }//GEN-LAST:event_runButtonActionPerformed
+
     private void openFile(File file) throws FileNotFoundException, IOException {
-        JScrollPane tab = new JScrollPane();
-        JTextPane text = new JTextPane();
-        text.setFont(new java.awt.Font("Consolas", 0, 14));
+        JScrollPane tab = newTab();
+        JViewport viewport = tab.getViewport();
+        JTextPane text = (JTextPane) viewport.getView();
         FileReader fr = new FileReader(file);
         text.read(fr, null);
         tab.setViewportView(text);
@@ -993,9 +1120,11 @@ public class Interface extends javax.swing.JFrame {
         lines.setFocusable(false);
         lines.setOpaque(true);
         lines.setFont(new java.awt.Font("Consolas", 0, 14));
-        lines.getMargin().set(5, 10, 0, 0);
+        lines.getMargin().set(0, 5, 0, 20);
+        lines.setBackground(new Color(230, 230, 230));
+        lines.setForeground(new Color(80, 80, 80));
         StyledDocument style = lines.getStyledDocument();
-        SimpleAttributeSet align= new SimpleAttributeSet();
+        SimpleAttributeSet align = new SimpleAttributeSet();
         StyleConstants.setAlignment(align, StyleConstants.ALIGN_RIGHT);
         style.setParagraphAttributes(0, style.getLength(), align, false);
 
@@ -1004,32 +1133,36 @@ public class Interface extends javax.swing.JFrame {
 
                 int caretPosition = text.getDocument().getLength();
                 Element root = text.getDocument().getDefaultRootElement();
-                String text = "1" + "\n";
+                String text = "1";
 
                 for (int i = 2; i < root.getElementIndex(caretPosition) + 2; i++) {
-                    text += i + "\n";
+                    text += "\n"+i ;
                 }
 
                 return text;
             }
+
             @Override
             public void changedUpdate(DocumentEvent de) {
                 lines.setText(getText());
             }
+
             @Override
             public void insertUpdate(DocumentEvent de) {
                 lines.setText(getText());
             }
+
             @Override
             public void removeUpdate(DocumentEvent de) {
                 lines.setText(getText());
             }
-            
+
         });
 
         text.getDocument().addUndoableEditListener((UndoableEditEvent evt) -> {
-            if (!evt.getEdit().getPresentationName().equals("alteração de estilo"))
+            if (!evt.getEdit().getPresentationName().equals("alteração de estilo")) {
                 undo.addEdit(evt.getEdit());
+            }
         });
 
         text.getActionMap().put("Undo", new AbstractAction("Undo") {
@@ -1043,9 +1176,19 @@ public class Interface extends javax.swing.JFrame {
                 }
             }
         });
-        text.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "Undo");
 
-       // tab.getViewport().add(text);
+        text.getActionMap().put("Redo", new AbstractAction("Undo") {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                if (undo.canRedo()) {
+                    undo.redo();
+                }
+            }
+        });
+        text.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "Undo");
+        text.getInputMap().put(KeyStroke.getKeyStroke("control Y"), "Redo");
+
+        // tab.getViewport().add(text);
         tab.setRowHeaderView(lines);
 
         tab.setViewportView(text);
@@ -1081,7 +1224,8 @@ public class Interface extends javax.swing.JFrame {
 
         try {
             doc.insertString(doc.getLength(), message + "\n", style);
-        } catch (BadLocationException e) {}
+        } catch (BadLocationException e) {
+        }
     }
 
     public void printMessage(String message) {
@@ -1094,7 +1238,8 @@ public class Interface extends javax.swing.JFrame {
 
         try {
             doc.insertString(doc.getLength(), message + "\n", style);
-        } catch (BadLocationException e) {}
+        } catch (BadLocationException e) {
+        }
     }
 
     public void clearTerminal() {
@@ -1115,15 +1260,20 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JSplitPane editorSplit;
     private javax.swing.JLabel ioLabel;
     private javax.swing.JPanel ioPanel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JRadioButton jRadioButtonMode0;
     private javax.swing.JRadioButton jRadioButtonMode1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSlider jSlider1;
+    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JToolBar jToolBar2;
     private javax.swing.JSplitPane mainSplit;
     private javax.swing.JLabel memoryLabel;
     private javax.swing.JTable memoryTable;
