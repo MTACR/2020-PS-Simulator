@@ -62,11 +62,17 @@ public class SecondPass {
                     if (a == IMEDIATO)
                         opd1 = opd1.substring(1);
 
-                    else if (a == INDIRETO)
+                    else if (a == INDIRETO) {
                         opd1 = opd1.substring(0, opd1.indexOf(",I"));
 
+                        if (labels.containsKey(opd1))
+                            addrOpd1 = labels.get(opd1).getKey();
+                    }
+
+                    if (addrOpd1 == -1)
+                        addrOpd1 = Integer.parseInt(opd1);
+
                     modeOpd1 = a;
-                    addrOpd1 = Integer.parseInt(opd1);
                 }
 
                 else throw new RuntimeException("Label não definida: " + opd1);
@@ -90,11 +96,17 @@ public class SecondPass {
                     if (a == IMEDIATO)
                         opd2 = opd2.substring(1);
 
-                    else if (a == INDIRETO)
+                    else if (a == INDIRETO) {
                         opd2 = opd2.substring(0, opd2.indexOf(",I"));
 
+                        if (labels.containsKey(opd2))
+                            addrOpd2 = labels.get(opd2).getKey();
+                    }
+
+                    if (addrOpd2 == -1)
+                        addrOpd2 = Integer.parseInt(opd2);
+
                     modeOpd2 = a;
-                    addrOpd2 = Integer.parseInt(opd2);
                 }
 
                 else throw new RuntimeException("Label não definida: " + opd2);
@@ -240,6 +252,10 @@ public class SecondPass {
             e.printStackTrace();
         }
 
+        objects.forEach(objectCode -> {
+            System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.printWords());
+        });
+
         return obj;
     }
 
@@ -294,11 +310,9 @@ public class SecondPass {
         return -1;
     }
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         System.out.printf("%-10s %-10s %-10s\n", "Address", "Size", "Machine");
-        pass(new File("input/firstpass.asm")).forEach(objectCode -> {
-            System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.printWords());
-        });
-    }*/
+        pass(new File("input/firstpass.asm"));
+    }
 
 }

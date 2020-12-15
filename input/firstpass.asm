@@ -1,9 +1,6 @@
 START BAGAÇA
-
-STACK 7
-
         READ A
-        WRITE  A
+        WRITE  A,I
 A       EXTR
         EXTDEF B
 C SPACE

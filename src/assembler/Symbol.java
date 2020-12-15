@@ -55,7 +55,7 @@ public class Symbol {
 
         if (s.endsWith(",I")) {
             Interface.instance().printMessage(s.substring(0, s.indexOf(",I")));
-            return !Pattern.compile("[^0-9]").matcher(s.substring(0, s.indexOf(",I"))).find();
+            return !Pattern.compile("[^A-Za-z0-9]").matcher(s.substring(0, s.indexOf(",I"))).find();
         }
 
         if (startsWithNumber(s))
