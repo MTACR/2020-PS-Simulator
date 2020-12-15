@@ -252,9 +252,7 @@ public class SecondPass {
             e.printStackTrace();
         }
 
-        objects.forEach(objectCode -> {
-            System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.printWords());
-        });
+        objects.forEach(objectCode -> System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.printWords()));
 
         return obj;
     }

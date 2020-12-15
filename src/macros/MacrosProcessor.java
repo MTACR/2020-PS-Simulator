@@ -328,7 +328,7 @@ public class MacrosProcessor {
     // Processa um arquivo contendo macros, gerando a saída num arquivo
 
     public File process(File file) {
-        File output = new File(file.getName().substring(0, file.getName().indexOf(".")) + ".proc");
+        File output = new File("tmp/" + file.getName().substring(0, file.getName().indexOf(".")) + ".proc");
 
         try {
             reader = new BufferedReader(new FileReader(file));

@@ -7,11 +7,8 @@ import loader.Loader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -25,6 +22,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.*;
 import javax.swing.undo.*;
+import java.util.List;
 
 public class Interface extends javax.swing.JFrame {
 
@@ -676,12 +674,10 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButtonMode0ActionPerformed
 
     private void menuCloseAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCloseAllActionPerformed
-        // TODO add your handling code here:
         codePaneTabs.removeAll();
     }//GEN-LAST:event_menuCloseAllActionPerformed
 
     private void menuNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewActionPerformed
-        // TODO add your handling code here:
         newFile();
     }//GEN-LAST:event_menuNewActionPerformed
 
@@ -693,7 +689,6 @@ public class Interface extends javax.swing.JFrame {
     }
 
     private void menuCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCloseActionPerformed
-        // TODO add your handling code here:;
         codePaneTabs.remove(codePaneTabs.getSelectedIndex());
     }//GEN-LAST:event_menuCloseActionPerformed
 
@@ -757,16 +752,13 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSaveActionPerformed
 
     private void menuRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRunActionPerformed
-        // TODO add your handling code here:
         System.out.println("simulator.Interface.menuRunActionPerformed()");
     }//GEN-LAST:event_menuRunActionPerformed
 
     private void jMenu4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu4ActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_jMenu4ActionPerformed
 
     private void menuSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveAsActionPerformed
-        // TODO add your handling code here:
         String fileName, path, content;
         JViewport viewport = ((JScrollPane) codePaneTabs.getSelectedComponent()).getViewport();
         JTextPane textPane = (JTextPane) viewport.getView();
@@ -796,51 +788,46 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSaveAsActionPerformed
 
     private void menuQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuQuitActionPerformed
-        // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_menuQuitActionPerformed
 
     private void menuRunFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRunFileActionPerformed
-        // TODO add your handling code here:
-        System.out.println("simulator.Interface.menuRunFileActionPerformed()");
-
         clearTerminal();
         printMessage("Montando...");
 
-        File[] files = new File[codePaneTabs.getTabCount()];
+        List<File> files = new ArrayList<>();
         File tmp = new File("tmp");
         tmp.mkdir();
 
         for (int i = 0; i < codePaneTabs.getTabCount(); i++) {
-            JViewport viewport = ((JScrollPane) codePaneTabs.getSelectedComponent()).getViewport();
+            String code = ((JEditorPane)(((JViewport)((JScrollPane)codePaneTabs.getComponent(i)).getComponents()[0]).getComponents()[0])).getText();
+
+            /*JViewport viewport = ((JScrollPane) codePaneTabs.getTabComponentAt(i)).getViewport();
             JTextPane textPane = (JTextPane) viewport.getView();
-            String code = textPane.getText();
+            String code = textPane.getText();*/
+
             if (!code.isEmpty()) {
                 try {
-                    files[i] = new File("tmp/" + codePaneTabs.getTitleAt(i));
-                    FileWriter writer = new FileWriter(files[i]);
+                    File file = new File("tmp/" + codePaneTabs.getTitleAt(i));
+                    files.add(file);
+                    FileWriter writer = new FileWriter(file);
                     writer.write(code);
                     writer.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+
         }
 
         initProcessor(Assembler.assemble(files));
 
-        for (int i = 0; i < files.length; i++) {
-            if (files[i].exists()) {
-                files[i].delete();
-            }
-        }
-
-        tmp.deleteOnExit();
+        for (File file : files)
+            file.delete();
     }//GEN-LAST:event_menuRunFileActionPerformed
 
     private void cleanAsmOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanAsmOutBtnActionPerformed
-        // TODO add your handling code here:
-        asmOutText.setText("");
+        clearTerminal();
     }//GEN-LAST:event_cleanAsmOutBtnActionPerformed
 
     private void openFile(File file) throws FileNotFoundException, IOException {
@@ -868,7 +855,7 @@ public class Interface extends javax.swing.JFrame {
         lines.setFocusable(false);
         lines.setOpaque(true);
         lines.setFont(new java.awt.Font("Consolas", 0, 14));
-        lines.getMargin().set(5, 10, 1, 5);
+        lines.getMargin().set(5, 10, 0, 0);
         StyledDocument style = lines.getStyledDocument();
         SimpleAttributeSet align= new SimpleAttributeSet();
         StyleConstants.setAlignment(align, StyleConstants.ALIGN_RIGHT);
@@ -879,7 +866,7 @@ public class Interface extends javax.swing.JFrame {
 
                 int caretPosition = text.getDocument().getLength();
                 Element root = text.getDocument().getDefaultRootElement();
-                String text = "1" + System.getProperty("line.separator");
+                String text = "1" + "\n";
 
                 for (int i = 2; i < root.getElementIndex(caretPosition) + 2; i++) {
                     text += i + "\n";
@@ -973,7 +960,7 @@ public class Interface extends javax.swing.JFrame {
     }
 
     public void clearTerminal() {
-        asmOutText.setDocument(new DefaultStyledDocument());
+        asmOutText.setText("");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

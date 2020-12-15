@@ -53,17 +53,18 @@ public class FirstPass {
                 for (int i = 0; i < lineArr.length; i++)
                     lineArr[i] = lineArr[i].trim();
 
+
                 // até aqui foram verificações de formatação da string
 
                 // esse switch decide a quantidade de tokens na linha sendo processada
                 // as table* são listas que contém todos tokens válidos, organizados por quantidade de parâmetros
                 // ou seja, table0 -> 0 parâmetros, table1 -> 1 parâmetro, etc.
 
-                if (hasEnd)
+                /*if (hasEnd)
                     throw new RuntimeException("Programa contém instruções após fim");
 
                 if (!hasStart && !symbols.isEmpty())
-                    throw new RuntimeException("Programa contém instruções antes do início");
+                    throw new RuntimeException("Programa contém instruções antes do início");*/
 
                 switch (lineArr.length) {
 

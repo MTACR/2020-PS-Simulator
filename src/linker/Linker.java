@@ -65,6 +65,8 @@ public class Linker {
         //ArrayList<Line> lines = updateAddresses(segments, offset);
         //updateReferences(lines, segments, tgs);
 
+        files.clear();
+
         Interface.instance().printMessage("Ligando arquivos...");
         return null;
     }
