@@ -131,6 +131,19 @@ public class Interface extends javax.swing.JFrame {
         jRadioButtonMode1 = new javax.swing.JRadioButton();
         resetButton = new javax.swing.JButton();
         stepButton = new javax.swing.JButton();
+        toolbar = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        newFileButton = new javax.swing.JButton();
+        openFileButton = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
+        undoButton = new javax.swing.JButton();
+        redoButton = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JSeparator();
+        jPanel2 = new javax.swing.JPanel();
+        runButton = new javax.swing.JButton();
+        run1Button = new javax.swing.JButton();
+        reset1Button = new javax.swing.JButton();
+        jSlider1 = new javax.swing.JSlider();
         menuBar = new javax.swing.JMenuBar();
         jMenu4 = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -160,17 +173,11 @@ public class Interface extends javax.swing.JFrame {
         codePane.setLayout(codePaneLayout);
         codePaneLayout.setHorizontalGroup(
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(codePaneLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(codePaneTabs)
-                .addGap(0, 0, 0))
+            .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
         );
         codePaneLayout.setVerticalGroup(
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(codePaneLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+            .addComponent(codePaneTabs, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
         );
 
         editorSplit.setTopComponent(codePane);
@@ -198,11 +205,11 @@ public class Interface extends javax.swing.JFrame {
                 .addGroup(outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(outputPaneLayout.createSequentialGroup()
                         .addComponent(asmOutLabel)
-                        .addContainerGap(125, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(outputPaneLayout.createSequentialGroup()
                         .addComponent(cleanAsmOutBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(asmOutScroll))))
+                        .addComponent(asmOutScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
         );
         outputPaneLayout.setVerticalGroup(
             outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -496,12 +503,109 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(2, 2, 2)
                 .addComponent(memoryLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
+                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(opPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         mainSplit.setRightComponent(simulator);
+
+        toolbar.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+
+        jPanel1.setAlignmentX(0.0F);
+        jPanel1.setAlignmentY(0.0F);
+
+        newFileButton.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\new.png")); // NOI18N
+        newFileButton.setBorderPainted(false);
+        newFileButton.setContentAreaFilled(false);
+        newFileButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                newFileButtonMouseClicked(evt);
+            }
+        });
+        jPanel1.add(newFileButton);
+
+        openFileButton.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\open.png")); // NOI18N
+        openFileButton.setBorderPainted(false);
+        openFileButton.setContentAreaFilled(false);
+        openFileButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                openFileButtonMouseClicked(evt);
+            }
+        });
+        jPanel1.add(openFileButton);
+
+        saveButton.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\save.png")); // NOI18N
+        saveButton.setBorderPainted(false);
+        saveButton.setContentAreaFilled(false);
+        saveButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                saveButtonMouseClicked(evt);
+            }
+        });
+        jPanel1.add(saveButton);
+
+        undoButton.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\undo.png")); // NOI18N
+        undoButton.setBorderPainted(false);
+        undoButton.setContentAreaFilled(false);
+        undoButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                undoButtonMouseClicked(evt);
+            }
+        });
+        jPanel1.add(undoButton);
+
+        redoButton.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\redo.png")); // NOI18N
+        redoButton.setBorderPainted(false);
+        redoButton.setContentAreaFilled(false);
+        redoButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                redoButtonMouseClicked(evt);
+            }
+        });
+        jPanel1.add(redoButton);
+
+        toolbar.add(jPanel1);
+
+        jSeparator3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jSeparator3.setMinimumSize(new java.awt.Dimension(100, 0));
+        toolbar.add(jSeparator3);
+
+        runButton.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\run.png")); // NOI18N
+        runButton.setBorderPainted(false);
+        runButton.setContentAreaFilled(false);
+        runButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                runButtonMouseClicked(evt);
+            }
+        });
+        jPanel2.add(runButton);
+
+        run1Button.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\step.png")); // NOI18N
+        run1Button.setBorderPainted(false);
+        run1Button.setContentAreaFilled(false);
+        run1Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                run1ButtonMouseClicked(evt);
+            }
+        });
+        jPanel2.add(run1Button);
+
+        reset1Button.setIcon(new javax.swing.ImageIcon("D:\\Projects\\PS-1\\res\\reset.png")); // NOI18N
+        reset1Button.setBorderPainted(false);
+        reset1Button.setContentAreaFilled(false);
+        reset1Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                reset1ButtonMouseClicked(evt);
+            }
+        });
+        jPanel2.add(reset1Button);
+
+        toolbar.add(jPanel2);
+
+        jSlider1.setToolTipText("Velocidade");
+        jSlider1.setName("Velocidade"); // NOI18N
+        toolbar.add(jSlider1);
 
         jMenu4.setText("Arquivo");
         jMenu4.addActionListener(new java.awt.event.ActionListener() {
@@ -510,7 +614,7 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuNew.setText("Novo");
         menuNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -519,7 +623,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuNew);
 
-        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuOpen.setText("Abrir ...");
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -528,7 +632,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuOpen);
 
-        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuClose.setText("Fechar");
         menuClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -548,7 +652,7 @@ public class Interface extends javax.swing.JFrame {
         jSeparator1.setEnabled(false);
         jMenu4.add(jSeparator1);
 
-        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuSave.setText("Salvar");
         menuSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -600,13 +704,15 @@ public class Interface extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 649, Short.MAX_VALUE))
+            .addComponent(mainSplit, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1077, Short.MAX_VALUE)
+            .addComponent(toolbar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(toolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE))
         );
 
         pack();
@@ -689,8 +795,6 @@ public class Interface extends javax.swing.JFrame {
     }
 
     private void menuCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCloseActionPerformed
-        String fileName = codePaneTabs.getTitleAt(codePaneTabs.getSelectedIndex());
-        activeFilesList.remove(fileName);
         codePaneTabs.remove(codePaneTabs.getSelectedIndex());
     }//GEN-LAST:event_menuCloseActionPerformed
 
@@ -807,7 +911,7 @@ public class Interface extends javax.swing.JFrame {
             /*JViewport viewport = ((JScrollPane) codePaneTabs.getTabComponentAt(i)).getViewport();
             JTextPane textPane = (JTextPane) viewport.getView();
             String code = textPane.getText();*/
-
+            
             if (!code.isEmpty()) {
                 try {
                     File file = new File("tmp/" + codePaneTabs.getTitleAt(i));
@@ -832,12 +936,42 @@ public class Interface extends javax.swing.JFrame {
         clearTerminal();
     }//GEN-LAST:event_cleanAsmOutBtnActionPerformed
 
+    private void openFileButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openFileButtonMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_openFileButtonMouseClicked
+
+    private void newFileButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newFileButtonMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_newFileButtonMouseClicked
+
+    private void runButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_runButtonMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_runButtonMouseClicked
+
+    private void run1ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_run1ButtonMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_run1ButtonMouseClicked
+
+    private void saveButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveButtonMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_saveButtonMouseClicked
+
+    private void undoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_undoButtonMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_undoButtonMouseClicked
+
+    private void redoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_redoButtonMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_redoButtonMouseClicked
+
+    private void reset1ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reset1ButtonMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_reset1ButtonMouseClicked
+
     private void openFile(File file) throws FileNotFoundException, IOException {
-        JScrollPane tab = newTab();
-        
-        JViewport viewport = tab.getViewport();
-        JTextPane text = (JTextPane) viewport.getView();
-        
+        JScrollPane tab = new JScrollPane();
+        JTextPane text = new JTextPane();
+        text.setFont(new java.awt.Font("Consolas", 0, 14));
         FileReader fr = new FileReader(file);
         text.read(fr, null);
         tab.setViewportView(text);
@@ -845,6 +979,7 @@ public class Interface extends javax.swing.JFrame {
         doc.setDocumentFilter(new CustomDocumentFilter(text)); //TODO botar listener pro redo aqui tbm?
         codePaneTabs.add(file.getName(), tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
+        newFileCount++;
     }
 
     private JScrollPane newTab() {
@@ -981,10 +1116,14 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel ioLabel;
     private javax.swing.JPanel ioPanel;
     private javax.swing.JMenu jMenu4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JRadioButton jRadioButtonMode0;
     private javax.swing.JRadioButton jRadioButtonMode1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSlider jSlider1;
     private javax.swing.JSplitPane mainSplit;
     private javax.swing.JLabel memoryLabel;
     private javax.swing.JTable memoryTable;
@@ -1000,8 +1139,10 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuSaveAs;
     private javax.swing.JLabel mopLabel;
     private javax.swing.JLabel mopValueLabel;
+    private javax.swing.JButton newFileButton;
     private javax.swing.JLabel opModeLabel;
     private javax.swing.JPanel opPanel;
+    private javax.swing.JButton openFileButton;
     private static javax.swing.JLabel outputLabel;
     private javax.swing.JPanel outputPane;
     private javax.swing.JLabel outputStreamLabel;
@@ -1009,16 +1150,23 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel pcValueLabel;
     private javax.swing.JLabel reLabel;
     private javax.swing.JLabel reValueLabel;
+    private javax.swing.JButton redoButton;
     private javax.swing.JLabel registerLabel;
     private javax.swing.JPanel registersPanel;
+    private javax.swing.JButton reset1Button;
     private javax.swing.JButton resetButton;
     private javax.swing.JLabel riLabel;
     private javax.swing.JLabel riTextLabel;
     private javax.swing.JLabel riValueLabel;
+    private javax.swing.JButton run1Button;
+    private javax.swing.JButton runButton;
+    private javax.swing.JButton saveButton;
     private javax.swing.JPanel simulator;
     private javax.swing.JLabel spLabel;
     private javax.swing.JLabel spValueLabel;
     private javax.swing.JButton stepButton;
+    private javax.swing.JPanel toolbar;
+    private javax.swing.JButton undoButton;
     // End of variables declaration//GEN-END:variables
 
     // Carrega o binário e atualiza a interface
