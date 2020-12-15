@@ -5,21 +5,23 @@ import gui.CustomDocumentFilter;
 import loader.Loader;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Application;
 import javax.swing.*;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.*;
+import javax.swing.undo.*;
 
 public class Interface extends javax.swing.JFrame {
 
@@ -30,6 +32,7 @@ public class Interface extends javax.swing.JFrame {
     private boolean running;
     private int newFileCount;
     private Map<String, String> activeFilesList = new HashMap<>();
+    final UndoManager undo;
 
     public Interface() {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -40,6 +43,7 @@ public class Interface extends javax.swing.JFrame {
         newFile();
         mainSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
         editorSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
+        undo = new UndoManager();
     }
 
     // Atualiza os valores dos Registradores na interface.
@@ -798,7 +802,7 @@ public class Interface extends javax.swing.JFrame {
         for (int i = 0; i < codePaneTabs.getTabCount(); i++) {
             JViewport viewport = ((JScrollPane) codePaneTabs.getSelectedComponent()).getViewport();
             JTextPane textPane = (JTextPane) viewport.getView();
-            String code = textPane.getText();            
+            String code = textPane.getText();
             if (!code.isEmpty()) {
                 try {
                     files[i] = new File("tmp/" + codePaneTabs.getTitleAt(i));
@@ -844,6 +848,23 @@ public class Interface extends javax.swing.JFrame {
         JScrollPane tab = new JScrollPane();
         JTextPane text = new JTextPane();
         text.setFont(new java.awt.Font("Consolas", 0, 14));
+
+        text.getDocument().addUndoableEditListener((UndoableEditEvent evt) -> {
+            undo.addEdit(evt.getEdit());
+        });
+
+        text.getActionMap().put("Undo", new AbstractAction("Undo") {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    if (undo.canUndo()) {
+                        undo.undo();
+                    }
+                } catch (CannotUndoException e) {
+                }
+            }
+        });
+        text.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "Undo");
 
         tab.setViewportView(text);
         AbstractDocument doc = (AbstractDocument) text.getDocument();
