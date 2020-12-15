@@ -89,25 +89,21 @@ public class FirstPass {
     public static DefinitionTable unifyDefinitions(ArrayList<Segment> segments, int offset) {
         DefinitionTable tgs = new DefinitionTable();    //Tabela de Símbolos Globais (TSG): Armazena todos os símbolos globais definidos. União das tabelas de definição dos diferentes segmentos.
 
-        //try {
-            for (Segment seg : segments) {
+        for (Segment seg : segments) {
 
-                for (Definition def : seg.definitionTable.values()) {
+            for (Definition def : seg.definitionTable.values()) {
 
-                    if (tgs.get(def.symbol) == null) {
-                        def.offset(offset);
-                        tgs.put(def.symbol, def);
+                if (tgs.get(def.symbol) == null) {
+                    def.offset(offset);
+                    tgs.put(def.symbol, def);
 
-                    } else {
-                        throw new RuntimeException("Redefined Symbol in " + seg.fileName + ": " + def.symbol);
-                    }
+                } else {
+                    throw new RuntimeException("Redefined Symbol in " + seg.fileName + ": " + def.symbol);
                 }
-
-                offset += seg.length();
             }
-        //} catch (Exception e){
-        //    e.printStackTrace();
-        //}
+
+            offset += seg.length();
+        }
         return tgs;
     }
 
