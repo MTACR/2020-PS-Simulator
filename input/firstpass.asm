@@ -1,6 +1,6 @@
 START BAGAÇA
         READ A
-        WRITE  A,I
+        WRITE  A
 A       EXTR
         EXTDEF B
 C SPACE
