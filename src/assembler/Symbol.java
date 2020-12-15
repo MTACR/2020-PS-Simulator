@@ -48,15 +48,12 @@ public class Symbol {
         if (s.isEmpty())
             return true;
 
-        if (s.startsWith("#")) {
+        if (s.startsWith("#"))
             if (startsWithNumber(s.substring(1)))
                 return !Pattern.compile("[^0-9]").matcher(s.substring(1)).find();
-        }
 
-        if (s.endsWith(",I")) {
-            Interface.instance().printMessage(s.substring(0, s.indexOf(",I")));
+        if (s.endsWith(",I"))
             return !Pattern.compile("[^A-Za-z0-9]").matcher(s.substring(0, s.indexOf(",I"))).find();
-        }
 
         if (startsWithNumber(s))
             return !Pattern.compile("[^0-9]").matcher(s).find();
