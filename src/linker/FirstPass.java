@@ -62,7 +62,8 @@ public class FirstPass {
                             if(flag == '+' || flag == '-'){
                                usageTable.add(new Usage(sl[0], Integer.parseInt(sl[1]), flag));
                             } else {
-                                throw new IOException("Undefined flag: " + flag);
+                                throw new RuntimeException("Undefined flag: " + flag);
+                                //throw new IOException("Undefined flag: " + flag);
                             }
                         }
                     }
@@ -71,6 +72,7 @@ public class FirstPass {
             } catch (IOException | NumberFormatException e) {
                 final JPanel panel = new JPanel();
                 JOptionPane.showMessageDialog(panel, "Arquivo inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException();
             }
 
             segments.add(new Segment(fileNameObj, definitionTable, usageTable, lines, stackSize));
@@ -83,7 +85,7 @@ public class FirstPass {
     public static DefinitionTable unifyDefinitions(ArrayList<Segment> segments, int offset) {
         DefinitionTable tgs = new DefinitionTable();    //Tabela de Símbolos Globais (TSG): Armazena todos os símbolos globais definidos. União das tabelas de definição dos diferentes segmentos.
 
-        try {
+        //try {
             for (Segment seg : segments) {
 
                 for (Definition def : seg.definitionTable.values()) {
@@ -93,15 +95,15 @@ public class FirstPass {
                         tgs.put(def.symbol, def);
 
                     } else {
-                        throw new Exception("Redefined Symbol in " + seg.fileName + ": " + def.symbol);
+                        throw new RuntimeException("Redefined Symbol in " + seg.fileName + ": " + def.symbol);
                     }
                 }
 
                 offset += seg.length();
             }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+        //} catch (Exception e){
+        //    e.printStackTrace();
+        //}
         return tgs;
     }
 
@@ -112,34 +114,4 @@ public class FirstPass {
         }
         return stackSum;
     }
-
-    //INUTIL o teste já é feito no updateReferences()
-    //Checa se as entradas na tabela de uso bate com as da definição, buscando por indefinidas
-    /*public static void checkUsages(ArrayList<Segment> segments){ //Provavelmente desnecessario, deve ser possivel fazer esse teste em uma etada posterior do ligador
-        try {
-            for (Segment segUse : segments) {
-
-                for (Map.Entry use : segUse.usageTable.entrySet()) {
-                    String key = (String) use.getKey();
-                    boolean found = false;
-
-                    for (Segment segDef : segments) {
-
-                        if (segUse != segDef) { //Bem provavelmente desnecessario
-                            if (segDef.definitionTable.get(key) != null) {
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!found) {
-                        throw new Exception("Undefined Symbol in " + segUse.fileName + ": " + key + "'s definition not found");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
 }

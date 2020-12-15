@@ -50,6 +50,7 @@ public class SecondPass {
                     e.printStackTrace();
                     Interface.instance().printMessage("Undefined Symbol in " + seg.fileName + ": " + use.symbol + "'s definition not found");
                     Interface.instance().printMessage("Ou pode ser dado algum problema da linha não existir");
+                    throw new RuntimeException();
                 }
             }
         }
