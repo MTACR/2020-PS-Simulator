@@ -40,17 +40,14 @@ public class SecondPass {
                 Definition def = tgs.get(use.symbol);
                 Line line = lines.get(use.locationCounter);
 
-                try {
-                    if (use.opsign == '+') {
-                        line.word = def.address + line.word;
-                    } else {
-                        line.word = def.address - line.word;
-                    }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                    Interface.instance().printMessage("Undefined Symbol in " + seg.fileName + ": " + use.symbol + "'s definition not found");
-                    //Interface.instance().printMessage("Ou pode ser dado algum problema da linha não existir");
-                    throw new RuntimeException();
+                if (def == null){
+                    throw new RuntimeException("Undefined Symbol in " + seg.fileName + ": " + use.symbol + "'s definition not found");
+                }
+
+                if (use.opsign == '+') {
+                    line.word = def.address + line.word;
+                } else {
+                    line.word = def.address - line.word;
                 }
             }
         }

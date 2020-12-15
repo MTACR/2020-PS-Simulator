@@ -44,6 +44,11 @@ public class FirstPass {
                         for (int i = 2; i < (size * 2) + 2; ) {
                             int op = Integer.parseInt(sl[i++]);
                             char mode = sl[i++].charAt(0);
+
+                            if (mode != 'a' && mode != 'r') {
+                                throw new RuntimeException("Poorly defined reallocation mode: " + mode + " in " + fileNameObj);
+                            }
+
                             lines.add(new Line(op, mode));
                         }
                     }
@@ -62,7 +67,7 @@ public class FirstPass {
                             if(flag == '+' || flag == '-'){
                                usageTable.add(new Usage(sl[0], Integer.parseInt(sl[1]), flag));
                             } else {
-                                throw new RuntimeException("Undefined flag: " + flag);
+                                throw new RuntimeException("Poorly defined reallocation mode: " + flag + " in " + fileNameTbl);
                                 //throw new IOException("Undefined flag: " + flag);
                             }
                         }
@@ -72,7 +77,6 @@ public class FirstPass {
             } catch (IOException | NumberFormatException e) {
                 final JPanel panel = new JPanel();
                 JOptionPane.showMessageDialog(panel, "Arquivo inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
-                throw new RuntimeException();
             }
 
             segments.add(new Segment(fileNameObj, definitionTable, usageTable, lines, stackSize));
