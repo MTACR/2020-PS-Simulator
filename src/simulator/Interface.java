@@ -838,7 +838,7 @@ public class Interface extends javax.swing.JFrame {
         text.read(fr, null);
         tab.setViewportView(text);
         AbstractDocument doc = (AbstractDocument) text.getDocument();
-        doc.setDocumentFilter(new CustomDocumentFilter(text));
+        doc.setDocumentFilter(new CustomDocumentFilter(text)); //TODO botar listener pro redo aqui tbm?
         codePaneTabs.add(file.getName(), tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
         newFileCount++;
@@ -850,7 +850,8 @@ public class Interface extends javax.swing.JFrame {
         text.setFont(new java.awt.Font("Consolas", 0, 14));
 
         text.getDocument().addUndoableEditListener((UndoableEditEvent evt) -> {
-            undo.addEdit(evt.getEdit());
+            if (!evt.getEdit().getPresentationName().equals("alteração de estilo"))
+                undo.addEdit(evt.getEdit());
         });
 
         text.getActionMap().put("Undo", new AbstractAction("Undo") {
