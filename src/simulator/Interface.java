@@ -17,8 +17,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.*;
 import javax.swing.undo.*;
@@ -44,6 +47,9 @@ public class Interface extends javax.swing.JFrame {
         mainSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
         editorSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
         undo = new UndoManager();
+        DefaultCaret caret = (DefaultCaret)asmOutText.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        asmOutText.setEditable(false);
     }
 
     // Atualiza os valores dos Registradores na interface.
@@ -205,15 +211,14 @@ public class Interface extends javax.swing.JFrame {
             .addGroup(outputPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(asmOutLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(outputPaneLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(asmOutScroll)
-                        .addContainerGap())
+                    .addComponent(asmOutScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPaneLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(cleanAsmOutBtn)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         editorSplit.setRightComponent(outputPane);
@@ -507,7 +512,7 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuNew.setText("Novo");
         menuNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -516,7 +521,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuNew);
 
-        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuOpen.setText("Abrir ...");
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -525,7 +530,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuOpen);
 
-        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuClose.setText("Fechar");
         menuClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -545,7 +550,7 @@ public class Interface extends javax.swing.JFrame {
         jSeparator1.setEnabled(false);
         jMenu4.add(jSeparator1);
 
-        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuSave.setText("Salvar");
         menuSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -696,6 +701,7 @@ public class Interface extends javax.swing.JFrame {
         // Abre o menu para escolher um arquivo, se for válido carrega no processador e atualiza interface
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("*.asm", "asm"));
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
@@ -732,6 +738,8 @@ public class Interface extends javax.swing.JFrame {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                 fileChooser.setSelectedFile(new File(fileName));
+                fileChooser.setFileFilter(new FileNameExtensionFilter("*.asm", "asm"));
+
                 int result = fileChooser.showSaveDialog(this);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     fileName = fileChooser.getSelectedFile().getName();
@@ -768,6 +776,7 @@ public class Interface extends javax.swing.JFrame {
         try {
 
             JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileFilter(new FileNameExtensionFilter("*.asm", "asm"));
             path = fileChooser.getCurrentDirectory().toString();
             if (activeFilesList.containsKey(fileName)) {
                 fileChooser.setSelectedFile(new File(activeFilesList.get(fileName)));
@@ -794,7 +803,10 @@ public class Interface extends javax.swing.JFrame {
     private void menuRunFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRunFileActionPerformed
         // TODO add your handling code here:
         System.out.println("simulator.Interface.menuRunFileActionPerformed()");
+
+        clearTerminal();
         printMessage("Montando...");
+
         File[] files = new File[codePaneTabs.getTabCount()];
         File tmp = new File("tmp");
         tmp.mkdir();
@@ -814,15 +826,16 @@ public class Interface extends javax.swing.JFrame {
                 }
             }
         }
+
         initProcessor(Assembler.assemble(files));
 
-        //Loader.load(exec);
         for (int i = 0; i < files.length; i++) {
             if (files[i].exists()) {
                 files[i].delete();
             }
         }
-        tmp.delete();
+
+        tmp.deleteOnExit();
     }//GEN-LAST:event_menuRunFileActionPerformed
 
     private void cleanAsmOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanAsmOutBtnActionPerformed
@@ -849,6 +862,46 @@ public class Interface extends javax.swing.JFrame {
         JTextPane text = new JTextPane();
         text.setFont(new java.awt.Font("Consolas", 0, 14));
 
+        JTextPane lines = new JTextPane();
+        lines.setText("1");
+        lines.setEditable(false);
+        lines.setFocusable(false);
+        lines.setOpaque(true);
+        lines.setFont(new java.awt.Font("Consolas", 0, 14));
+        lines.getMargin().set(5, 10, 1, 5);
+        StyledDocument style = lines.getStyledDocument();
+        SimpleAttributeSet align= new SimpleAttributeSet();
+        StyleConstants.setAlignment(align, StyleConstants.ALIGN_RIGHT);
+        style.setParagraphAttributes(0, style.getLength(), align, false);
+
+        text.getDocument().addDocumentListener(new DocumentListener() {
+            public String getText() {
+
+                int caretPosition = text.getDocument().getLength();
+                Element root = text.getDocument().getDefaultRootElement();
+                String text = "1" + System.getProperty("line.separator");
+
+                for (int i = 2; i < root.getElementIndex(caretPosition) + 2; i++) {
+                    text += i + "\n";
+                }
+
+                return text;
+            }
+            @Override
+            public void changedUpdate(DocumentEvent de) {
+                lines.setText(getText());
+            }
+            @Override
+            public void insertUpdate(DocumentEvent de) {
+                lines.setText(getText());
+            }
+            @Override
+            public void removeUpdate(DocumentEvent de) {
+                lines.setText(getText());
+            }
+            
+        });
+
         text.getDocument().addUndoableEditListener((UndoableEditEvent evt) -> {
             if (!evt.getEdit().getPresentationName().equals("alteração de estilo"))
                 undo.addEdit(evt.getEdit());
@@ -866,6 +919,9 @@ public class Interface extends javax.swing.JFrame {
             }
         });
         text.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "Undo");
+
+       // tab.getViewport().add(text);
+        tab.setRowHeaderView(lines);
 
         tab.setViewportView(text);
         AbstractDocument doc = (AbstractDocument) text.getDocument();
@@ -900,8 +956,7 @@ public class Interface extends javax.swing.JFrame {
 
         try {
             doc.insertString(doc.getLength(), message + "\n", style);
-        } catch (BadLocationException e) {
-        }
+        } catch (BadLocationException e) {}
     }
 
     public void printMessage(String message) {
@@ -914,8 +969,7 @@ public class Interface extends javax.swing.JFrame {
 
         try {
             doc.insertString(doc.getLength(), message + "\n", style);
-        } catch (BadLocationException e) {
-        }
+        } catch (BadLocationException e) {}
     }
 
     public void clearTerminal() {
