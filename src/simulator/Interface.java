@@ -143,6 +143,7 @@ public class Interface extends javax.swing.JFrame {
         runButton = new javax.swing.JButton();
         run1Button = new javax.swing.JButton();
         reset1Button = new javax.swing.JButton();
+        jSlider1 = new javax.swing.JSlider();
         menuBar = new javax.swing.JMenuBar();
         jMenu4 = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -601,6 +602,10 @@ public class Interface extends javax.swing.JFrame {
         jPanel2.add(reset1Button);
 
         toolbar.add(jPanel2);
+
+        jSlider1.setToolTipText("Velocidade");
+        jSlider1.setName("Velocidade"); // NOI18N
+        toolbar.add(jSlider1);
 
         jMenu4.setText("Arquivo");
         jMenu4.addActionListener(new java.awt.event.ActionListener() {
@@ -1118,6 +1123,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSlider jSlider1;
     private javax.swing.JSplitPane mainSplit;
     private javax.swing.JLabel memoryLabel;
     private javax.swing.JTable memoryTable;

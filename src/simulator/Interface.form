@@ -890,6 +890,12 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JSlider" name="jSlider1">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Velocidade"/>
+            <Property name="name" type="java.lang.String" value="Velocidade" noResource="true"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>
