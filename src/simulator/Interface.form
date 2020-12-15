@@ -144,13 +144,13 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-              <Component id="mainSplit" pref="651" max="32767" attributes="0"/>
+              <Component id="mainSplit" pref="649" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="mainSplit" alignment="0" pref="463" max="32767" attributes="0"/>
+          <Component id="mainSplit" alignment="0" pref="464" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -198,7 +198,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Component id="codePaneTabs" pref="384" max="32767" attributes="0"/>
+                          <Component id="codePaneTabs" pref="385" max="32767" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -231,7 +231,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <Component id="asmOutLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="127" max="32767" attributes="0"/>
+                                  <EmptySpace pref="125" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
                                   <Component id="cleanAsmOutBtn" min="-2" max="-2" attributes="0"/>
@@ -352,7 +352,7 @@
                       <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                       <Component id="memoryLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="MemoryScrollPane" pref="225" max="32767" attributes="0"/>
+                      <Component id="MemoryScrollPane" pref="226" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="opPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
