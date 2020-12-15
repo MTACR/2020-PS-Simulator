@@ -128,7 +128,7 @@ public class CustomDocumentFilter extends DocumentFilter {
         styledDocument.setCharacterAttributes(0, pane.getText().length(), commonAttrSet, true);
 
         Matcher matcher;
-        String text = pane.getText().replace("\n", "");
+        String text = pane.getText().replace("\n", "").toUpperCase();
 
         matcher = opcode.matcher(text);
         while (matcher.find())

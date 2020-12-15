@@ -59,6 +59,12 @@ public class FirstPass {
                 // as table* são listas que contém todos tokens válidos, organizados por quantidade de parâmetros
                 // ou seja, table0 -> 0 parâmetros, table1 -> 1 parâmetro, etc.
 
+                if (hasEnd)
+                    throw new RuntimeException("Programa contém instruções após fim");
+
+                if (!hasStart && !symbols.isEmpty())
+                    throw new RuntimeException("Programa contém instruções antes do início");
+
                 switch (lineArr.length) {
 
                     case 1:
@@ -311,9 +317,8 @@ public class FirstPass {
 
             // Se usos externos possui label, marca para ser removido
             // Isso serve para que no segundo passo labels externas não sejam encontrdas e o offset receba flag 'a'
-            } else if (extuseLabels.contains(label)) {
+            } else if (extuseLabels.contains(label))
                 ext2Remove.add(label);
-            }
         }
 
         // Remove todos símbolos externos do mapa

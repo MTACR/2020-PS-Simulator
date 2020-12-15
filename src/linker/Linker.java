@@ -36,20 +36,20 @@ public class Linker {
         updateReferences(lines, segments, tgs);
 
         //Prints
-        Interface.instance().printMessage("Código");
+        System.out.println("Código");
         for(int i = 0; i < lines.size(); i++){
             System.out.println(i + " " + lines.get(i).toString());
         }
 
-        Interface.instance().printMessage("Definições");
+        System.out.println("Definições");
         for(Definition def : tgs.values()) {
-            Interface.instance().printMessage(def.toString());
+            System.out.println(def.toString());
         }
 
-        Interface.instance().printMessage("Usos");
-        for(Segment seg : segments){
+        System.out.println("Usos");
+        for (Segment seg : segments){
             for(Usage use : seg.usageTable.values()){
-                Interface.instance().printMessage(use.toString());
+                System.out.println(use.toString());
             }
         }
     }
