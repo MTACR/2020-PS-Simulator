@@ -5,9 +5,18 @@ import gui.CustomDocumentFilter;
 import loader.Loader;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Application;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.*;
@@ -20,6 +29,7 @@ public class Interface extends javax.swing.JFrame {
     private boolean abort;
     private boolean running;
     private int newFileCount;
+    private Map<String, String> activeFilesList = new HashMap<>();
 
     public Interface() {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -27,6 +37,9 @@ public class Interface extends javax.swing.JFrame {
         setLook();
         initComponents();
         newFileCount = 0;
+        newFile();
+        mainSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
+        editorSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
     }
 
     // Atualiza os valores dos Registradores na interface.
@@ -50,7 +63,7 @@ public class Interface extends javax.swing.JFrame {
             model.addRow(new Object[]{i, next(memory, i++), next(memory, i++), next(memory, i++), next(memory, i++)});
         }
         memoryTable.setCellSelectionEnabled(true);
-        
+
         int position = processor.getPc();
         int line = position / 4;
         int col = (position % 4 + 1);
@@ -76,12 +89,11 @@ public class Interface extends javax.swing.JFrame {
         editorSplit = new javax.swing.JSplitPane();
         codePane = new javax.swing.JPanel();
         codePaneTabs = new javax.swing.JTabbedPane();
-        codeScrollPane = new javax.swing.JScrollPane();
-        codeTextPane = new javax.swing.JTextPane();
         outputPane = new javax.swing.JPanel();
         asmOutLabel = new javax.swing.JLabel();
         asmOutScroll = new javax.swing.JScrollPane();
         asmOutText = new javax.swing.JTextPane();
+        cleanAsmOutBtn = new javax.swing.JButton();
         simulator = new javax.swing.JPanel();
         ioLabel = new javax.swing.JLabel();
         ioPanel = new javax.swing.JPanel();
@@ -113,11 +125,17 @@ public class Interface extends javax.swing.JFrame {
         stepButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         jMenu4 = new javax.swing.JMenu();
-        menuNewFile = new javax.swing.JMenu();
-        menuOpenFile = new javax.swing.JMenu();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
-        jMenu3 = new javax.swing.JMenu();
+        menuNew = new javax.swing.JMenuItem();
+        menuOpen = new javax.swing.JMenuItem();
+        menuClose = new javax.swing.JMenuItem();
+        menuCloseAll = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        menuSave = new javax.swing.JMenuItem();
+        menuSaveAs = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        menuQuit = new javax.swing.JMenuItem();
+        menuRun = new javax.swing.JMenu();
+        menuRunFile = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Simulador");
@@ -126,30 +144,24 @@ public class Interface extends javax.swing.JFrame {
         mainSplit.setDividerLocation(1000);
         mainSplit.setResizeWeight(1.0);
 
-        editorSplit.setDividerLocation(1000);
+        editorSplit.setDividerLocation(500);
         editorSplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         editorSplit.setResizeWeight(0.8);
-
-        codeTextPane.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
-        codeTextPane.setText("START TESTE\n*\nMACRO\nSCALE &RP\nMACRO\nMULTSC &A,&B,&C\nLOAD &A\nMULT &B\n*SHIFTR &RP\nSTORE &C\nMEND\nMACRO\nDIVSC &A,&B,&C\nLOAD &A\nDIV &B\n*SHIFTL &RP\nSTORE &C\nMEND\nMEND\n*\nMACRO\n&LAB DISCR &A,&B,&C,&D\n&LAB MULTSC &A,&C,TEMP1\nMULTSC TEMP1,4,TEMP1\nMULTSC &A,&B,TEMP2\nSUB TEMP1\nSTORE &D\nMEND\n*\nREAD A\nREAD B\nREAD C\nSCALE 3\nDISCR A,B,C,D\nWRITE D\nSTOP\n*\nA SPACE\nB SPACE\nC SPACE\nD SPACE\nTEMP1 SPACE\nTEMP2 SPACE\n*\nEND\n");
-        codeScrollPane.setViewportView(codeTextPane);
-
-        codePaneTabs.addTab("arquivo.asm", codeScrollPane);
 
         javax.swing.GroupLayout codePaneLayout = new javax.swing.GroupLayout(codePane);
         codePane.setLayout(codePaneLayout);
         codePaneLayout.setHorizontalGroup(
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(codePaneLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addComponent(codePaneTabs)
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
         codePaneLayout.setVerticalGroup(
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(codePaneLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -162,6 +174,13 @@ public class Interface extends javax.swing.JFrame {
         asmOutText.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
         asmOutScroll.setViewportView(asmOutText);
 
+        cleanAsmOutBtn.setText("Limpar");
+        cleanAsmOutBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cleanAsmOutBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout outputPaneLayout = new javax.swing.GroupLayout(outputPane);
         outputPane.setLayout(outputPaneLayout);
         outputPaneLayout.setHorizontalGroup(
@@ -170,19 +189,27 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(outputPaneLayout.createSequentialGroup()
-                        .addComponent(asmOutScroll)
-                        .addContainerGap())
-                    .addGroup(outputPaneLayout.createSequentialGroup()
                         .addComponent(asmOutLabel)
-                        .addGap(0, 159, Short.MAX_VALUE))))
+                        .addContainerGap(127, Short.MAX_VALUE))
+                    .addGroup(outputPaneLayout.createSequentialGroup()
+                        .addComponent(cleanAsmOutBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(asmOutScroll))))
         );
         outputPaneLayout.setVerticalGroup(
             outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(outputPaneLayout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(asmOutLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(asmOutScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(outputPaneLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(asmOutScroll)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPaneLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cleanAsmOutBtn)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         editorSplit.setRightComponent(outputPane);
@@ -462,7 +489,7 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(2, 2, 2)
                 .addComponent(memoryLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(opPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -470,52 +497,95 @@ public class Interface extends javax.swing.JFrame {
         mainSplit.setRightComponent(simulator);
 
         jMenu4.setText("Arquivo");
-
-        menuNewFile.setText("Novo Arquivo");
-        menuNewFile.addMenuKeyListener(new javax.swing.event.MenuKeyListener() {
-            public void menuKeyPressed(javax.swing.event.MenuKeyEvent evt) {
-                menuNewFileMenuKeyPressed(evt);
-            }
-            public void menuKeyReleased(javax.swing.event.MenuKeyEvent evt) {
-            }
-            public void menuKeyTyped(javax.swing.event.MenuKeyEvent evt) {
+        jMenu4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu4ActionPerformed(evt);
             }
         });
-        menuNewFile.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menuNewFileMouseClicked(evt);
+
+        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        menuNew.setText("Novo");
+        menuNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuNewActionPerformed(evt);
             }
         });
-        jMenu4.add(menuNewFile);
+        jMenu4.add(menuNew);
 
-        menuOpenFile.setText("Abrir Arquivo");
-        jMenu4.add(menuOpenFile);
+        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        menuOpen.setText("Abrir ...");
+        menuOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuOpenActionPerformed(evt);
+            }
+        });
+        jMenu4.add(menuOpen);
+
+        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        menuClose.setText("Fechar");
+        menuClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCloseActionPerformed(evt);
+            }
+        });
+        jMenu4.add(menuClose);
+
+        menuCloseAll.setText("Fechar Todos");
+        menuCloseAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCloseAllActionPerformed(evt);
+            }
+        });
+        jMenu4.add(menuCloseAll);
+
+        jSeparator1.setEnabled(false);
+        jMenu4.add(jSeparator1);
+
+        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        menuSave.setText("Salvar");
+        menuSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSaveActionPerformed(evt);
+            }
+        });
+        jMenu4.add(menuSave);
+
+        menuSaveAs.setText("Salvar Como ...");
+        menuSaveAs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSaveAsActionPerformed(evt);
+            }
+        });
+        jMenu4.add(menuSaveAs);
+        jMenu4.add(jSeparator2);
+
+        menuQuit.setText("Sair");
+        menuQuit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuQuitActionPerformed(evt);
+            }
+        });
+        jMenu4.add(menuQuit);
 
         menuBar.add(jMenu4);
 
-        jMenu1.setText("Abrir Binário");
-        jMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jMenu1MouseClicked(evt);
+        menuRun.setText("Executar");
+        menuRun.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuRunActionPerformed(evt);
             }
         });
-        menuBar.add(jMenu1);
 
-        jMenu2.setText("Abrir Código");
-        jMenu2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jMenu2MouseClicked(evt);
+        menuRunFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F6, 0));
+        menuRunFile.setText("Executar");
+        menuRunFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuRunFileActionPerformed(evt);
             }
         });
-        menuBar.add(jMenu2);
+        menuRun.add(menuRunFile);
 
-        jMenu3.setText("Executar");
-        jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jMenu3MouseClicked(evt);
-            }
-        });
-        menuBar.add(jMenu3);
+        menuBar.add(menuRun);
 
         setJMenuBar(menuBar);
 
@@ -525,11 +595,11 @@ public class Interface extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 683, Short.MAX_VALUE))
+                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
         );
 
         pack();
@@ -584,19 +654,6 @@ public class Interface extends javax.swing.JFrame {
         outputLabel.setText(String.format("%05d", out));
     }
 
-    private void jMenu1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu1MouseClicked
-        // Abre o menu para escolher um arquivo, se for válido carrega no processador e atualiza interface
-        System.out.println("Simulator.Interface.jMenu1MouseClicked()");
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-            initProcessor(selectedFile);
-        }
-    }//GEN-LAST:event_jMenu1MouseClicked
-
     private void jRadioButtonMode1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMode1ActionPerformed
         // Altera o registrador de modo de operação no processador
         processor.setMop((byte) 1);
@@ -609,32 +666,139 @@ public class Interface extends javax.swing.JFrame {
         updateGUI();
     }//GEN-LAST:event_jRadioButtonMode0ActionPerformed
 
-    private void jMenu2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu2MouseClicked
-        // Abre o menu para escolher um arquivo de código, se for válido carrega no processador e atualiza interface
-        System.out.println("Simulator.Interface.jMenu1MouseClicked()");
+    private void menuCloseAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCloseAllActionPerformed
+        // TODO add your handling code here:
+        codePaneTabs.removeAll();
+    }//GEN-LAST:event_menuCloseAllActionPerformed
+
+    private void menuNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewActionPerformed
+        // TODO add your handling code here:
+        newFile();
+    }//GEN-LAST:event_menuNewActionPerformed
+
+    private void newFile() {
+        JScrollPane tab = newTab();
+        codePaneTabs.add("novo" + newFileCount + ".asm", tab);
+        codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
+        newFileCount++;
+    }
+
+    private void menuCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCloseActionPerformed
+        // TODO add your handling code here:;
+        codePaneTabs.remove(codePaneTabs.getSelectedIndex());
+    }//GEN-LAST:event_menuCloseActionPerformed
+
+    private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
+        // Abre o menu para escolher um arquivo, se for válido carrega no processador e atualiza interface
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
-            //File selectedFile = Assembler.convert(fileChooser.getSelectedFile(), 10);
-            //System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-            //initProcessor(selectedFile);
-            //TODO
-            throw new RuntimeException("Precisa implementar dnv");
+            File selectedFile = fileChooser.getSelectedFile();
+            try {
+                openFile(selectedFile);
+                activeFilesList.put(selectedFile.getName(), selectedFile.getPath());
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-    }//GEN-LAST:event_jMenu2MouseClicked
 
-    private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
+    }//GEN-LAST:event_menuOpenActionPerformed
+
+    private void menuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveActionPerformed
+        String fileName, path, content;
+
+        JViewport viewport = ((JScrollPane) codePaneTabs.getSelectedComponent()).getViewport();
+        JTextPane textPane = (JTextPane) viewport.getView();
+        content = textPane.getText();
+        fileName = codePaneTabs.getTitleAt(codePaneTabs.getSelectedIndex());
+        FileWriter writer = null;
+        try {
+            if (activeFilesList.containsKey(fileName)) {
+                System.out.println("simulator.Interface.menuSaveActionPerformed()");
+                path = activeFilesList.get(fileName);
+                File f = new File(path);
+                writer = new FileWriter(f);
+                writer.write(content);
+                writer.close();
+                activeFilesList.put(f.getName(), f.getPath());
+            } else {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                fileChooser.setSelectedFile(new File(fileName));
+                int result = fileChooser.showSaveDialog(this);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    fileName = fileChooser.getSelectedFile().getName();
+                    path = fileChooser.getCurrentDirectory().toString();
+                    System.out.println(path + "\\" + fileName);
+                    File f = new File(path + "\\" + fileName);
+                    writer = new FileWriter(f);
+                    writer.write(content);
+                    writer.close();
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_menuSaveActionPerformed
+
+    private void menuRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRunActionPerformed
+        // TODO add your handling code here:
+        System.out.println("simulator.Interface.menuRunActionPerformed()");
+    }//GEN-LAST:event_menuRunActionPerformed
+
+    private void jMenu4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenu4ActionPerformed
+
+    private void menuSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSaveAsActionPerformed
+        // TODO add your handling code here:
+        String fileName, path, content;
+        JViewport viewport = ((JScrollPane) codePaneTabs.getSelectedComponent()).getViewport();
+        JTextPane textPane = (JTextPane) viewport.getView();
+        content = textPane.getText();
+        fileName = codePaneTabs.getTitleAt(codePaneTabs.getSelectedIndex());
+        FileWriter writer = null;
+        try {
+
+            JFileChooser fileChooser = new JFileChooser();
+            path = fileChooser.getCurrentDirectory().toString();
+            if (activeFilesList.containsKey(fileName)) {
+                fileChooser.setSelectedFile(new File(activeFilesList.get(fileName)));
+            }
+            int result = fileChooser.showSaveDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                fileName = fileChooser.getSelectedFile().getName();
+                System.out.println(path + "\\" + fileName);
+                File f = new File(path + "\\" + fileName);
+                writer = new FileWriter(f);
+                writer.write(content);
+                writer.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_menuSaveAsActionPerformed
+
+    private void menuQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuQuitActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_menuQuitActionPerformed
+
+    private void menuRunFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRunFileActionPerformed
+        // TODO add your handling code here:
+        System.out.println("simulator.Interface.menuRunFileActionPerformed()");
         printMessage("Montando...");
-
         File[] files = new File[codePaneTabs.getTabCount()];
-        
         File tmp = new File("tmp");
         tmp.mkdir();
 
         for (int i = 0; i < codePaneTabs.getTabCount(); i++) {
-            String code = ((JEditorPane)(((JViewport)((JScrollPane)codePaneTabs.getComponent(i)).getComponents()[0]).getComponents()[0])).getText();
-            
+            JViewport viewport = ((JScrollPane) codePaneTabs.getSelectedComponent()).getViewport();
+            JTextPane textPane = (JTextPane) viewport.getView();
+            String code = textPane.getText();            
             if (!code.isEmpty()) {
                 try {
                     files[i] = new File("tmp/" + codePaneTabs.getTitleAt(i));
@@ -646,41 +810,47 @@ public class Interface extends javax.swing.JFrame {
                 }
             }
         }
-
         initProcessor(Assembler.assemble(files));
 
         //Loader.load(exec);
-
-        for (int i = 0; i < files.length; i++)
-            if (files[i].exists())
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].exists()) {
                 files[i].delete();
-
+            }
+        }
         tmp.delete();
+    }//GEN-LAST:event_menuRunFileActionPerformed
 
-    }//GEN-LAST:event_jMenu3MouseClicked
+    private void cleanAsmOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanAsmOutBtnActionPerformed
+        // TODO add your handling code here:
+        asmOutText.setText("");
+    }//GEN-LAST:event_cleanAsmOutBtnActionPerformed
 
-    private void menuNewFileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuNewFileMouseClicked
-        JScrollPane tab = newTab();
-        codePaneTabs.add("novo"+newFileCount+".asm", tab);
+    private void openFile(File file) throws FileNotFoundException, IOException {
+        JScrollPane tab = new JScrollPane();
+        JTextPane text = new JTextPane();
+        text.setFont(new java.awt.Font("Consolas", 0, 14));
+        FileReader fr = new FileReader(file);
+        text.read(fr, null);
+        tab.setViewportView(text);
+        AbstractDocument doc = (AbstractDocument) text.getDocument();
+        doc.setDocumentFilter(new CustomDocumentFilter(text));
+        codePaneTabs.add(file.getName(), tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
         newFileCount++;
-    }//GEN-LAST:event_menuNewFileMouseClicked
-
-    private void menuNewFileMenuKeyPressed(javax.swing.event.MenuKeyEvent evt) {//GEN-FIRST:event_menuNewFileMenuKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_menuNewFileMenuKeyPressed
+    }
 
     private JScrollPane newTab() {
         JScrollPane tab = new JScrollPane();
         JTextPane text = new JTextPane();
-        text.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
-        text.setText("");
-	    tab.setViewportView(text);
+        text.setFont(new java.awt.Font("Consolas", 0, 14));
+
+        tab.setViewportView(text);
         AbstractDocument doc = (AbstractDocument) text.getDocument();
         doc.setDocumentFilter(new CustomDocumentFilter(text));
         return tab;
     }
-    
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
             instance().setVisible(true);
@@ -691,8 +861,9 @@ public class Interface extends javax.swing.JFrame {
     private static Interface instance;
 
     public static synchronized Interface instance() {
-        if (instance == null)
+        if (instance == null) {
             instance = new Interface();
+        }
 
         return instance;
     }
@@ -705,8 +876,10 @@ public class Interface extends javax.swing.JFrame {
         Style style = asmOutText.addStyle("Error", null);
         StyleConstants.setForeground(style, Color.red);
 
-        try { doc.insertString(doc.getLength(), message + "\n", style); }
-        catch (BadLocationException e){}
+        try {
+            doc.insertString(doc.getLength(), message + "\n", style);
+        } catch (BadLocationException e) {
+        }
     }
 
     public void printMessage(String message) {
@@ -717,8 +890,10 @@ public class Interface extends javax.swing.JFrame {
         Style style = asmOutText.addStyle("Message", null);
         StyleConstants.setForeground(style, Color.DARK_GRAY);
 
-        try { doc.insertString(doc.getLength(), message + "\n", style); }
-        catch (BadLocationException e){}
+        try {
+            doc.insertString(doc.getLength(), message + "\n", style);
+        } catch (BadLocationException e) {
+        }
     }
 
     public void clearTerminal() {
@@ -733,25 +908,30 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JScrollPane asmOutScroll;
     private javax.swing.JTextPane asmOutText;
     private javax.swing.ButtonGroup buttonGroup;
+    private javax.swing.JButton cleanAsmOutBtn;
     private javax.swing.JPanel codePane;
     private javax.swing.JTabbedPane codePaneTabs;
-    private javax.swing.JScrollPane codeScrollPane;
-    private javax.swing.JTextPane codeTextPane;
     private javax.swing.JSplitPane editorSplit;
     private javax.swing.JLabel ioLabel;
     private javax.swing.JPanel ioPanel;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JRadioButton jRadioButtonMode0;
     private javax.swing.JRadioButton jRadioButtonMode1;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSplitPane mainSplit;
     private javax.swing.JLabel memoryLabel;
     private javax.swing.JTable memoryTable;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.JMenu menuNewFile;
-    private javax.swing.JMenu menuOpenFile;
+    private javax.swing.JMenuItem menuClose;
+    private javax.swing.JMenuItem menuCloseAll;
+    private javax.swing.JMenuItem menuNew;
+    private javax.swing.JMenuItem menuOpen;
+    private javax.swing.JMenuItem menuQuit;
+    private javax.swing.JMenu menuRun;
+    private javax.swing.JMenuItem menuRunFile;
+    private javax.swing.JMenuItem menuSave;
+    private javax.swing.JMenuItem menuSaveAs;
     private javax.swing.JLabel mopLabel;
     private javax.swing.JLabel mopValueLabel;
     private javax.swing.JLabel opModeLabel;
@@ -787,8 +967,9 @@ public class Interface extends javax.swing.JFrame {
             }
             updateGUI();
 
-        } else
+        } else {
             printError("Arquivo inválido");
+        }
     }
 
     private void setLook() {

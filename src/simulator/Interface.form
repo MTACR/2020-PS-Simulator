@@ -10,46 +10,107 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Arquivo"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenu4ActionPerformed"/>
+          </Events>
           <SubComponents>
-            <Menu class="javax.swing.JMenu" name="menuNewFile">
+            <MenuItem class="javax.swing.JMenuItem" name="menuNew">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Novo Arquivo"/>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+N"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Novo"/>
               </Properties>
               <Events>
-                <EventHandler event="menuKeyPressed" listener="javax.swing.event.MenuKeyListener" parameters="javax.swing.event.MenuKeyEvent" handler="menuNewFileMenuKeyPressed"/>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="menuNewFileMouseClicked"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuNewActionPerformed"/>
               </Events>
-            </Menu>
-            <Menu class="javax.swing.JMenu" name="menuOpenFile">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuOpen">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Abrir Arquivo"/>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+O"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Abrir ..."/>
               </Properties>
-            </Menu>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuOpenActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuClose">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+W"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Fechar"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuCloseActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuCloseAll">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Fechar Todos"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuCloseAllActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
+              <Properties>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuSave">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+S"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Salvar"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSaveActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuSaveAs">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Salvar Como ..."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSaveAsActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuQuit">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Sair"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuQuitActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenu1">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Abrir Bin&#xe1;rio"/>
-          </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jMenu1MouseClicked"/>
-          </Events>
-        </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenu2">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Abrir C&#xf3;digo"/>
-          </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jMenu2MouseClicked"/>
-          </Events>
-        </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenu3">
+        <Menu class="javax.swing.JMenu" name="menuRun">
           <Properties>
             <Property name="text" type="java.lang.String" value="Executar"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jMenu3MouseClicked"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuRunActionPerformed"/>
           </Events>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="menuRunFile">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="F6"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Executar"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuRunFileActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
         </Menu>
       </SubComponents>
     </Menu>
@@ -83,13 +144,13 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-              <Component id="mainSplit" pref="683" max="32767" attributes="0"/>
+              <Component id="mainSplit" pref="651" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="mainSplit" alignment="0" pref="434" max="32767" attributes="0"/>
+          <Component id="mainSplit" alignment="0" pref="463" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -104,7 +165,7 @@
       <SubComponents>
         <Container class="javax.swing.JSplitPane" name="editorSplit">
           <Properties>
-            <Property name="dividerLocation" type="int" value="1000"/>
+            <Property name="dividerLocation" type="int" value="500"/>
             <Property name="orientation" type="int" value="0"/>
             <Property name="resizeWeight" type="double" value="0.8"/>
           </Properties>
@@ -127,9 +188,9 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Component id="codePaneTabs" max="32767" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -137,7 +198,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Component id="codePaneTabs" pref="325" max="32767" attributes="0"/>
+                          <Component id="codePaneTabs" pref="384" max="32767" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -147,32 +208,6 @@
                 <Container class="javax.swing.JTabbedPane" name="codePaneTabs">
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
-                  <SubComponents>
-                    <Container class="javax.swing.JScrollPane" name="codeScrollPane">
-                      <AuxValues>
-                        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                      </AuxValues>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="arquivo.asm">
-                            <Property name="tabTitle" type="java.lang.String" value="arquivo.asm"/>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                      <SubComponents>
-                        <Component class="javax.swing.JTextPane" name="codeTextPane">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Consolas" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="START TESTE&#xa;*&#xa;MACRO&#xa;SCALE &amp;RP&#xa;MACRO&#xa;MULTSC &amp;A,&amp;B,&amp;C&#xa;LOAD &amp;A&#xa;MULT &amp;B&#xa;*SHIFTR &amp;RP&#xa;STORE &amp;C&#xa;MEND&#xa;MACRO&#xa;DIVSC &amp;A,&amp;B,&amp;C&#xa;LOAD &amp;A&#xa;DIV &amp;B&#xa;*SHIFTL &amp;RP&#xa;STORE &amp;C&#xa;MEND&#xa;MEND&#xa;*&#xa;MACRO&#xa;&amp;LAB DISCR &amp;A,&amp;B,&amp;C,&amp;D&#xa;&amp;LAB MULTSC &amp;A,&amp;C,TEMP1&#xa;MULTSC TEMP1,4,TEMP1&#xa;MULTSC &amp;A,&amp;B,TEMP2&#xa;SUB TEMP1&#xa;STORE &amp;D&#xa;MEND&#xa;*&#xa;READ A&#xa;READ B&#xa;READ C&#xa;SCALE 3&#xa;DISCR A,B,C,D&#xa;WRITE D&#xa;STOP&#xa;*&#xa;A SPACE&#xa;B SPACE&#xa;C SPACE&#xa;D SPACE&#xa;TEMP1 SPACE&#xa;TEMP2 SPACE&#xa;*&#xa;END&#xa;"/>
-                          </Properties>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                  </SubComponents>
                 </Container>
               </SubComponents>
             </Container>
@@ -191,16 +226,17 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
+                      <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
-                                  <Component id="asmOutScroll" max="32767" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="asmOutLabel" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="127" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
-                                  <Component id="asmOutLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="159" max="32767" attributes="0"/>
+                                  <Component id="cleanAsmOutBtn" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="asmOutScroll" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -209,10 +245,20 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="asmOutLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="asmOutScroll" pref="67" max="32767" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="asmOutScroll" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="cleanAsmOutBtn" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -239,6 +285,14 @@
                     </Component>
                   </SubComponents>
                 </Container>
+                <Component class="javax.swing.JButton" name="cleanAsmOutBtn">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Limpar"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cleanAsmOutBtnActionPerformed"/>
+                  </Events>
+                </Component>
               </SubComponents>
             </Container>
           </SubComponents>
@@ -300,7 +354,7 @@
                       <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                       <Component id="memoryLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="MemoryScrollPane" pref="196" max="32767" attributes="0"/>
+                      <Component id="MemoryScrollPane" pref="225" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="opPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
