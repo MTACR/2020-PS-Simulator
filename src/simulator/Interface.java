@@ -1019,10 +1019,15 @@ public class Interface extends javax.swing.JFrame {
                 } catch (IOException e) {
                 }
             }
-
         }
 
-        initProcessor(Assembler.assemble(files));
+        try {
+            File exec = Assembler.assemble(files);
+
+            initProcessor(exec);
+        } catch (RuntimeException e) {
+            Interface.instance().printError(e.getMessage());
+        }
 
         files.forEach((file) -> {
             file.delete();
