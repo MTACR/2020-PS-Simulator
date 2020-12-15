@@ -1,7 +1,5 @@
 package linker;
 
-
-import javafx.util.Pair;
 import linker.auxiliar.DefinitionTable;
 import linker.auxiliar.UsageTable;
 
@@ -11,8 +9,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
 
 public class FirstPass {
     public static ArrayList<Segment> readSegments(String[] fileNames){ //Protótipo de leitura de leitura, considerando que as tabelas de definição e uso estão em um arquivo diferente do código objeto
@@ -41,18 +38,10 @@ public class FirstPass {
 
                         length += size;
 
-                        //Meio gambiarra, mas né
-                        int offset = 2;
-
-                        if (size > 1){
-                            lines.add(new Line(Integer.parseInt(sl[2]), sl[3].charAt(0), true));
-                            offset += 2;
-                        }
-
-                        for (int i = offset; i < (size * 2) + 2; ) {
+                        for (int i = 2; i < (size * 2) + 2; ) {
                             int op = Integer.parseInt(sl[i++]);
                             char mode = sl[i++].charAt(0);
-                            lines.add(new Line(op, mode, false));
+                            lines.add(new Line(op, mode));
                         }
                     }
                 }
@@ -68,8 +57,7 @@ public class FirstPass {
                             definitionTable.put(def.symbol, def);
                         } else {
                             if(flag == '+' || flag == '-'){
-                                Usage use = new Usage(sl[0], Integer.parseInt(sl[1]), flag);
-                                usageTable.put(use.symbol, use);
+                               usageTable.add(new Usage(sl[0], Integer.parseInt(sl[1]), flag));
                             } else {
                                 throw new IOException("Undefined flag: " + flag);
                             }

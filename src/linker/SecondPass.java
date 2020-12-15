@@ -1,6 +1,5 @@
 package linker;
 
-import assembler.ObjectCode;
 import linker.auxiliar.DefinitionTable;
 import simulator.Interface;
 
@@ -12,14 +11,14 @@ public class SecondPass {
         ArrayList<Line> updated = new ArrayList<>();
 
         for (int i = 0; i < offset; i++){
-            updated.add(new Line(0, 'a', false));   //Cria o cabeçalho e a pilha
+            updated.add(new Line(0, 'a'));   //Cria o cabeçalho e a pilha
         }
         updated.get(0).word = offset;       //Armazena o inicio do programa na posição 0 Necessario?. Na verdade, não dá pra deduzir pelo tamanho da pilha
         updated.get(2).word = offset - 3;   //Armazena o tamanho da pilha no endereço 2
 
         for(Segment seg : segments){
 
-            for(Usage usage : seg.usageTable.values()){
+            for(Usage usage : seg.usageTable){
                 usage.offset(offset);
             }
 
@@ -37,7 +36,7 @@ public class SecondPass {
     //de uso (o endereço é atualizado)
     public static void updateReferences(ArrayList<Line> lines, ArrayList<Segment> segments, DefinitionTable tgs){
         for(Segment seg : segments){
-            for(Usage use : seg.usageTable.values()){
+            for(Usage use : seg.usageTable){
                 Definition def = tgs.get(use.symbol);
                 Line line = lines.get(use.locationCounter);
 

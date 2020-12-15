@@ -2,14 +2,10 @@ package linker.auxiliar;
 
 import linker.Usage;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class UsageTable extends HashMap<String, Usage> {
-    public UsageTable(int initialCapacity, float loadFactor) {
-        super(initialCapacity, loadFactor);
-    }
-
+public class UsageTable extends ArrayList<Usage> {
     public UsageTable(int initialCapacity) {
         super(initialCapacity);
     }
@@ -17,7 +13,7 @@ public class UsageTable extends HashMap<String, Usage> {
     public UsageTable() {
     }
 
-    public UsageTable(Map<? extends String, ? extends Usage> m) {
-        super(m);
+    public UsageTable(Collection<? extends Usage> c) {
+        super(c);
     }
 }

@@ -1,14 +1,11 @@
 package linker;
 
-import assembler.ObjectCode;
 import linker.auxiliar.DefinitionTable;
 import simulator.Interface;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static linker.FirstPass.readSegments;
 import static linker.FirstPass.unifyDefinitions;
@@ -48,7 +45,7 @@ public class Linker {
 
         System.out.println("Usos");
         for (Segment seg : segments){
-            for(Usage use : seg.usageTable.values()){
+            for(Usage use : seg.usageTable){
                 System.out.println(use.toString());
             }
         }

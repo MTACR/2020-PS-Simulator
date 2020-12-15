@@ -1,17 +1,8 @@
 package linker;
 
-import assembler.ObjectCode;
-import javafx.util.Pair;
-import linker.Definition;
-import linker.Usage;
 import linker.auxiliar.DefinitionTable;
 import linker.auxiliar.UsageTable;
 
-import javax.swing.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 
 public class Segment {

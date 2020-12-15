@@ -4,12 +4,11 @@ public class Line {
     /*public int address;*/ //Pode ser deduzida da posição no vetor
     public int word;
     public char reallocMode;
-    public boolean instruction;
+    /*public boolean instruction;*/ //Inutil
 
-    public Line(int word, char reallocMode, boolean instruction) {
+    public Line(int word, char reallocMode) {
         this.word = word;
         this.reallocMode = reallocMode;
-        this.instruction = instruction;
     }
 
     public void offset(int offset){
