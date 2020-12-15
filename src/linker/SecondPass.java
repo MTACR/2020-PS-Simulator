@@ -26,7 +26,7 @@ public class SecondPass {
                 line.offset(offset);
                 updated.add(line);
             }
-            offset += seg.length;
+            offset += seg.length();
         }
 
         return updated;

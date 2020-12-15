@@ -7,10 +7,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static linker.FirstPass.readSegments;
-import static linker.FirstPass.unifyDefinitions;
-import static linker.SecondPass.updateAddresses;
-import static linker.SecondPass.updateReferences;
+import static linker.FirstPass.*;
+import static linker.SecondPass.*;
 
 public class Linker {
 
@@ -21,15 +19,12 @@ public class Linker {
 
         //FirstPass
         ArrayList<Segment> segments = readSegments(args);
-
-        //offset += tamanho da pilha
-
+        offset += getStackSum(segments);
         DefinitionTable tgs = unifyDefinitions(segments, offset);
         //checkUsages(segments);
 
         //SecondPass
         ArrayList<Line> lines = updateAddresses(segments, offset);
-
         updateReferences(lines, segments, tgs);
 
         //Prints

@@ -18,7 +18,7 @@ public class FirstPass {
             DefinitionTable definitionTable = new DefinitionTable();
             UsageTable usageTable = new UsageTable();
             ArrayList<Line> lines = new ArrayList<>();
-            int length = 0;
+            int stackSize = 10;
 
             String fileNameTbl = fileNameObj.replace(".obj",".tbl");
 
@@ -33,10 +33,13 @@ public class FirstPass {
                     while ((line = readerObj.readLine()) != null) {
                         sl = line.split(" ");
 
+                        if(sl.length == 1){
+                            stackSize = Integer.parseInt(sl[0]);
+                        }
+
                         int address = Integer.parseInt(sl[0]);
                         int size = Integer.parseInt(sl[1]);
 
-                        length += size;
 
                         for (int i = 2; i < (size * 2) + 2; ) {
                             int op = Integer.parseInt(sl[i++]);
@@ -70,7 +73,7 @@ public class FirstPass {
                 JOptionPane.showMessageDialog(panel, "Arquivo inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
             }
 
-            segments.add(new Segment(fileNameObj, definitionTable, usageTable, lines, length));
+            segments.add(new Segment(fileNameObj, definitionTable, usageTable, lines, stackSize));
         }
         return segments;
     }
@@ -94,12 +97,20 @@ public class FirstPass {
                     }
                 }
 
-                offset += seg.length;
+                offset += seg.length();
             }
         } catch (Exception e){
             e.printStackTrace();
         }
         return tgs;
+    }
+
+    public static int getStackSum(ArrayList<Segment> segments){
+        int stackSum = 0;
+        for(Segment seg : segments){
+            stackSum += seg.stackSize;
+        }
+        return stackSum;
     }
 
     //INUTIL o teste já é feito no updateReferences()
