@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
@@ -857,7 +858,7 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_menuNewActionPerformed
 
     private void newFile() {
-        JScrollPane tab = newTab();
+        JScrollPane tab = newTab("");
         codePaneTabs.add("new " + newFileCount + ".asm", tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
         undoManagerList.add(codePaneTabs.getSelectedIndex(), new UndoManager());
@@ -1042,31 +1043,18 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_reset1ButtonActionPerformed
 
     private void openFile(File file) throws IOException {
-        JScrollPane tab = newTab();
-        JViewport viewport = tab.getViewport();
-        JTextPane text = (JTextPane) viewport.getView();
-        FileReader fr = new FileReader(file);
-        text.read(fr, null);
-        tab.setViewportView(text);
-        AbstractDocument doc = (AbstractDocument) text.getDocument();
-        doc.setDocumentFilter(new CustomDocumentFilter(text));
-        doc.addUndoableEditListener((UndoableEditEvent evt) -> {
-            System.out.println(evt.getEdit());
-            if (!evt.getEdit().getPresentationName().equals("alteração de estilo")) {
-                undoManagerList.get(codePaneTabs.getSelectedIndex()).addEdit(evt.getEdit());
-            }
-        });
+        String content = new String(Files.readAllBytes(file.toPath()));
+        JScrollPane tab = newTab(content);
         codePaneTabs.add(file.getName(), tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
         undoManagerList.add(codePaneTabs.getSelectedIndex(), new UndoManager());
-        newFileCount++;
     }
 
-    private JScrollPane newTab() {
+    private JScrollPane newTab(String content) {
         JScrollPane tab = new JScrollPane();
         JTextPane text = new JTextPane();
         text.setFont(new java.awt.Font("Consolas", 0, 14));
-
+        text.setText(content);
         JTextPane lines = new JTextPane();
         lines.setText("1");
         lines.setEditable(false);
@@ -1138,9 +1126,7 @@ public class Interface extends javax.swing.JFrame {
         text.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "Undo");
         text.getInputMap().put(KeyStroke.getKeyStroke("control Y"), "Redo");
 
-        // tab.getViewport().add(text);
         tab.setRowHeaderView(lines);
-
         tab.setViewportView(text);
         AbstractDocument doc = (AbstractDocument) text.getDocument();
         doc.setDocumentFilter(new CustomDocumentFilter(text));
