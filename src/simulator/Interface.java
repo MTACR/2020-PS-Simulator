@@ -18,7 +18,6 @@ import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.*;
@@ -1043,6 +1042,7 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_reset1ButtonActionPerformed
 
     private void openFile(File file) throws IOException {
+        
         String content = new String(Files.readAllBytes(file.toPath()));
         JScrollPane tab = newTab(content);
         codePaneTabs.add(file.getName(), tab);
@@ -1055,29 +1055,29 @@ public class Interface extends javax.swing.JFrame {
         JTextPane text = new JTextPane();
         text.setFont(new java.awt.Font("Consolas", 0, 14));
         text.setText(content);
-        JTextPane lines = new JTextPane();
-        lines.setText("1");
-        lines.setEditable(false);
+        JLabel lines = new JLabel();
+        lines.setText("<html><p style='margin: 2px 20px 0 5px;'>1</p>");
         lines.setFocusable(false);
         lines.setOpaque(true);
         lines.setFont(new java.awt.Font("Consolas", 0, 14));
-        lines.getMargin().set(0, 5, 0, 20);
         lines.setBackground(new Color(230, 230, 230));
         lines.setForeground(new Color(80, 80, 80));
-        StyledDocument style = lines.getStyledDocument();
+        lines.setHorizontalAlignment(JLabel.LEFT);
+        lines.setVerticalAlignment(JLabel.TOP);
+//        StyledDocument style = lines.getStyledDocument();
         SimpleAttributeSet align = new SimpleAttributeSet();
         StyleConstants.setAlignment(align, StyleConstants.ALIGN_RIGHT);
-        style.setParagraphAttributes(0, style.getLength(), align, false);
+//        style.setParagraphAttributes(0, style.getLength(), align, false);
 
         text.getDocument().addDocumentListener(new DocumentListener() {
             public String getText() {
 
                 int caretPosition = text.getDocument().getLength();
                 Element root = text.getDocument().getDefaultRootElement();
-                String text = "1";
+                String text = "<html><p style='margin: 2px 20px 0 5px;'>1</p><p style='margin: 0 5px 0 5px;'> ";// coloquei o segundo <p> aqui pra ver se ficava mais rapido
 
                 for (int i = 2; i < root.getElementIndex(caretPosition) + 2; i++) {
-                    text += "\n" + i;
+                    text += i + "<br/>";
                 }
 
                 return text;
