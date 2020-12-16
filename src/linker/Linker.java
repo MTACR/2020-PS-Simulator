@@ -18,7 +18,7 @@ public class Linker {
     public static void main(String[] args) {
         int offset = 3; //indicador do inicio do programa + nada + tamanho máximo da pilha
 
-        args = new String[]{"output/A.obj", "output/A.tbl"};
+        args = new String[]{"output/A.obj"};
 
         //FirstPass
         ArrayList<Segment> segments = readSegments(args);

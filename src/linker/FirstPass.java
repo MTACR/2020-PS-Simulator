@@ -18,7 +18,7 @@ public class FirstPass {
             DefinitionTable definitionTable = new DefinitionTable();
             UsageTable usageTable = new UsageTable();
             ArrayList<Line> lines = new ArrayList<>();
-            int stackSize = 10;
+            int stackSize = 0;
 
             String fileNameTbl = fileNameObj.replace(".obj",".tbl");
 
@@ -30,12 +30,10 @@ public class FirstPass {
 
                 try (BufferedReader readerObj = new BufferedReader(new FileReader(fileObj))) {
 
+                    stackSize = Integer.parseInt(readerObj.readLine().split(" ")[2]);
+
                     while ((line = readerObj.readLine()) != null) {
                         sl = line.split(" ");
-
-                        if(sl.length == 1){
-                            stackSize = Integer.parseInt(sl[0]);
-                        }
 
                         int address = Integer.parseInt(sl[0]);
                         int size = Integer.parseInt(sl[1]);
