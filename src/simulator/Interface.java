@@ -80,6 +80,24 @@ public class Interface extends javax.swing.JFrame {
         memoryTable.setColumnSelectionInterval(col, col);
     }
 
+    private void clearGUI() {
+        pcValueLabel.setText(String.format("%05d", 0));
+        spValueLabel.setText(String.format("%05d", 0));
+        accValueLabel.setText(String.format("%05d", 0));
+        mopValueLabel.setText(String.format("%03d", 0));
+        riValueLabel.setText(String.format("%05d", 0));
+        riTextLabel.setText("NOP");
+        reValueLabel.setText(String.format("%05d", 0));
+        outputLabel.setText("00000");
+        DefaultTableModel model = (DefaultTableModel) memoryTable.getModel();
+        model.setRowCount(0);
+    }
+
+    private void updateGUI() {
+        updateRegisters();
+        updateMemory();
+    }
+
     // Para evitar ArrayIndexOutOfBoundsException caso a memória não seja multipla de 4.
     private String next(short[] memory, int index) {
         if (index < memory.length) {
@@ -177,7 +195,6 @@ public class Interface extends javax.swing.JFrame {
         mainSplit.setDividerLocation(400);
         mainSplit.setResizeWeight(1.0);
 
-        editorSplit.setBorder(null);
         editorSplit.setDividerLocation(300);
         editorSplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         editorSplit.setResizeWeight(0.8);
@@ -589,6 +606,11 @@ public class Interface extends javax.swing.JFrame {
         speedSlider.setToolTipText("Velocidade");
         speedSlider.setValue(75);
         speedSlider.setName("Velocidade"); // NOI18N
+        speedSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                speedSliderStateChanged(evt);
+            }
+        });
         jPanel3.add(speedSlider, java.awt.BorderLayout.CENTER);
 
         jToolBar2.add(jPanel3);
@@ -602,7 +624,7 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuNew.setText("Novo");
         menuNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -611,7 +633,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuNew);
 
-        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuOpen.setText("Abrir ...");
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -620,7 +642,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuOpen);
 
-        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuClose.setText("Fechar");
         menuClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -640,7 +662,7 @@ public class Interface extends javax.swing.JFrame {
         jSeparator1.setEnabled(false);
         jMenu4.add(jSeparator1);
 
-        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuSave.setText("Salvar");
         menuSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -869,7 +891,7 @@ public class Interface extends javax.swing.JFrame {
                 processor.setOnStopListener(() -> {
                     timer.stop();
                     processor = null;
-                    printMessage("Execution finished successful");
+                    printMessage("Execution finished successfully");
                 });
 
                 updateGUI();
@@ -957,11 +979,18 @@ public class Interface extends javax.swing.JFrame {
             assert (timer != null);
                 timer.stop();
 
-            processor = null;
             updateGUI();
+            processor = null;
             printMessage("Execution stopped");
+        } else {
+            clearGUI();
         }
     }//GEN-LAST:event_stopButtonActionPerformed
+
+    private void speedSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_speedSliderStateChanged
+        if (timer != null)
+            timer.setDelay((100 - speedSlider.getValue()) * 10);
+    }//GEN-LAST:event_speedSliderStateChanged
 
     private List<File> buildFiles() {
         List<File> files = new ArrayList<>();
@@ -1207,11 +1236,6 @@ public class Interface extends javax.swing.JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-    }
-
-    public void updateGUI() {
-        updateRegisters();
-        updateMemory();
     }
 
 }

@@ -1,3 +1,1 @@
-START PROG
-READ 1
-END
+A
