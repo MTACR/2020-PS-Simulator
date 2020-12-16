@@ -860,7 +860,7 @@ public class Interface extends javax.swing.JFrame {
         JScrollPane tab = newTab();
         codePaneTabs.add("new " + newFileCount + ".asm", tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
-        undoManagerList.add(codePaneTabs.indexOfComponent(tab), new UndoManager());
+        undoManagerList.add(codePaneTabs.getSelectedIndex(), new UndoManager());
         newFileCount++;
     }
 
@@ -1052,7 +1052,7 @@ public class Interface extends javax.swing.JFrame {
         doc.setDocumentFilter(new CustomDocumentFilter(text)); //TODO botar listener pro redo aqui tbm?
         codePaneTabs.add(file.getName(), tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
-        undoManagerList.add(codePaneTabs.indexOfComponent(tab), new UndoManager());
+        undoManagerList.add(codePaneTabs.getSelectedIndex(), new UndoManager());
         newFileCount++;
     }
 
