@@ -1049,7 +1049,13 @@ public class Interface extends javax.swing.JFrame {
         text.read(fr, null);
         tab.setViewportView(text);
         AbstractDocument doc = (AbstractDocument) text.getDocument();
-        doc.setDocumentFilter(new CustomDocumentFilter(text)); //TODO botar listener pro redo aqui tbm?
+        doc.setDocumentFilter(new CustomDocumentFilter(text));
+        doc.addUndoableEditListener((UndoableEditEvent evt) -> {
+            System.out.println(evt.getEdit());
+            if (!evt.getEdit().getPresentationName().equals("alteração de estilo")) {
+                undoManagerList.get(codePaneTabs.getSelectedIndex()).addEdit(evt.getEdit());
+            }
+        });
         codePaneTabs.add(file.getName(), tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
         undoManagerList.add(codePaneTabs.getSelectedIndex(), new UndoManager());
@@ -1083,7 +1089,7 @@ public class Interface extends javax.swing.JFrame {
                 String text = "1";
 
                 for (int i = 2; i < root.getElementIndex(caretPosition) + 2; i++) {
-                    text += "\n"+i ;
+                    text += "\n" + i;
                 }
 
                 return text;
@@ -1115,16 +1121,18 @@ public class Interface extends javax.swing.JFrame {
         text.getActionMap().put("Undo", new AbstractAction("Undo") {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                if (undoManagerList.get(codePaneTabs.getSelectedIndex()).canUndo())
+                if (undoManagerList.get(codePaneTabs.getSelectedIndex()).canUndo()) {
                     undoManagerList.get(codePaneTabs.getSelectedIndex()).undo();
+                }
             }
         });
 
         text.getActionMap().put("Redo", new AbstractAction("Undo") {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                if (undoManagerList.get(codePaneTabs.getSelectedIndex()).canRedo())
+                if (undoManagerList.get(codePaneTabs.getSelectedIndex()).canRedo()) {
                     undoManagerList.get(codePaneTabs.getSelectedIndex()).redo();
+                }
             }
         });
         text.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "Undo");
