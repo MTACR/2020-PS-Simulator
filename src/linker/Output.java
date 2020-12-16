@@ -4,7 +4,7 @@ public class Output {
 	public static String createStart(int stackSize) {
 		String output = "";
 		
-		output += fillBinary(Integer.toString(stackSize + 3, 2), 16) + "\n" + fillBinary("0", 16) 
+		output += fillBinary("0", 16) + "\n" + fillBinary("0", 16) 
 						+ "\n" +  fillBinary(Integer.toString(stackSize, 2), 16) + "\n";
 		
 		for (int i = 0; i < stackSize; i++) {
