@@ -893,30 +893,33 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_menuQuitActionPerformed
 
     private void menuRunFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRunFileActionPerformed
-        try {
-            clearTerminal();
-            if (timer != null) {
-                timer.stop();
-            }
+        //if (exec != null) {
+            try {
+                clearTerminal();
+                if (timer != null) {
+                    timer.stop();
+                }
 
-            timer = new Timer((100 - speedSlider.getValue()) * 10, (ActionEvent evt1) -> {
-                processor.step();
+                timer = new Timer((100 - speedSlider.getValue()) * 10, (ActionEvent evt1) -> {
+                    processor.step();
+                    updateGUI();
+                });
+                timer.setRepeats(true);
+                timer.start();
+
+                processor.setOnStopListener(() -> {
+                    timer.stop();
+                    processor = null;
+                    printMessage("Execution finished successfully");
+                });
+
                 updateGUI();
-            });
-            timer.setRepeats(true);
-            timer.start();
 
-            processor.setOnStopListener(() -> {
-                timer.stop();
-                processor = null;
-                printMessage("Execution finished successfully");
-            });
-
-            updateGUI();
-
-        } catch (RuntimeException e) {
-            printError(e.getMessage());
-        }
+            } catch (RuntimeException e) {
+                printError(e.getMessage());
+            }
+        //} else
+            //printMessage("No executable loaded");
     }//GEN-LAST:event_menuRunFileActionPerformed
 
     private void cleanAsmOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanAsmOutBtnActionPerformed
@@ -951,6 +954,7 @@ public class Interface extends javax.swing.JFrame {
         //carrega pro processador
         //placeholder
         List<File> files = buildFiles();
+
         if (files.isEmpty())
             printError("No files to assemble");
         else {
@@ -958,6 +962,8 @@ public class Interface extends javax.swing.JFrame {
             File f = new File("input/fatorial_bin");
             processor = new Processor(f, (byte) 1);
             updateGUI();
+
+            printMessage("Executable loaded");
         }
     }//GEN-LAST:event_runButtonActionPerformed
 
@@ -994,8 +1000,8 @@ public class Interface extends javax.swing.JFrame {
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         if (processor != null) {
-            assert (timer != null);
-            timer.stop();
+            if (timer != null)
+                timer.stop();
 
             processor = new Processor(exec, processor.getMop());
             updateGUI();
@@ -1005,14 +1011,15 @@ public class Interface extends javax.swing.JFrame {
 
     private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
         if (processor != null) {
-            assert (timer != null);
-            timer.stop();
+            if (timer != null)
+                timer.stop();
 
             updateGUI();
             processor = null;
             printMessage("Execution stopped");
         } else {
             clearGUI();
+            printMessage("Processor cleaned");
         }
     }//GEN-LAST:event_stopButtonActionPerformed
 
