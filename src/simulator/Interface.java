@@ -141,6 +141,7 @@ public class Interface extends javax.swing.JFrame {
         runButton = new javax.swing.JButton();
         stepButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
+        stopButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         speedSlider = new javax.swing.JSlider();
@@ -563,6 +564,21 @@ public class Interface extends javax.swing.JFrame {
         });
         jToolBar2.add(resetButton);
 
+        stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/stop.png"))); // NOI18N
+        stopButton.setBorderPainted(false);
+        stopButton.setContentAreaFilled(false);
+        stopButton.setFocusable(false);
+        stopButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        stopButton.setMaximumSize(new java.awt.Dimension(40, 40));
+        stopButton.setMinimumSize(new java.awt.Dimension(40, 40));
+        stopButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        stopButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stopButtonActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(stopButton);
+
         jPanel3.setLayout(new java.awt.BorderLayout());
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -852,6 +868,7 @@ public class Interface extends javax.swing.JFrame {
                 processor.setOnStopListener(() -> {
                     timer.stop();
                     processor = null;
+                    printMessage("Execution finished successful");
                 });
 
                 updateGUI();
@@ -912,6 +929,7 @@ public class Interface extends javax.swing.JFrame {
                     processor = new Processor(exec, (byte) 1);
                     processor.setOnStopListener(() -> {
                         processor = null;
+                        printMessage("Execution finished successful");
                     });
 
                     updateGUI();
@@ -924,12 +942,25 @@ public class Interface extends javax.swing.JFrame {
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         if (processor != null) {
-            timer.stop();
+            assert (timer != null);
+                timer.stop();
+
             processor = new Processor(exec, processor.getMop());
             updateGUI();
-            printMessage("Execution reset");
+            printMessage("Execution resetted");
         }
     }//GEN-LAST:event_resetButtonActionPerformed
+
+    private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
+        if (processor != null) {
+            assert (timer != null);
+                timer.stop();
+
+            processor = null;
+            updateGUI();
+            printMessage("Execution stopped");
+        }
+    }//GEN-LAST:event_stopButtonActionPerformed
 
     private List<File> buildFiles() {
         List<File> files = new ArrayList<>();
@@ -1159,6 +1190,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel spValueLabel;
     private javax.swing.JSlider speedSlider;
     private javax.swing.JButton stepButton;
+    private javax.swing.JButton stopButton;
     private javax.swing.JPanel toolbar;
     private javax.swing.JButton undoButton;
     // End of variables declaration//GEN-END:variables
