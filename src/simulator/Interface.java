@@ -39,6 +39,8 @@ public class Interface extends javax.swing.JFrame {
         this.setVisible(true);
         //setLook();
         initComponents();
+        ImageIcon icon = new ImageIcon("src/res/icon.png");
+        this.setIconImage(icon.getImage());
 
         mainSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
         editorSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
@@ -203,11 +205,11 @@ public class Interface extends javax.swing.JFrame {
         codePane.setLayout(codePaneLayout);
         codePaneLayout.setHorizontalGroup(
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+            .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
         );
         codePaneLayout.setVerticalGroup(
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(codePaneTabs, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+            .addComponent(codePaneTabs, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
         );
 
         editorSplit.setTopComponent(codePane);
@@ -232,7 +234,7 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(cleanAsmOutBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(asmOutScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE))
+                .addComponent(asmOutScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE))
         );
         outputPaneLayout.setVerticalGroup(
             outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -241,9 +243,9 @@ public class Interface extends javax.swing.JFrame {
                 .addGroup(outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(asmOutScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPaneLayout.createSequentialGroup()
-                        .addGap(0, 19, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(cleanAsmOutBtn)
-                        .addGap(0, 19, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -421,7 +423,7 @@ public class Interface extends javax.swing.JFrame {
         simulatorLayout.setHorizontalGroup(
             simulatorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(simulatorLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(6, 6, 6)
                 .addGroup(simulatorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
                     .addGroup(simulatorLayout.createSequentialGroup()
@@ -437,7 +439,7 @@ public class Interface extends javax.swing.JFrame {
                                 .addComponent(registerLabel)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(registersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
+                .addGap(6, 6, 6))
         );
         simulatorLayout.setVerticalGroup(
             simulatorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -453,8 +455,8 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(2, 2, 2)
                 .addComponent(memoryLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
+                .addGap(6, 6, 6))
         );
 
         mainSplit.setRightComponent(simulator);
@@ -624,7 +626,7 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         menuNew.setText("Novo");
         menuNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -633,7 +635,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuNew);
 
-        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         menuOpen.setText("Abrir ...");
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -642,7 +644,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuOpen);
 
-        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
         menuClose.setText("Fechar");
         menuClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -662,7 +664,7 @@ public class Interface extends javax.swing.JFrame {
         jSeparator1.setEnabled(false);
         jMenu4.add(jSeparator1);
 
-        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         menuSave.setText("Salvar");
         menuSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -714,7 +716,7 @@ public class Interface extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
+            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 668, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -725,7 +727,7 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(3, 3, 3)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(3, 3, 3)
-                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE))
+                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
         );
 
         pack();
