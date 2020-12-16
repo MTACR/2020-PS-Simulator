@@ -30,8 +30,7 @@ public class Processor {
             this.op = op;
         }
 
-        public int getValue()
-        {
+        public int getValue() {
             return op;
         }
     }
@@ -52,10 +51,12 @@ public class Processor {
 
     // Função reflexiva, faz parte da integração com a interface, permitindo a alternancia entre nextInstruction() e parseOpCode()
     public interface OnStep {
+
         void onStep();
     }
 
     public interface OnStop {
+
         void onStop();
     }
 
@@ -75,15 +76,17 @@ public class Processor {
     // Determina a proxima instrução
     private void nextInstruction() {
         //if (ri != 11) { // Se ri=11(STOP), parar execução
-            if (pc == 0)
-                throw new RuntimeException("Stack overflow");
+        if (pc == 0) {
+            throw new RuntimeException("Stack overflow");
+        }
 
-            if (pc > memory.size() || pc < 0)
-                throw new RuntimeException("Program counter out of memory bounds");
+        if (pc > memory.size() || pc < 0) {
+            throw new RuntimeException("Program counter out of memory bounds");
+        }
 
-            ri = memory.getWord(pc++, false, true);
+        ri = memory.getWord(pc++, false, true);
 
-            step = this::parseOpCode;
+        step = this::parseOpCode;
     }
 
     // Seleciona qual código a ser processado e lida com a quantidade de palavras a ser lida pros operandos
@@ -165,8 +168,14 @@ public class Processor {
         Short input = null;
         do {
             try {
-                input = Short.parseShort(JOptionPane.showInputDialog("Insira a entrada"));
-                memory.storeWord(address, input);
+                String in = JOptionPane.showInputDialog("Insira a entrada");
+                if (in != null) {
+                    input = Short.parseShort(in);
+                    memory.storeWord(address, input);
+                } else {
+                    stop.onStop();
+                    break;
+                }
             } catch (NumberFormatException ex) {
                 final JPanel panel = new JPanel();
                 JOptionPane.showMessageDialog(panel, "A entrada deve ser do tipo Short! (-32,768 até 32,767)", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -195,7 +204,7 @@ public class Processor {
     // Desempilha um valor para o PC. Em caso de falha (Stack Underflow), o programa para.
     private void ret() {
         //short pop = memory.pop();
-       // if (pop >= 0) {
+        // if (pop >= 0) {
         pc = memory.pop();
     }
 
@@ -207,24 +216,27 @@ public class Processor {
 
     // Desvios de fluxo condicionais
     private void branchNeg(boolean f1) {
-        if (acc < 0)
+        if (acc < 0) {
             branch(f1);
-        else
+        } else {
             pc++;
+        }
     }
 
     private void branchPos(boolean f1) {
-        if (acc > 0)
+        if (acc > 0) {
             branch(f1);
-        else
+        } else {
             pc++;
+        }
     }
 
     private void branchZero(boolean f1) {
-        if (acc == 0)
+        if (acc == 0) {
             branch(f1);
-        else
+        } else {
             pc++;
+        }
     }
 
     // Operações aritméticas
@@ -270,7 +282,6 @@ public class Processor {
         System.out.println("------------");
         memory.dumpMemory();
     }*/
-
     //Getters para a interface
     public short getPc() {
         return pc;

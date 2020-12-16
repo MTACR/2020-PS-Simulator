@@ -469,6 +469,7 @@ public class Interface extends javax.swing.JFrame {
         jToolBar1.setRollover(true);
 
         newFileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/new.png"))); // NOI18N
+        newFileButton.setToolTipText("Novo Arquivo");
         newFileButton.setContentAreaFilled(false);
         newFileButton.setFocusable(false);
         newFileButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -483,6 +484,7 @@ public class Interface extends javax.swing.JFrame {
         jToolBar1.add(newFileButton);
 
         openFileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/open.png"))); // NOI18N
+        openFileButton.setToolTipText("Abrir Arquivo Existente");
         openFileButton.setContentAreaFilled(false);
         openFileButton.setFocusable(false);
         openFileButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -497,6 +499,7 @@ public class Interface extends javax.swing.JFrame {
         jToolBar1.add(openFileButton);
 
         saveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/save.png"))); // NOI18N
+        saveButton.setToolTipText("Salvar");
         saveButton.setContentAreaFilled(false);
         saveButton.setFocusable(false);
         saveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -511,6 +514,7 @@ public class Interface extends javax.swing.JFrame {
         jToolBar1.add(saveButton);
 
         undoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/undo.png"))); // NOI18N
+        undoButton.setToolTipText("Desfazer");
         undoButton.setContentAreaFilled(false);
         undoButton.setFocusable(false);
         undoButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -525,6 +529,7 @@ public class Interface extends javax.swing.JFrame {
         jToolBar1.add(undoButton);
 
         redoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/redo.png"))); // NOI18N
+        redoButton.setToolTipText("Refazer");
         redoButton.setContentAreaFilled(false);
         redoButton.setFocusable(false);
         redoButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -543,6 +548,7 @@ public class Interface extends javax.swing.JFrame {
         jToolBar2.setRollover(true);
 
         runButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/run.png"))); // NOI18N
+        runButton.setToolTipText("Carregar código para o simulador");
         runButton.setContentAreaFilled(false);
         runButton.setFocusable(false);
         runButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -557,6 +563,7 @@ public class Interface extends javax.swing.JFrame {
         jToolBar2.add(runButton);
 
         playButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/play.png"))); // NOI18N
+        playButton.setToolTipText("Executar em modo contínuo");
         playButton.setContentAreaFilled(false);
         playButton.setFocusable(false);
         playButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -571,6 +578,7 @@ public class Interface extends javax.swing.JFrame {
         jToolBar2.add(playButton);
 
         stepButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/step.png"))); // NOI18N
+        stepButton.setToolTipText("Executar uma instrução");
         stepButton.setContentAreaFilled(false);
         stepButton.setFocusable(false);
         stepButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -585,6 +593,7 @@ public class Interface extends javax.swing.JFrame {
         jToolBar2.add(stepButton);
 
         resetButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/reset.png"))); // NOI18N
+        resetButton.setToolTipText("Reiniciar");
         resetButton.setContentAreaFilled(false);
         resetButton.setFocusable(false);
         resetButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -599,6 +608,7 @@ public class Interface extends javax.swing.JFrame {
         jToolBar2.add(resetButton);
 
         stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/stop.png"))); // NOI18N
+        stopButton.setToolTipText("Parar");
         stopButton.setContentAreaFilled(false);
         stopButton.setFocusable(false);
         stopButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
