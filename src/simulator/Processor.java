@@ -48,57 +48,46 @@ public class Processor {
     private final Memory memory;
     //private final Interface gui;
     private OnStep step;
+    private OnStop stop;
 
     // Função reflexiva, faz parte da integração com a interface, permitindo a alternancia entre nextInstruction() e parseOpCode()
     public interface OnStep {
-        boolean onStep();
+        void onStep();
     }
 
-    public boolean step() {
-        return step.onStep();
+    public interface OnStop {
+        void onStop();
+    }
+
+    public void step() {
+        step.onStep();
     }
 
     // Construtores
-    public Processor(File file) {
+    public Processor(File file, byte mop) {
         memory = new Memory(MEMORY_SIZE);
         memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
         pc = memory.firstPosition();
         step = this::nextInstruction;
+        this.mop = mop;
     }
 
-    /*public Processor(File file, Interface gui) {
-        this.gui = gui;
-        memory = new Memory(MEMORY_SIZE);
-        memory.loadFileToMemory(file);
-        pc = memory.firstPosition();
-
-        step = this::nextInstruction;
-    }*/
-
     // Determina a proxima instrução
-    private boolean nextInstruction() {
-        if (ri != 11) { // Se ri=11(STOP), parar execução
-            if (pc == 0) {
-                Interface.instance().printError("Stack overflow");
-                return false;
-            }
+    private void nextInstruction() {
+        //if (ri != 11) { // Se ri=11(STOP), parar execução
+            if (pc == 0)
+                throw new RuntimeException("Stack overflow");
 
-            if (pc > memory.size() || pc < 0) {
-                Interface.instance().printError("Program counter out of memory bounds");
-                return false;
-            }
+            if (pc > memory.size() || pc < 0)
+                throw new RuntimeException("Program counter out of memory bounds");
 
             ri = memory.getWord(pc++, false, true);
 
             step = this::parseOpCode;
-
-            return true;
-        } else
-            return false;
     }
 
     // Seleciona qual código a ser processado e lida com a quantidade de palavras a ser lida pros operandos
-    private boolean parseOpCode() {
+    private void parseOpCode() {
         boolean f1 = (ri & 32) != 0;
         boolean f2 = (ri & 64) != 0;
         boolean f3 = (ri & 128) != 0;
@@ -136,12 +125,14 @@ public class Processor {
                 write(f1, f3);
                 break;
             case RET:
-                return ret();
+                ret();
+                break;
             case DIVIDE:
                 divide(f1, f3);
                 break;
             case STOP:
-                return false;
+                stop.onStop();
+                break;
             case READ:
                 read(f1);
                 break;
@@ -152,12 +143,11 @@ public class Processor {
                 mult(f1, f3);
                 break;
             case CALL:
-                return call(f1);
+                call(f1);
+                break;
             default:
-                Interface.instance().printError("Invalid opcode");
-                return false;
+                throw new RuntimeException("Invalid opcode");
         }
-        return true;
     }
 
     // Carrega um enderço e coloca o valor na interface gráfica
@@ -196,24 +186,17 @@ public class Processor {
     }
 
     // Empilha o PC atual e vai para o inicio da função/endereço determinado. Em caso de falha (Stack overflow), para o programa
-    private boolean call(boolean f1) {
-        if (memory.push((short) (pc + 1))) {
-            pc = memory.getWord(pc++, f1, false);
-            re = memory.getAccessed();
-            return true;
-        } else
-            return false;
+    private void call(boolean f1) {
+        memory.push((short) (pc + 1));
+        pc = memory.getWord(pc++, f1, false);
+        re = memory.getAccessed();
     }
 
     // Desempilha um valor para o PC. Em caso de falha (Stack Underflow), o programa para.
-    private boolean ret() {
-        short pop = memory.pop();
-
-        if (pop >= 0) {
-            pc = pop;
-            return true;
-        } else
-            return false;
+    private void ret() {
+        //short pop = memory.pop();
+       // if (pop >= 0) {
+        pc = memory.pop();
     }
 
     // Desvio de fluxo incondicional
@@ -288,11 +271,6 @@ public class Processor {
         memory.dumpMemory();
     }*/
 
-    //Setters
-    public void setMop(byte mop) {
-        this.mop = mop;
-    }
-
     //Getters para a interface
     public short getPc() {
         return pc;
@@ -320,6 +298,10 @@ public class Processor {
 
     public short[] getMemory() {
         return memory.getMemory();
+    }
+
+    public void setOnStopListener(OnStop stop) {
+        this.stop = stop;
     }
 
 }

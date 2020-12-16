@@ -26,10 +26,10 @@ import javax.swing.undo.*;
 public class Interface extends javax.swing.JFrame {
 
     private Processor processor;
-    private File activeFile;
-    private Timer instructionTimer; // Temporizador que vai fazer o processador executar o programa inteiro no modo 0
-    private boolean abort;
-    private boolean running;
+    private File exec;
+    private Timer timer; // Temporizador que vai fazer o processador executar o programa inteiro no modo 0
+    //private boolean abort;
+    //private boolean running;
     private int newFileCount;
     private Map<String, String> activeFilesList = new HashMap<>();
     final List<UndoManager> undoManagerList;
@@ -130,12 +130,6 @@ public class Interface extends javax.swing.JFrame {
         memoryLabel = new javax.swing.JLabel();
         MemoryScrollPane = new javax.swing.JScrollPane();
         memoryTable = new javax.swing.JTable();
-        opPanel = new javax.swing.JPanel();
-        opModeLabel = new javax.swing.JLabel();
-        jRadioButtonMode0 = new javax.swing.JRadioButton();
-        jRadioButtonMode1 = new javax.swing.JRadioButton();
-        resetButton = new javax.swing.JButton();
-        stepButton = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
         newFileButton = new javax.swing.JButton();
@@ -145,11 +139,11 @@ public class Interface extends javax.swing.JFrame {
         redoButton = new javax.swing.JButton();
         jToolBar2 = new javax.swing.JToolBar();
         runButton = new javax.swing.JButton();
-        run1Button = new javax.swing.JButton();
-        reset1Button = new javax.swing.JButton();
+        stepButton = new javax.swing.JButton();
+        resetButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jSlider1 = new javax.swing.JSlider();
+        speedSlider = new javax.swing.JSlider();
         menuBar = new javax.swing.JMenuBar();
         jMenu4 = new javax.swing.JMenu();
         menuNew = new javax.swing.JMenuItem();
@@ -410,78 +404,6 @@ public class Interface extends javax.swing.JFrame {
             memoryTable.getColumnModel().getColumn(4).setResizable(false);
         }
 
-        opModeLabel.setText("Modo de Operação");
-
-        buttonGroup.add(jRadioButtonMode0);
-        jRadioButtonMode0.setSelected(true);
-        jRadioButtonMode0.setText("Modo 0");
-        jRadioButtonMode0.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonMode0ActionPerformed(evt);
-            }
-        });
-
-        buttonGroup.add(jRadioButtonMode1);
-        jRadioButtonMode1.setText("Modo 1");
-        jRadioButtonMode1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonMode1ActionPerformed(evt);
-            }
-        });
-
-        resetButton.setText("Reset");
-        resetButton.setMaximumSize(null);
-        resetButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resetButtonActionPerformed(evt);
-            }
-        });
-
-        stepButton.setText("Step");
-        stepButton.setMaximumSize(null);
-        stepButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stepButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout opPanelLayout = new javax.swing.GroupLayout(opPanel);
-        opPanel.setLayout(opPanelLayout);
-        opPanelLayout.setHorizontalGroup(
-            opPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(opPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(opPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(opPanelLayout.createSequentialGroup()
-                        .addComponent(jRadioButtonMode0)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButtonMode1))
-                    .addComponent(opModeLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(stepButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(resetButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        opPanelLayout.setVerticalGroup(
-            opPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(opPanelLayout.createSequentialGroup()
-                .addGroup(opPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(opPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(opModeLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(opPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(jRadioButtonMode1)
-                            .addComponent(jRadioButtonMode0)))
-                    .addGroup(opPanelLayout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addGroup(opPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(resetButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(stepButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
-        );
-
         javax.swing.GroupLayout simulatorLayout = new javax.swing.GroupLayout(simulator);
         simulator.setLayout(simulatorLayout);
         simulatorLayout.setHorizontalGroup(
@@ -502,8 +424,7 @@ public class Interface extends javax.swing.JFrame {
                             .addGroup(simulatorLayout.createSequentialGroup()
                                 .addComponent(registerLabel)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(registersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(opPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(registersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         simulatorLayout.setVerticalGroup(
@@ -520,9 +441,8 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(2, 2, 2)
                 .addComponent(memoryLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(opPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         mainSplit.setRightComponent(simulator);
@@ -627,35 +547,35 @@ public class Interface extends javax.swing.JFrame {
         });
         jToolBar2.add(runButton);
 
-        run1Button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/step.png"))); // NOI18N
-        run1Button.setBorderPainted(false);
-        run1Button.setContentAreaFilled(false);
-        run1Button.setFocusable(false);
-        run1Button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        run1Button.setMaximumSize(new java.awt.Dimension(40, 40));
-        run1Button.setMinimumSize(new java.awt.Dimension(40, 40));
-        run1Button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        run1Button.addActionListener(new java.awt.event.ActionListener() {
+        stepButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/step.png"))); // NOI18N
+        stepButton.setBorderPainted(false);
+        stepButton.setContentAreaFilled(false);
+        stepButton.setFocusable(false);
+        stepButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        stepButton.setMaximumSize(new java.awt.Dimension(40, 40));
+        stepButton.setMinimumSize(new java.awt.Dimension(40, 40));
+        stepButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        stepButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                run1ButtonActionPerformed(evt);
+                stepButtonActionPerformed(evt);
             }
         });
-        jToolBar2.add(run1Button);
+        jToolBar2.add(stepButton);
 
-        reset1Button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/reset.png"))); // NOI18N
-        reset1Button.setBorderPainted(false);
-        reset1Button.setContentAreaFilled(false);
-        reset1Button.setFocusable(false);
-        reset1Button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        reset1Button.setMaximumSize(new java.awt.Dimension(40, 40));
-        reset1Button.setMinimumSize(new java.awt.Dimension(40, 40));
-        reset1Button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        reset1Button.addActionListener(new java.awt.event.ActionListener() {
+        resetButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/reset.png"))); // NOI18N
+        resetButton.setBorderPainted(false);
+        resetButton.setContentAreaFilled(false);
+        resetButton.setFocusable(false);
+        resetButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        resetButton.setMaximumSize(new java.awt.Dimension(40, 40));
+        resetButton.setMinimumSize(new java.awt.Dimension(40, 40));
+        resetButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                reset1ButtonActionPerformed(evt);
+                resetButtonActionPerformed(evt);
             }
         });
-        jToolBar2.add(reset1Button);
+        jToolBar2.add(resetButton);
 
         jPanel3.setLayout(new java.awt.BorderLayout());
 
@@ -664,9 +584,9 @@ public class Interface extends javax.swing.JFrame {
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jPanel3.add(jLabel1, java.awt.BorderLayout.PAGE_START);
 
-        jSlider1.setToolTipText("Velocidade");
-        jSlider1.setName("Velocidade"); // NOI18N
-        jPanel3.add(jSlider1, java.awt.BorderLayout.CENTER);
+        speedSlider.setToolTipText("Velocidade");
+        speedSlider.setName("Velocidade"); // NOI18N
+        jPanel3.add(speedSlider, java.awt.BorderLayout.CENTER);
 
         jToolBar2.add(jPanel3);
 
@@ -780,72 +700,24 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(0, 0, 0)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE))
+                .addComponent(mainSplit))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private boolean executeNextInstruction() {
-        boolean errored = processor.step();
-        updateGUI();
-        return errored;
-    }
-
-    private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
-        // Executa nextInstruction() no processador e atualiza interface.
-        // Dependendo do modo de operação selecionado, executa continuamente ou apenas uma instrução
-        if (activeFile != null) {
-            if (processor.getMop() == 0) { // Modo não interativo
-                if (instructionTimer != null) { // Para de executar o programa se estiver executando
-                    instructionTimer.stop();
-                    instructionTimer = null;
-                    return;
-                }
-
-                instructionTimer = new Timer(50, (java.awt.event.ActionEvent evt1) -> {
-                    running = true;
-                    if (abort || !executeNextInstruction()) {
-                        instructionTimer.stop();
-                        instructionTimer = null;
-                        abort = false;
-                        running = false;
-                    }
-                });
-                instructionTimer.setRepeats(true);
-                instructionTimer.start();
-
-            } else if (processor.getMop() == 1) { // Modo debug
-                executeNextInstruction();
-            }
-            running = false;
-        }
-
-    }//GEN-LAST:event_stepButtonActionPerformed
-
-    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        // Reabre arquivo e reseta a interface
-        if (running) {
-            abort = true;
-        }
-        initProcessor(activeFile);
-    }//GEN-LAST:event_resetButtonActionPerformed
+    /*private boolean executeNextInstruction() {
+        if (processor != null) {
+            boolean error = processor.step();
+            updateGUI();
+            return error;
+        } else
+            throw new RuntimeException("No executable loaded");
+    }*/
     //Setter para o método write
     public void setOutputLabel(short out) {
         outputLabel.setText(String.format("%05d", out));
     }
-
-    private void jRadioButtonMode1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMode1ActionPerformed
-        // Altera o registrador de modo de operação no processador
-        processor.setMop((byte) 1);
-        updateGUI();
-    }//GEN-LAST:event_jRadioButtonMode1ActionPerformed
-
-    private void jRadioButtonMode0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMode0ActionPerformed
-        // Altera o registrador de modo de operação no processador
-        processor.setMop((byte) 0);
-        updateGUI();
-    }//GEN-LAST:event_jRadioButtonMode0ActionPerformed
 
     private void menuCloseAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCloseAllActionPerformed
         codePaneTabs.removeAll();
@@ -969,36 +841,38 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_menuQuitActionPerformed
 
     private void menuRunFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRunFileActionPerformed
-        clearTerminal();
+          List<File> files = buildFiles();
 
-        List<File> files = new ArrayList<>();
-        File tmp = new File("tmp");
-        tmp.mkdir();
+        if (files.isEmpty())
+            printError("No files to assemble");
+        else
+            try {
+                clearTerminal();
 
-        for (int i = 0; i < codePaneTabs.getTabCount(); i++) {
-            String code = ((JEditorPane) (((JViewport) ((JScrollPane) codePaneTabs.getComponent(i)).getComponents()[0]).getComponents()[0])).getText();
+                exec = Assembler.assemble(files);
 
-            if (!code.isEmpty()) {
-                try {
-                    File file = new File("tmp/" + codePaneTabs.getTitleAt(i));
-                    files.add(file);
-                    FileWriter writer = new FileWriter(file);
-                    writer.write(code);
-                    writer.close();
-                } catch (IOException e) {
-                }
+                processor = new Processor(exec, (byte) 0);
+
+                if (timer != null)
+                    timer.stop();
+
+                timer = new Timer((100 - speedSlider.getValue()) * 10, (ActionEvent evt1) -> {
+                    processor.step();
+                    updateGUI();
+                });
+                timer.setRepeats(true);
+                timer.start();
+
+                processor.setOnStopListener(() -> {
+                    timer.stop();
+                    processor = null;
+                });
+
+                updateGUI();
+
+            } catch (RuntimeException e) {
+                printError(e.getMessage());
             }
-        }
-
-        try {
-            File exec = Assembler.assemble(files);
-
-            initProcessor(exec);
-        } catch (RuntimeException e) {
-            Interface.instance().printError(e.getMessage());
-        }
-
-        files.forEach((file) -> file.delete());
     }//GEN-LAST:event_menuRunFileActionPerformed
 
     private void cleanAsmOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanAsmOutBtnActionPerformed
@@ -1033,16 +907,69 @@ public class Interface extends javax.swing.JFrame {
         menuRunFileActionPerformed(evt);
     }//GEN-LAST:event_runButtonActionPerformed
 
-    private void run1ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_run1ButtonActionPerformed
-        stepButtonActionPerformed(evt);
-    }//GEN-LAST:event_run1ButtonActionPerformed
+    private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
+        if (processor != null) {
+            processor.step();
+            updateGUI();
 
-    private void reset1ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reset1ButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_reset1ButtonActionPerformed
+        } else {
+            List<File> files = buildFiles();
+
+            if (files.isEmpty())
+                printError("No files to assemble");
+            else
+                try {
+                    clearTerminal();
+
+                    exec = Assembler.assemble(files);
+
+                    processor = new Processor(exec, (byte) 1);
+                    processor.setOnStopListener(() -> {
+                        processor = null;
+                    });
+
+                    updateGUI();
+
+                } catch (RuntimeException e) {
+                    printError(e.getMessage());
+                }
+        }
+    }//GEN-LAST:event_stepButtonActionPerformed
+
+    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        if (processor != null) {
+            timer.stop();
+            processor = new Processor(exec, processor.getMop());
+            updateGUI();
+            printMessage("Execution reset");
+        }
+    }//GEN-LAST:event_resetButtonActionPerformed
+
+    private List<File> buildFiles() {
+        List<File> files = new ArrayList<>();
+        File tmp = new File("tmp");
+        tmp.mkdir();
+
+        for (int i = 0; i < codePaneTabs.getTabCount(); i++) {
+            String code = ((JEditorPane) (((JViewport) ((JScrollPane) codePaneTabs.getComponent(i)).getComponents()[0]).getComponents()[0])).getText();
+
+            if (!code.isEmpty()) {
+                try {
+                    File file = new File("tmp/" + codePaneTabs.getTitleAt(i));
+                    files.add(file);
+                    FileWriter writer = new FileWriter(file);
+                    writer.write(code);
+                    writer.close();
+                } catch (IOException e) {
+                    printError("File " + codePaneTabs.getTitleAt(i) + " failed");
+                }
+            }
+        }
+
+        return files;
+    }
 
     private void openFile(File file) throws IOException {
-        
         String content = new String(Files.readAllBytes(file.toPath()));
         JScrollPane tab = newTab(content);
         codePaneTabs.add(file.getName(), tab);
@@ -1203,12 +1130,9 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JRadioButton jRadioButtonMode0;
-    private javax.swing.JRadioButton jRadioButtonMode1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JSlider jSlider1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JSplitPane mainSplit;
@@ -1227,8 +1151,6 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel mopLabel;
     private javax.swing.JLabel mopValueLabel;
     private javax.swing.JButton newFileButton;
-    private javax.swing.JLabel opModeLabel;
-    private javax.swing.JPanel opPanel;
     private javax.swing.JButton openFileButton;
     private static javax.swing.JLabel outputLabel;
     private javax.swing.JPanel outputPane;
@@ -1240,38 +1162,20 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JButton redoButton;
     private javax.swing.JLabel registerLabel;
     private javax.swing.JPanel registersPanel;
-    private javax.swing.JButton reset1Button;
     private javax.swing.JButton resetButton;
     private javax.swing.JLabel riLabel;
     private javax.swing.JLabel riTextLabel;
     private javax.swing.JLabel riValueLabel;
-    private javax.swing.JButton run1Button;
     private javax.swing.JButton runButton;
     private javax.swing.JButton saveButton;
     private javax.swing.JPanel simulator;
     private javax.swing.JLabel spLabel;
     private javax.swing.JLabel spValueLabel;
+    private javax.swing.JSlider speedSlider;
     private javax.swing.JButton stepButton;
     private javax.swing.JPanel toolbar;
     private javax.swing.JButton undoButton;
     // End of variables declaration//GEN-END:variables
-
-    // Carrega o binário e atualiza a interface
-    private void initProcessor(File file) {
-        if (file != null) {
-            processor = new Processor(file);
-            activeFile = file;
-            if (jRadioButtonMode0.isSelected()) {
-                processor.setMop((byte) 0);
-            } else {
-                processor.setMop((byte) 1);
-            }
-            updateGUI();
-
-        } else {
-            printError("Invalid executable file");
-        }
-    }
 
     private void setLook() {
         try {

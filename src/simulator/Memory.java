@@ -21,25 +21,19 @@ public class Memory {
     }
 
     //Pilha
-    public boolean push(short word) {  //insere na pilha
+    public void push(short word) {  //insere na pilha
         //sp++
         if (sp > stackSize + 2) { //verifica se a pilha está cheia
-            Interface.instance().printError("Stack overflow " + sp + "size: " + stackSize);
-            sp = 0; //"causando um desvio para o endereço 0 (zero)"
-            return false;
+            throw new RuntimeException("Stack overflow " + sp + "size: " + stackSize);
         } else {
             memory[sp] = word;
             sp++; // Só aumenta SP se foi inserido algo na pilha
-            return true;
         }
     }
 
     public short pop() { //retira da pilha
-        //System.err.println("sp" + sp + " zero: " + stackZero + " valorPilha " + memory[sp]);
         if (sp <= stackZero) { //verifica se a pilha está vazia 
-            Interface.instance().printError("Stack underflow");
-            sp = memory[2];
-            return 0; // -1 iria dar OutOfBoundsException
+            throw new RuntimeException("Stack underflow");
         } else {
             return memory[--sp];
         }
@@ -51,7 +45,7 @@ public class Memory {
 
     //Carrega programa para memória e retorna início da área de dados
     public void loadFileToMemory(File file) {
-        try {
+        if (file != null)
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
                 int i = 0;
@@ -62,11 +56,10 @@ public class Memory {
 
                 // TAMANHO DA PILHA É DEFINIDO DEPOIS DE CARREGAR O ARQUIVO
                 stackSize = (short) memory[2]; // usar memory[2] para obter o endereço limite da pilha
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage());
             }
-        } catch (IOException | NumberFormatException e) {
-            final JPanel panel = new JPanel();
-            JOptionPane.showMessageDialog(panel, "Arquivo inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
-        }
+        else throw new RuntimeException("Invalid executable file");
     }
 
     public void storeWord(short pos, short word) {
