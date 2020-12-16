@@ -4,11 +4,14 @@ import linker.auxiliar.DefinitionTable;
 import simulator.Interface;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static linker.FirstPass.*;
 import static linker.SecondPass.*;
+import static linker.Output.*;
 
 public class Linker {
 
@@ -60,12 +63,42 @@ public class Linker {
         offset += getStackSum(segments);
         DefinitionTable tgs = unifyDefinitions(segments, offset);
         //checkUsages(segments);
-
+		
+		/*System.out.println(segments.get(0).fileName);
+		System.out.println(segments.get(0).stackSize);
+		System.out.println(segments.get(0).usageTable);
+		System.out.println(segments.get(0).lines);*/
+		
         //SecondPass
         ArrayList<Line> lines = updateAddresses(segments, offset);
         updateReferences(lines, segments, tgs);
+		
+		for (Line l : lines) {
+			System.out.println(l);
+		}
+		
+		String binOutput = "";
+		binOutput += createStart(getStackSum(segments));
 
-        return null;
+		for (int i = offset + 1; i < lines.size(); i++) {
+			Line l = lines.get(i);
+			if (l.reallocMode == 'a') binOutput += opcodeToBin(l.word) + "\n";
+			else if (l.reallocMode == 'r') binOutput += opdToBin(l.word) + "\n";
+		}
+		
+		File fileOutput = new File("tmp/" + files.get(0).getName().substring(0, files.get(0).getName().indexOf(".")) + ".HPX");
+
+        try {
+            FileWriter writer = new FileWriter(fileOutput);
+			
+			writer.write(binOutput);
+			
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+        return fileOutput;
     }
 
 }

@@ -958,9 +958,9 @@ public class Interface extends javax.swing.JFrame {
         if (files.isEmpty())
             printError("No files to assemble");
         else {
-            //exec = Assembler.assemble(files);
-            File f = new File("input/fatorial_bin");
-            processor = new Processor(f, (byte) 1);
+            exec = Assembler.assemble(files);
+            //File f = new File("input/fatorial_bin");
+            processor = new Processor(exec, (byte) 1);
             updateGUI();
 
             printMessage("Executable loaded");
