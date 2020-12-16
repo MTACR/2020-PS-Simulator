@@ -159,6 +159,7 @@ public class Interface extends javax.swing.JFrame {
         redoButton = new javax.swing.JButton();
         jToolBar2 = new javax.swing.JToolBar();
         runButton = new javax.swing.JButton();
+        playButton = new javax.swing.JButton();
         stepButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
@@ -555,6 +556,20 @@ public class Interface extends javax.swing.JFrame {
         });
         jToolBar2.add(runButton);
 
+        playButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/play.png"))); // NOI18N
+        playButton.setContentAreaFilled(false);
+        playButton.setFocusable(false);
+        playButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        playButton.setMaximumSize(new java.awt.Dimension(40, 40));
+        playButton.setMinimumSize(new java.awt.Dimension(40, 40));
+        playButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        playButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playButtonActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(playButton);
+
         stepButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/step.png"))); // NOI18N
         stepButton.setContentAreaFilled(false);
         stepButton.setFocusable(false);
@@ -868,39 +883,30 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_menuQuitActionPerformed
 
     private void menuRunFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRunFileActionPerformed
-          List<File> files = buildFiles();
-
-        if (files.isEmpty())
-            printError("No files to assemble");
-        else
-            try {
-                clearTerminal();
-
-                //exec = Assembler.assemble(files);
-                File f = new File("input/fatorial_bin");
-                processor = new Processor(f, (byte) 0);
-
-                if (timer != null)
-                    timer.stop();
-
-                timer = new Timer((100 - speedSlider.getValue()) * 10, (ActionEvent evt1) -> {
-                    processor.step();
-                    updateGUI();
-                });
-                timer.setRepeats(true);
-                timer.start();
-
-                processor.setOnStopListener(() -> {
-                    timer.stop();
-                    processor = null;
-                    printMessage("Execution finished successfully");
-                });
-
-                updateGUI();
-
-            } catch (RuntimeException e) {
-                printError(e.getMessage());
+        try {
+            clearTerminal();
+            if (timer != null) {
+                timer.stop();
             }
+
+            timer = new Timer((100 - speedSlider.getValue()) * 10, (ActionEvent evt1) -> {
+                processor.step();
+                updateGUI();
+            });
+            timer.setRepeats(true);
+            timer.start();
+
+            processor.setOnStopListener(() -> {
+                timer.stop();
+                processor = null;
+                printMessage("Execution finished successfully");
+            });
+
+            updateGUI();
+
+        } catch (RuntimeException e) {
+            printError(e.getMessage());
+        }
     }//GEN-LAST:event_menuRunFileActionPerformed
 
     private void cleanAsmOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanAsmOutBtnActionPerformed
@@ -932,7 +938,17 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_redoButtonActionPerformed
 
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
-        menuRunFileActionPerformed(evt);
+        //carrega pro processador
+        //placeholder
+        List<File> files = buildFiles();
+        if (files.isEmpty())
+            printError("No files to assemble");
+        else {
+            //exec = Assembler.assemble(files);
+            File f = new File("input/fatorial_bin");
+            processor = new Processor(f, (byte) 1);
+            updateGUI();
+        }
     }//GEN-LAST:event_runButtonActionPerformed
 
     private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
@@ -943,9 +959,9 @@ public class Interface extends javax.swing.JFrame {
         } else {
             List<File> files = buildFiles();
 
-            if (files.isEmpty())
+            if (files.isEmpty()) {
                 printError("No files to assemble");
-            else
+            } else {
                 try {
                     clearTerminal();
 
@@ -962,13 +978,14 @@ public class Interface extends javax.swing.JFrame {
                 } catch (RuntimeException e) {
                     printError(e.getMessage());
                 }
+            }
         }
     }//GEN-LAST:event_stepButtonActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         if (processor != null) {
             assert (timer != null);
-                timer.stop();
+            timer.stop();
 
             processor = new Processor(exec, processor.getMop());
             updateGUI();
@@ -979,7 +996,7 @@ public class Interface extends javax.swing.JFrame {
     private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
         if (processor != null) {
             assert (timer != null);
-                timer.stop();
+            timer.stop();
 
             updateGUI();
             processor = null;
@@ -993,6 +1010,11 @@ public class Interface extends javax.swing.JFrame {
         if (timer != null)
             timer.setDelay((100 - speedSlider.getValue()) * 10);
     }//GEN-LAST:event_speedSliderStateChanged
+
+    private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
+        // TODO add your handling code here:
+        menuRunFileActionPerformed(evt);
+    }//GEN-LAST:event_playButtonActionPerformed
 
     private List<File> buildFiles() {
         List<File> files = new ArrayList<>();
@@ -1206,6 +1228,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel outputStreamLabel;
     private javax.swing.JLabel pcLabel;
     private javax.swing.JLabel pcValueLabel;
+    private javax.swing.JButton playButton;
     private javax.swing.JLabel reLabel;
     private javax.swing.JLabel reValueLabel;
     private javax.swing.JButton redoButton;
