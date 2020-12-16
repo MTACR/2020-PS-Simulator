@@ -565,7 +565,6 @@ public class Interface extends javax.swing.JFrame {
         jToolBar2.add(resetButton);
 
         stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/stop.png"))); // NOI18N
-        stopButton.setBorderPainted(false);
         stopButton.setContentAreaFilled(false);
         stopButton.setFocusable(false);
         stopButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -586,7 +585,9 @@ public class Interface extends javax.swing.JFrame {
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jPanel3.add(jLabel1, java.awt.BorderLayout.PAGE_START);
 
+        speedSlider.setMinimum(50);
         speedSlider.setToolTipText("Velocidade");
+        speedSlider.setValue(75);
         speedSlider.setName("Velocidade"); // NOI18N
         jPanel3.add(speedSlider, java.awt.BorderLayout.CENTER);
 
