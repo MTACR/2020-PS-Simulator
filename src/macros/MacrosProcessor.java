@@ -292,7 +292,7 @@ public class MacrosProcessor {
 // Expande uma macro. Line é a linha com o comando de expansão e label é a label na qual essa macro deve ser expandida
 
     private void expandMacro(String macroName, String line, String label) {
-        Interface.instance().printMessage("Expandindo a macro " + macroName + "...");
+        //Interface.instance().printMessage("Expandindo a macro " + macroName + "...");
         // Tira o nome da macro da linha
         int space = line.indexOf(' ');
         line = space > -1 ? line.substring(space + 1) : "";
@@ -329,6 +329,8 @@ public class MacrosProcessor {
 
     public File process(File file) {
         File output = new File("tmp/" + file.getName().substring(0, file.getName().indexOf(".")) + ".proc");
+
+        Interface.instance().printMessage("Expanding macros...");
 
         try {
             reader = new BufferedReader(new FileReader(file));

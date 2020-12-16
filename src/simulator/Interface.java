@@ -8,12 +8,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
@@ -22,7 +22,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.*;
 import javax.swing.undo.*;
-import java.util.List;
 
 public class Interface extends javax.swing.JFrame {
 
@@ -33,21 +32,23 @@ public class Interface extends javax.swing.JFrame {
     private boolean running;
     private int newFileCount;
     private Map<String, String> activeFilesList = new HashMap<>();
-    final UndoManager undo;
+    final List<UndoManager> undoManagerList;
 
     public Interface() {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(true);
         setLook();
         initComponents();
-        newFileCount = 0;
-        newFile();
+
         mainSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
         editorSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
-        undo = new UndoManager();
         DefaultCaret caret = (DefaultCaret) asmOutText.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+        undoManagerList = new LinkedList<>();
         asmOutText.setEditable(false);
+        newFileCount = 0;
+        newFile();
     }
 
     // Atualiza os valores dos Registradores na interface.
@@ -540,11 +541,6 @@ public class Interface extends javax.swing.JFrame {
         newFileButton.setMaximumSize(new java.awt.Dimension(40, 40));
         newFileButton.setMinimumSize(new java.awt.Dimension(40, 40));
         newFileButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        newFileButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                newFileButtonMouseClicked(evt);
-            }
-        });
         newFileButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newFileButtonActionPerformed(evt);
@@ -560,11 +556,6 @@ public class Interface extends javax.swing.JFrame {
         openFileButton.setMaximumSize(new java.awt.Dimension(40, 40));
         openFileButton.setMinimumSize(new java.awt.Dimension(40, 40));
         openFileButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        openFileButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                openFileButtonMouseClicked(evt);
-            }
-        });
         openFileButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openFileButtonActionPerformed(evt);
@@ -580,11 +571,6 @@ public class Interface extends javax.swing.JFrame {
         saveButton.setMaximumSize(new java.awt.Dimension(40, 40));
         saveButton.setMinimumSize(new java.awt.Dimension(40, 40));
         saveButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        saveButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                saveButtonMouseClicked(evt);
-            }
-        });
         saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveButtonActionPerformed(evt);
@@ -600,11 +586,6 @@ public class Interface extends javax.swing.JFrame {
         undoButton.setMaximumSize(new java.awt.Dimension(40, 40));
         undoButton.setMinimumSize(new java.awt.Dimension(40, 40));
         undoButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        undoButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                undoButtonMouseClicked(evt);
-            }
-        });
         undoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 undoButtonActionPerformed(evt);
@@ -620,11 +601,6 @@ public class Interface extends javax.swing.JFrame {
         redoButton.setMaximumSize(new java.awt.Dimension(40, 40));
         redoButton.setMinimumSize(new java.awt.Dimension(40, 40));
         redoButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        redoButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                redoButtonMouseClicked(evt);
-            }
-        });
         redoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 redoButtonActionPerformed(evt);
@@ -644,11 +620,6 @@ public class Interface extends javax.swing.JFrame {
         runButton.setMaximumSize(new java.awt.Dimension(40, 40));
         runButton.setMinimumSize(new java.awt.Dimension(40, 40));
         runButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        runButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                runButtonMouseClicked(evt);
-            }
-        });
         runButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 runButtonActionPerformed(evt);
@@ -664,9 +635,9 @@ public class Interface extends javax.swing.JFrame {
         run1Button.setMaximumSize(new java.awt.Dimension(40, 40));
         run1Button.setMinimumSize(new java.awt.Dimension(40, 40));
         run1Button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        run1Button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                run1ButtonMouseClicked(evt);
+        run1Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                run1ButtonActionPerformed(evt);
             }
         });
         jToolBar2.add(run1Button);
@@ -679,9 +650,9 @@ public class Interface extends javax.swing.JFrame {
         reset1Button.setMaximumSize(new java.awt.Dimension(40, 40));
         reset1Button.setMinimumSize(new java.awt.Dimension(40, 40));
         reset1Button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        reset1Button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                reset1ButtonMouseClicked(evt);
+        reset1Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reset1ButtonActionPerformed(evt);
             }
         });
         jToolBar2.add(reset1Button);
@@ -708,7 +679,7 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuNew.setText("Novo");
         menuNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -717,7 +688,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuNew);
 
-        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuOpen.setText("Abrir ...");
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -726,7 +697,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuOpen);
 
-        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuClose.setText("Fechar");
         menuClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -746,7 +717,7 @@ public class Interface extends javax.swing.JFrame {
         jSeparator1.setEnabled(false);
         jMenu4.add(jSeparator1);
 
-        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuSave.setText("Salvar");
         menuSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -800,7 +771,6 @@ public class Interface extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 738, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, 0)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -879,6 +849,7 @@ public class Interface extends javax.swing.JFrame {
 
     private void menuCloseAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCloseAllActionPerformed
         codePaneTabs.removeAll();
+        undoManagerList.clear();
     }//GEN-LAST:event_menuCloseAllActionPerformed
 
     private void menuNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewActionPerformed
@@ -889,10 +860,12 @@ public class Interface extends javax.swing.JFrame {
         JScrollPane tab = newTab();
         codePaneTabs.add("new " + newFileCount + ".asm", tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
+        undoManagerList.add(codePaneTabs.indexOfComponent(tab), new UndoManager());
         newFileCount++;
     }
 
     private void menuCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCloseActionPerformed
+        undoManagerList.remove(codePaneTabs.getSelectedIndex());
         codePaneTabs.remove(codePaneTabs.getSelectedIndex());
     }//GEN-LAST:event_menuCloseActionPerformed
 
@@ -1005,9 +978,6 @@ public class Interface extends javax.swing.JFrame {
         for (int i = 0; i < codePaneTabs.getTabCount(); i++) {
             String code = ((JEditorPane) (((JViewport) ((JScrollPane) codePaneTabs.getComponent(i)).getComponents()[0]).getComponents()[0])).getText();
 
-            /*JViewport viewport = ((JScrollPane) codePaneTabs.getTabComponentAt(i)).getViewport();
-            JTextPane textPane = (JTextPane) viewport.getView();
-            String code = textPane.getText();*/
             if (!code.isEmpty()) {
                 try {
                     File file = new File("tmp/" + codePaneTabs.getTitleAt(i));
@@ -1028,78 +998,50 @@ public class Interface extends javax.swing.JFrame {
             Interface.instance().printError(e.getMessage());
         }
 
-        files.forEach((file) -> {
-            file.delete();
-        });
+        files.forEach((file) -> file.delete());
     }//GEN-LAST:event_menuRunFileActionPerformed
 
     private void cleanAsmOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanAsmOutBtnActionPerformed
         clearTerminal();
     }//GEN-LAST:event_cleanAsmOutBtnActionPerformed
 
-    private void openFileButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openFileButtonMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_openFileButtonMouseClicked
-
-    private void newFileButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newFileButtonMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_newFileButtonMouseClicked
-
-    private void runButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_runButtonMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_runButtonMouseClicked
-
-    private void run1ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_run1ButtonMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_run1ButtonMouseClicked
-
-    private void saveButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveButtonMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_saveButtonMouseClicked
-
-    private void undoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_undoButtonMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_undoButtonMouseClicked
-
-    private void redoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_redoButtonMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_redoButtonMouseClicked
-
-    private void reset1ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reset1ButtonMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_reset1ButtonMouseClicked
-
     private void newFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newFileButtonActionPerformed
-        // TODO add your handling code here:
         menuNewActionPerformed(evt);
     }//GEN-LAST:event_newFileButtonActionPerformed
 
     private void openFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileButtonActionPerformed
-        // TODO add your handling code here:
         menuOpenActionPerformed(evt);
     }//GEN-LAST:event_openFileButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        // TODO add your handling code here:
         menuSaveActionPerformed(evt);
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
-        // TODO add your handling code here:
-        JViewport viewport = ((JScrollPane) codePaneTabs.getSelectedComponent()).getViewport();
-        JTextPane textPane = (JTextPane) viewport.getView();
+        /*JViewport viewport = ((JScrollPane) codePaneTabs.getSelectedComponent()).getViewport();
+        JTextPane textPane = (JTextPane) viewport.getView();*/
+        if (undoManagerList.get(codePaneTabs.getSelectedIndex()).canUndo())
+            undoManagerList.get(codePaneTabs.getSelectedIndex()).undo();
     }//GEN-LAST:event_undoButtonActionPerformed
 
     private void redoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoButtonActionPerformed
-        // TODO add your handling code here:
+        if (undoManagerList.get(codePaneTabs.getSelectedIndex()).canRedo())
+            undoManagerList.get(codePaneTabs.getSelectedIndex()).redo();
     }//GEN-LAST:event_redoButtonActionPerformed
 
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
-        // TODO add your handling code here:
         menuRunFileActionPerformed(evt);
     }//GEN-LAST:event_runButtonActionPerformed
 
-    private void openFile(File file) throws FileNotFoundException, IOException {
+    private void run1ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_run1ButtonActionPerformed
+        stepButtonActionPerformed(evt);
+    }//GEN-LAST:event_run1ButtonActionPerformed
+
+    private void reset1ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reset1ButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_reset1ButtonActionPerformed
+
+    private void openFile(File file) throws IOException {
         JScrollPane tab = newTab();
         JViewport viewport = tab.getViewport();
         JTextPane text = (JTextPane) viewport.getView();
@@ -1110,6 +1052,7 @@ public class Interface extends javax.swing.JFrame {
         doc.setDocumentFilter(new CustomDocumentFilter(text)); //TODO botar listener pro redo aqui tbm?
         codePaneTabs.add(file.getName(), tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
+        undoManagerList.add(codePaneTabs.indexOfComponent(tab), new UndoManager());
         newFileCount++;
     }
 
@@ -1165,28 +1108,23 @@ public class Interface extends javax.swing.JFrame {
 
         text.getDocument().addUndoableEditListener((UndoableEditEvent evt) -> {
             if (!evt.getEdit().getPresentationName().equals("alteração de estilo")) {
-                undo.addEdit(evt.getEdit());
+                undoManagerList.get(codePaneTabs.getSelectedIndex()).addEdit(evt.getEdit());
             }
         });
 
         text.getActionMap().put("Undo", new AbstractAction("Undo") {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                try {
-                    if (undo.canUndo()) {
-                        undo.undo();
-                    }
-                } catch (CannotUndoException e) {
-                }
+                if (undoManagerList.get(codePaneTabs.getSelectedIndex()).canUndo())
+                    undoManagerList.get(codePaneTabs.getSelectedIndex()).undo();
             }
         });
 
         text.getActionMap().put("Redo", new AbstractAction("Undo") {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                if (undo.canRedo()) {
-                    undo.redo();
-                }
+                if (undoManagerList.get(codePaneTabs.getSelectedIndex()).canRedo())
+                    undoManagerList.get(codePaneTabs.getSelectedIndex()).redo();
             }
         });
         text.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "Undo");
@@ -1198,6 +1136,7 @@ public class Interface extends javax.swing.JFrame {
         tab.setViewportView(text);
         AbstractDocument doc = (AbstractDocument) text.getDocument();
         doc.setDocumentFilter(new CustomDocumentFilter(text));
+
         return tab;
     }
 
@@ -1336,7 +1275,7 @@ public class Interface extends javax.swing.JFrame {
             updateGUI();
 
         } else {
-            printError("Arquivo inválido");
+            printError("Invalid executable file");
         }
     }
 
