@@ -887,7 +887,7 @@ public class Interface extends javax.swing.JFrame {
 
     private void newFile() {
         JScrollPane tab = newTab();
-        codePaneTabs.add("novo" + newFileCount + ".asm", tab);
+        codePaneTabs.add("new " + newFileCount + ".asm", tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
         newFileCount++;
     }
@@ -997,7 +997,6 @@ public class Interface extends javax.swing.JFrame {
 
     private void menuRunFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRunFileActionPerformed
         clearTerminal();
-        printMessage("Montando...");
 
         List<File> files = new ArrayList<>();
         File tmp = new File("tmp");

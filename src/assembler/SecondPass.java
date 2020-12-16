@@ -32,7 +32,7 @@ public class SecondPass {
         // Lista de código objeto
         List<ObjectCode> objects = new ArrayList<>();
 
-        Interface.instance().printMessage("Executando segundo passo...");
+        Interface.instance().printMessage("Pass 2/2");
 
         for (Symbol symbol : symbols) {
             String operator = symbol.operator;
@@ -55,7 +55,7 @@ public class SecondPass {
                 ADDRMODE a = getAddrMode(opd1);
 
                 if (a == IMEDIATO && !table.contains(operator))
-                    throw new RuntimeException("Modo de endereçamento inválido em: " + operator + " " + opd1);
+                    throw new RuntimeException("Invalid addressing mode in: " + operator + " " + opd1);
 
                 if (a != null) {
 
@@ -75,7 +75,7 @@ public class SecondPass {
                     modeOpd1 = a;
                 }
 
-                else throw new RuntimeException("Label não definida: " + opd1);
+                else throw new RuntimeException("Undefined label: " + opd1);
 
                 size++;
             }
@@ -89,7 +89,7 @@ public class SecondPass {
                 ADDRMODE a = getAddrMode(opd2);
 
                 if (a == IMEDIATO && !operator.equals("COPY"))
-                    throw new RuntimeException("Modo de endereçamento inválido em: " + operator + " " + opd2);
+                    throw new RuntimeException("Invalid addressing mode in: " + operator + " " + opd2);
 
                 if (a != null) {
 
@@ -109,7 +109,7 @@ public class SecondPass {
                     modeOpd2 = a;
                 }
 
-                else throw new RuntimeException("Label não definida: " + opd2);
+                else throw new RuntimeException("Undefined label: " + opd2);
 
                 size++;
             }
@@ -141,7 +141,7 @@ public class SecondPass {
 
                         break;
 
-                    default: throw new RuntimeException("Instrução inválida");
+                    default: throw new RuntimeException("Invalid instruction: " + operator);
                 }
 
             // Se for instrução, gera código objeto

@@ -15,7 +15,7 @@ public class Linker {
     public static void main(String[] args) {
         int offset = 3; //indicador do inicio do programa + nada + tamanho máximo da pilha
 
-        args = new String[]{"output/firstpass.obj", "output/MASMAPRG1.obj"};
+        args = new String[]{"output/BAGAÇA.obj", "output/BAGAÇA.tbl"};
 
         //FirstPass
         ArrayList<Segment> segments = readSegments(args);
@@ -47,19 +47,24 @@ public class Linker {
     }
 
     public static File link(List<File> files) {
-        //int offset = 3;
-        //TODO iniciar arquivos aqui
-        //ArrayList<Segment> segments = readSegments(files);
-        //offset += tamanho da pilha
-        //DefinitionTable tgs = unifyDefinitions(segments, offset);
+        Interface.instance().printMessage("Linking...");
+
+        int offset = 3; //TODO não é 2? pq o primeiro endereço do .obj já é o tamamnho da pilha
+
+        String[] args = new String[files.size()];
+
+        for (int i = 0; i < args.length; i++)
+            args[i] = files.get(i).getPath();
+
+        ArrayList<Segment> segments = readSegments(args);
+        offset += getStackSum(segments);
+        DefinitionTable tgs = unifyDefinitions(segments, offset);
         //checkUsages(segments);
+
         //SecondPass
-        //ArrayList<Line> lines = updateAddresses(segments, offset);
-        //updateReferences(lines, segments, tgs);
+        ArrayList<Line> lines = updateAddresses(segments, offset);
+        updateReferences(lines, segments, tgs);
 
-        files.clear();
-
-        Interface.instance().printMessage("Ligando arquivos...");
         return null;
     }
 

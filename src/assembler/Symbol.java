@@ -18,13 +18,13 @@ public class Symbol {
 
     public Symbol(int line, int address, String label, String operator, String opd1, String opd2) {
         if (!isLabelValid(label))
-            throw new RuntimeException(" Erro de sintaxe em " + label);
+            throw new RuntimeException("Syntax error in " + label);
 
         if (!isOpdValid(opd1))
-            throw new RuntimeException(" Erro de sintaxe em " + opd1);
+            throw new RuntimeException("Syntax error in " + opd1);
 
         if (!isOpdValid(opd2))
-            throw new RuntimeException(" Erro de sintaxe em " + opd2);
+            throw new RuntimeException("Syntax error in " + opd2);
 
         this.line = line;
         this.address = address;
