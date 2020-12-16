@@ -13,7 +13,7 @@ public class SecondPass {
         for (int i = 0; i < offset; i++){
             updated.add(new Line(0, 'a'));   //Cria o cabeçalho e a pilha
         }
-        updated.get(0).word = offset;       //Armazena o inicio do programa na posição 0 Necessario?. Na verdade, não dá pra deduzir pelo tamanho da pilha
+        //updated.get(0).word = offset;       //Armazena o inicio do programa na posição 0 Necessario?. Na verdade, não dá pra deduzir pelo tamanho da pilha
         updated.get(2).word = offset - 3;   //Armazena o tamanho da pilha no endereço 2
 
         for(Segment seg : segments){
