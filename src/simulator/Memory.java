@@ -22,18 +22,15 @@ public class Memory {
 
     //Pilha
     public void push(short word) {  //insere na pilha
-        //sp++
-        if (sp > stackSize + 2) { //verifica se a pilha está cheia
-            throw new RuntimeException("Stack overflow " + sp + "size: " + stackSize);
-        } else {
+        if (sp <= stackSize + 2) {
             memory[sp] = word;
             sp++; // Só aumenta SP se foi inserido algo na pilha
         }
     }
 
     public short pop() { //retira da pilha
-        if (sp <= stackZero) { //verifica se a pilha está vazia 
-            throw new RuntimeException("Stack underflow");
+        if (sp <= stackZero) { //verifica se a pilha está vazia
+            return 0;
         } else {
             return memory[--sp];
         }

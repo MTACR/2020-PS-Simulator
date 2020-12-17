@@ -78,6 +78,7 @@ public class Processor {
     private void nextInstruction() {
         //if (ri != 11) { // Se ri=11(STOP), parar execução
         if (pc == 0) {
+            stop.onFail();
             throw new RuntimeException("Stack overflow");
         }
 

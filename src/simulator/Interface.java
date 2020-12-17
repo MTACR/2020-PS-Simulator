@@ -1264,7 +1264,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
         processor = null;
         exec = null;
         timer.stop();
-        printError("Program aborted by user");
+        printError("Execution finished with fail");
     }
 
 }
