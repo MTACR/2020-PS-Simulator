@@ -110,6 +110,6 @@ public class FirstPass {
         for(Segment seg : segments){
             stackSum += seg.stackSize;
         }
-        return stackSum;
+        return Math.min(stackSum, 10);
     }
 }

@@ -15,7 +15,7 @@ import static linker.Output.*;
 
 public class Linker {
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         int offset = 3; //indicador do inicio do programa + nada + tamanho máximo da pilha
 
         args = new String[]{"output/FATORIAL.obj", "output/VARS.obj"};
@@ -47,7 +47,7 @@ public class Linker {
                 System.out.println(use.toString());
             }
         }
-    }*/
+    }
 
     public static File link(List<File> files) {
         Interface.instance().printMessage("Linking...");
