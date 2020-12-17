@@ -106,6 +106,9 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
     }
 
     private void updateGUI() {
+        if (processor == null)
+            return;
+
         updateRegisters();
         updateMemory();
     }
@@ -949,6 +952,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
             printError("No files to assemble");
         else {
             try {
+                clearTerminal();
                 exec = Assembler.assemble(files);
                 processor = new Processor(exec, this);
                 updateGUI();
@@ -986,6 +990,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
             timer.stop();
             printMessage("Execution stopped");
         } else {
+            clearTerminal();
             clearGUI();
             printMessage("Processor cleaned");
             exec = null;
@@ -1145,8 +1150,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
 
         try {
             doc.insertString(doc.getLength(), message + "\n", style);
-        } catch (BadLocationException e) {
-        }
+        } catch (BadLocationException e) {}
     }
 
     public void printMessage(String message) {
@@ -1159,8 +1163,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
 
         try {
             doc.insertString(doc.getLength(), message + "\n", style);
-        } catch (BadLocationException e) {
-        }
+        } catch (BadLocationException e) {}
     }
 
     public void clearTerminal() {
