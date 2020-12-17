@@ -15,7 +15,7 @@ import static linker.Output.*;
 
 public class Linker {
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         int offset = 3; //indicador do inicio do programa + nada + tamanho máximo da pilha
 
         args = new String[]{"output/A.obj"};
@@ -47,12 +47,12 @@ public class Linker {
                 System.out.println(use.toString());
             }
         }
-    }
+    }*/
 
     public static File link(List<File> files) {
         Interface.instance().printMessage("Linking...");
 
-        int offset = 3; //TODO não é 2? pq o primeiro endereço do .obj já é o tamamnho da pilha
+        int offset = 2;
 
         String[] args = new String[files.size()];
 
@@ -80,13 +80,13 @@ public class Linker {
 		String binOutput = "";
 		binOutput += createStart(getStackSum(segments));
 
-		for (int i = offset + 1; i < lines.size(); i++) {
+		for (int i = offset; i < lines.size(); i++) {
 			Line l = lines.get(i);
 			if (l.reallocMode == 'a') binOutput += opcodeToBin(l.word) + "\n";
 			else if (l.reallocMode == 'r') binOutput += opdToBin(l.word) + "\n";
 		}
 		
-		File fileOutput = new File("tmp/" + files.get(0).getName().substring(0, files.get(0).getName().indexOf(".")) + ".HPX");
+		File fileOutput = new File("output/" + files.get(0).getName().substring(0, files.get(0).getName().indexOf(".")) + ".hpx");
 
         try {
             FileWriter writer = new FileWriter(fileOutput);

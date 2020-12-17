@@ -23,7 +23,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
-public class Interface extends javax.swing.JFrame {
+public class Interface extends javax.swing.JFrame implements Processor.OnStop {
 
     private Processor processor;
     private File exec;
@@ -41,6 +41,16 @@ public class Interface extends javax.swing.JFrame {
         initComponents();
         ImageIcon icon = new ImageIcon("src/res/icon.png");
         this.setIconImage(icon.getImage());
+
+        timer = new Timer((100 - speedSlider.getValue()) * 10, (ActionEvent evt1) -> {
+            try {
+                processor.step();
+                updateGUI();
+            } catch (RuntimeException e) {
+                printError(e.getMessage());
+            }
+        });
+        timer.setRepeats(true);
 
         mainSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
         editorSplit.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "none");
@@ -158,7 +168,7 @@ public class Interface extends javax.swing.JFrame {
         undoButton = new javax.swing.JButton();
         redoButton = new javax.swing.JButton();
         jToolBar2 = new javax.swing.JToolBar();
-        runButton = new javax.swing.JButton();
+        buildButton = new javax.swing.JButton();
         playButton = new javax.swing.JButton();
         stepButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
@@ -547,20 +557,20 @@ public class Interface extends javax.swing.JFrame {
 
         jToolBar2.setRollover(true);
 
-        runButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/run.png"))); // NOI18N
-        runButton.setToolTipText("Carregar código para o simulador");
-        runButton.setContentAreaFilled(false);
-        runButton.setFocusable(false);
-        runButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        runButton.setMaximumSize(new java.awt.Dimension(40, 40));
-        runButton.setMinimumSize(new java.awt.Dimension(40, 40));
-        runButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        runButton.addActionListener(new java.awt.event.ActionListener() {
+        buildButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/run.png"))); // NOI18N
+        buildButton.setToolTipText("Carregar código para o simulador");
+        buildButton.setContentAreaFilled(false);
+        buildButton.setFocusable(false);
+        buildButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buildButton.setMaximumSize(new java.awt.Dimension(40, 40));
+        buildButton.setMinimumSize(new java.awt.Dimension(40, 40));
+        buildButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buildButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                runButtonActionPerformed(evt);
+                buildButtonActionPerformed(evt);
             }
         });
-        jToolBar2.add(runButton);
+        jToolBar2.add(buildButton);
 
         playButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/play.png"))); // NOI18N
         playButton.setToolTipText("Executar em modo contínuo");
@@ -651,7 +661,7 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuNew.setText("Novo");
         menuNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -660,7 +670,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuNew);
 
-        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuOpen.setText("Abrir ...");
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -669,7 +679,7 @@ public class Interface extends javax.swing.JFrame {
         });
         jMenu4.add(menuOpen);
 
-        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuClose.setText("Fechar");
         menuClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -689,7 +699,7 @@ public class Interface extends javax.swing.JFrame {
         jSeparator1.setEnabled(false);
         jMenu4.add(jSeparator1);
 
-        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuSave.setText("Salvar");
         menuSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -893,33 +903,15 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_menuQuitActionPerformed
 
     private void menuRunFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRunFileActionPerformed
-        //if (exec != null) {
+        if (processor != null) {
             try {
-                clearTerminal();
-                if (timer != null) {
-                    timer.stop();
-                }
-
-                timer = new Timer((100 - speedSlider.getValue()) * 10, (ActionEvent evt1) -> {
-                    processor.step();
-                    updateGUI();
-                });
-                timer.setRepeats(true);
+                processor = new Processor(exec, this);
                 timer.start();
-
-                processor.setOnStopListener(() -> {
-                    timer.stop();
-                    processor = null;
-                    printMessage("Execution finished successfully");
-                });
-
                 updateGUI();
-
             } catch (RuntimeException e) {
                 printError(e.getMessage());
             }
-        //} else
-            //printMessage("No executable loaded");
+        }
     }//GEN-LAST:event_menuRunFileActionPerformed
 
     private void cleanAsmOutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanAsmOutBtnActionPerformed
@@ -950,76 +942,54 @@ public class Interface extends javax.swing.JFrame {
             undoManagerList.get(codePaneTabs.getSelectedIndex()).redo();
     }//GEN-LAST:event_redoButtonActionPerformed
 
-    private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
-        //carrega pro processador
-        //placeholder
+    private void buildButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buildButtonActionPerformed
         List<File> files = buildFiles();
 
         if (files.isEmpty())
             printError("No files to assemble");
         else {
-            exec = Assembler.assemble(files);
-            //File f = new File("input/fatorial_bin");
-            processor = new Processor(exec, (byte) 1);
-            updateGUI();
-
-            printMessage("Executable loaded");
+            try {
+                exec = Assembler.assemble(files);
+                processor = new Processor(exec, this);
+                updateGUI();
+                printMessage("Executable loaded");
+            } catch (RuntimeException e) {
+                printError(e.getMessage());
+            }
         }
-    }//GEN-LAST:event_runButtonActionPerformed
+    }//GEN-LAST:event_buildButtonActionPerformed
 
     private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
         if (processor != null) {
             processor.step();
             updateGUI();
-
-        } else {
-            List<File> files = buildFiles();
-
-            if (files.isEmpty()) {
-                printError("No files to assemble");
-            } else {
-                try {
-                    clearTerminal();
-
-                    exec = Assembler.assemble(files);
-
-                    processor = new Processor(exec, (byte) 1);
-                    processor.setOnStopListener(() -> {
-                        processor = null;
-                        printMessage("Execution finished successful");
-                    });
-
-                    updateGUI();
-
-                } catch (RuntimeException e) {
-                    printError(e.getMessage());
-                }
-            }
         }
     }//GEN-LAST:event_stepButtonActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        if (processor != null) {
-            if (timer != null)
-                timer.stop();
+        if (timer.isRunning()) {
+            timer.stop();
 
-            processor = new Processor(exec, processor.getMop());
+            try {
+                processor = new Processor(exec, this);
+            } catch (RuntimeException e) {
+                printError(e.getMessage());
+            }
+
             updateGUI();
             printMessage("Execution resetted");
         }
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
-        if (processor != null) {
-            if (timer != null)
-                timer.stop();
-
-            updateGUI();
-            processor = null;
+        if (timer.isRunning()) {
+            timer.stop();
             printMessage("Execution stopped");
         } else {
             clearGUI();
             printMessage("Processor cleaned");
+            exec = null;
+            processor = null;
         }
     }//GEN-LAST:event_stopButtonActionPerformed
 
@@ -1029,7 +999,6 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_speedSliderStateChanged
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
-        // TODO add your handling code here:
         menuRunFileActionPerformed(evt);
     }//GEN-LAST:event_playButtonActionPerformed
 
@@ -1205,6 +1174,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JScrollPane asmOutScroll;
     private javax.swing.JTabbedPane asmOutTab;
     private javax.swing.JTextPane asmOutText;
+    private javax.swing.JButton buildButton;
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JButton cleanAsmOutBtn;
     private javax.swing.JPanel codePane;
@@ -1255,7 +1225,6 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel riLabel;
     private javax.swing.JLabel riTextLabel;
     private javax.swing.JLabel riValueLabel;
-    private javax.swing.JButton runButton;
     private javax.swing.JButton saveButton;
     private javax.swing.JPanel simulator;
     private javax.swing.JLabel spLabel;
@@ -1278,6 +1247,19 @@ public class Interface extends javax.swing.JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public void onStop() {
+        processor = null;
+        timer.stop();
+        printMessage("Execution finished successful");
+    }
+
+    @Override
+    public void onFail() {
+        timer.stop();
+        printError("Program aborted by user");
     }
 
 }

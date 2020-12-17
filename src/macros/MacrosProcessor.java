@@ -346,9 +346,9 @@ public class MacrosProcessor {
         return output;
     }
 
-    public static void main(String []args) {
+    /*public static void main(String []args) {
         MacrosProcessor processor = new MacrosProcessor();
         processor.process(new File("input/testemacro.asm"));
-    }
+    }*/
 
 }

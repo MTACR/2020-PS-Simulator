@@ -308,9 +308,9 @@ public class SecondPass {
         return -1;
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         System.out.printf("%-10s %-10s %-10s\n", "Address", "Size", "Machine");
         pass(new File("input/firstpass.asm"));
-    }
+    }*/
 
 }

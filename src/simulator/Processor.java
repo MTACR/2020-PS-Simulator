@@ -58,6 +58,7 @@ public class Processor {
     public interface OnStop {
 
         void onStop();
+        void onFail();
     }
 
     public void step() {
@@ -65,12 +66,12 @@ public class Processor {
     }
 
     // Construtores
-    public Processor(File file, byte mop) {
+    public Processor(File file, OnStop onStop) {
         memory = new Memory(MEMORY_SIZE);
         memory.loadFileToMemory(file); //Carrega programa para memória e retorna início da área de dados
         pc = memory.firstPosition();
         step = this::nextInstruction;
-        this.mop = mop;
+        stop = onStop;
     }
 
     // Determina a proxima instrução
@@ -173,7 +174,7 @@ public class Processor {
                     input = Short.parseShort(in);
                     memory.storeWord(address, input);
                 } else {
-                    stop.onStop();
+                    stop.onFail();
                     break;
                 }
             } catch (NumberFormatException ex) {
@@ -309,10 +310,6 @@ public class Processor {
 
     public short[] getMemory() {
         return memory.getMemory();
-    }
-
-    public void setOnStopListener(OnStop stop) {
-        this.stop = stop;
     }
 
 }
