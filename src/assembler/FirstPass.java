@@ -25,7 +25,7 @@ public class FirstPass {
         boolean hasStart = false;
         boolean hasEnd = false;
         boolean hasStack = false;
-        int address = 1;
+        int address = 0;
         int line = 1;
         String name = "";
 
@@ -151,7 +151,7 @@ public class FirstPass {
                                 if (Integer.parseInt(lineArr[1]) > 10 || Integer.parseInt(lineArr[1]) < 0)
                                     throw new RuntimeException("Invalid STACK size at " + line);
 
-                                symbols.add(0, new Symbol(line, 0, "", lineArr[0], lineArr[1], ""));
+                                symbols.add(0, new Symbol(line, -1, "", lineArr[0], lineArr[1], ""));
 
                             } else {
                                 symbols.add(new Symbol(line, address, "", lineArr[0], lineArr[1], ""));
@@ -299,7 +299,7 @@ public class FirstPass {
         symbols.addAll(labels2Alloc);
 
         if (!hasStack)
-            symbols.add(0, new Symbol(0, 0, "", "STACK", "10", ""));
+            symbols.add(0, new Symbol(0, -1, "", "STACK", "10", ""));
 
         String string = "";
 

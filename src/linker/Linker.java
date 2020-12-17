@@ -52,7 +52,7 @@ public class Linker {
     public static File link(List<File> files) {
         Interface.instance().printMessage("Linking...");
 
-        int offset = 2;
+        int offset = 3;
 
         String[] args = new String[files.size()];
 

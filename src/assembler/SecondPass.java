@@ -137,7 +137,7 @@ public class SecondPass {
                         break;
 
                     case "STACK":
-                        objects.add(new ObjectCode(symbol.address, 1, new Pair<>(Integer.parseInt(opd1), 'a')));
+                        objects.add(new ObjectCode(-1, 1, new Pair<>(Integer.parseInt(opd1), 'a')));
 
                         break;
 
