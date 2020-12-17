@@ -8,3 +8,11 @@ out/production/PS-1/Processor$1.class
 out/production/PS-1/Processor.class
 /out/
 *.class
+*.class
+*.class
+*.hpx
+*.obj
+*.ASM
+*.tbl
+*.properties
+*.class
