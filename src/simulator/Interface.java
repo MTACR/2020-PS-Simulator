@@ -7,6 +7,8 @@ import loader.Loader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
@@ -17,6 +19,8 @@ import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
@@ -61,6 +65,27 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
         asmOutText.setEditable(false);
         newFileCount = 0;
         newFile();
+
+        memoryTable.getModel().addTableModelListener(
+                new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent evt) {
+                if (evt.getType() == evt.UPDATE) {
+                    int col = evt.getColumn();
+                    int row = evt.getLastRow();
+                    int address = (col + (row * 4) - 1);
+                    if (processor != null) {
+                        try {
+                            short value = Short.parseShort(memoryTable.getModel().getValueAt(row, col).toString());
+                            processor.getMemory()[address] = value;
+                        } catch (NumberFormatException ex) {
+                            int oldValue = processor.getMemory()[address];
+                            memoryTable.getModel().setValueAt(oldValue, row, col);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     // Atualiza os valores dos Registradores na interface.
@@ -78,6 +103,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
     private void updateMemory() {
         short memory[] = processor.getMemory();
         DefaultTableModel model = (DefaultTableModel) memoryTable.getModel();
+
         int i = 0;
         model.setRowCount(0);
         while (i < memory.length) {
@@ -106,8 +132,9 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
     }
 
     private void updateGUI() {
-        if (processor == null)
+        if (processor == null) {
             return;
+        }
 
         updateRegisters();
         updateMemory();
@@ -219,11 +246,11 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
         codePane.setLayout(codePaneLayout);
         codePaneLayout.setHorizontalGroup(
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
+            .addComponent(codePaneTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
         );
         codePaneLayout.setVerticalGroup(
             codePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(codePaneTabs, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+            .addComponent(codePaneTabs, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
         );
 
         editorSplit.setTopComponent(codePane);
@@ -248,7 +275,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
                 .addContainerGap()
                 .addComponent(cleanAsmOutBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(asmOutScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE))
+                .addComponent(asmOutScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE))
         );
         outputPaneLayout.setVerticalGroup(
             outputPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -410,7 +437,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
                 java.lang.Short.class, java.lang.Short.class, java.lang.Short.class, java.lang.Short.class, java.lang.Short.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -421,6 +448,8 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
                 return canEdit [columnIndex];
             }
         });
+        memoryTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        memoryTable.setDoubleBuffered(true);
         memoryTable.setMinimumSize(new java.awt.Dimension(60, 60));
         memoryTable.getTableHeader().setReorderingAllowed(false);
         MemoryScrollPane.setViewportView(memoryTable);
@@ -469,7 +498,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
                 .addGap(2, 2, 2)
                 .addComponent(memoryLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                .addComponent(MemoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
                 .addGap(6, 6, 6))
         );
 
@@ -664,7 +693,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
             }
         });
 
-        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         menuNew.setText("Novo");
         menuNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -673,7 +702,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
         });
         jMenu4.add(menuNew);
 
-        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         menuOpen.setText("Abrir ...");
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -682,7 +711,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
         });
         jMenu4.add(menuOpen);
 
-        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
         menuClose.setText("Fechar");
         menuClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -702,7 +731,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
         jSeparator1.setEnabled(false);
         jMenu4.add(jSeparator1);
 
-        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         menuSave.setText("Salvar");
         menuSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -754,9 +783,9 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 668, Short.MAX_VALUE)
+            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -765,7 +794,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
                 .addGap(3, 3, 3)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(3, 3, 3)
-                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE))
+                .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
         );
 
         pack();
@@ -818,9 +847,11 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
                 openFile(selectedFile);
                 activeFilesList.put(selectedFile.getName(), selectedFile.getPath());
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Interface.class
+                        .getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
-                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Interface.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
         }
 
@@ -861,7 +892,8 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Interface.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_menuSaveActionPerformed
 
@@ -897,7 +929,8 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
                 writer.close();
             }
         } catch (IOException ex) {
-            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Interface.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_menuSaveAsActionPerformed
 
@@ -908,7 +941,7 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
     private void menuRunFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRunFileActionPerformed
         if (processor != null) {
             try {
-                processor = new Processor(exec, this);
+                //processor = new Processor(exec, this);
                 timer.start();
                 updateGUI();
             } catch (RuntimeException e) {
@@ -1150,7 +1183,8 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
 
         try {
             doc.insertString(doc.getLength(), message + "\n", style);
-        } catch (BadLocationException e) {}
+        } catch (BadLocationException e) {
+        }
     }
 
     public void printMessage(String message) {
@@ -1163,7 +1197,8 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
 
         try {
             doc.insertString(doc.getLength(), message + "\n", style);
-        } catch (BadLocationException e) {}
+        } catch (BadLocationException e) {
+        }
     }
 
     public void clearTerminal() {
@@ -1248,7 +1283,8 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interface.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
 
@@ -1266,5 +1302,4 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
         timer.stop();
         printError("Execution finished with fail");
     }
-
 }

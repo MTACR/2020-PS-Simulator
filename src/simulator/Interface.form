@@ -176,9 +176,9 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="mainSplit" pref="668" max="32767" attributes="0"/>
+          <Component id="mainSplit" pref="671" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jPanel4" max="32767" attributes="0"/>
+              <Component id="jPanel4" pref="665" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -189,7 +189,7 @@
               <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
               <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-              <Component id="mainSplit" pref="363" max="32767" attributes="0"/>
+              <Component id="mainSplit" pref="372" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -227,12 +227,12 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="codePaneTabs" pref="256" max="32767" attributes="0"/>
+                      <Component id="codePaneTabs" pref="259" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="codePaneTabs" alignment="1" pref="260" max="32767" attributes="0"/>
+                      <Component id="codePaneTabs" alignment="1" pref="296" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -273,7 +273,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="cleanAsmOutBtn" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="asmOutScroll" pref="172" max="32767" attributes="0"/>
+                              <Component id="asmOutScroll" pref="175" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -381,7 +381,7 @@
                       <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                       <Component id="memoryLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="MemoryScrollPane" pref="193" max="32767" attributes="0"/>
+                      <Component id="MemoryScrollPane" pref="202" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -641,10 +641,10 @@
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="5" rowCount="0">
                         <Column editable="false" title="Endere&#xe7;o" type="java.lang.Short"/>
-                        <Column editable="false" title="Valor (+0)" type="java.lang.Short"/>
-                        <Column editable="false" title="Valor (+1)" type="java.lang.Short"/>
-                        <Column editable="false" title="Valor (+2)" type="java.lang.Short"/>
-                        <Column editable="false" title="Valor (+3)" type="java.lang.Short"/>
+                        <Column editable="true" title="Valor (+0)" type="java.lang.Short"/>
+                        <Column editable="true" title="Valor (+1)" type="java.lang.Short"/>
+                        <Column editable="true" title="Valor (+2)" type="java.lang.Short"/>
+                        <Column editable="true" title="Valor (+3)" type="java.lang.Short"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -676,6 +676,10 @@
                         </Column>
                       </TableColumnModel>
                     </Property>
+                    <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                      <Color id="Cursor Padr&#xe3;o"/>
+                    </Property>
+                    <Property name="doubleBuffered" type="boolean" value="true"/>
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[60, 60]"/>
                     </Property>
