@@ -44,12 +44,12 @@ public class SecondPass {
                 }
 
                 Line lineUse = lines.get(use.locationCounter);
-                Line lineDef = lines.get(def.address);
+                //Line lineDef = lines.get(def.address);
 
                 if (use.opsign == '+') {
-                    lineUse.word = lineDef.word + lineUse.word;
+                    lineUse.word = def.address + lineUse.word;
                 } else {
-                    lineUse.word = lineDef.word - lineUse.word;
+                    lineUse.word = def.address - lineUse.word;
                 }
             }
         }
