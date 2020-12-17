@@ -38,16 +38,18 @@ public class SecondPass {
         for(Segment seg : segments){
             for(Usage use : seg.usageTable){
                 Definition def = tgs.get(use.symbol);
-                Line line = lines.get(use.locationCounter);
 
                 if (def == null){
                     throw new RuntimeException("Undefined Symbol in " + seg.fileName + ": " + use.symbol + "'s definition not found");
                 }
 
+                Line lineUse = lines.get(use.locationCounter);
+                Line lineDef = lines.get(def.address);
+
                 if (use.opsign == '+') {
-                    line.word = def.address + line.word;
+                    lineUse.word = lineDef.word + lineUse.word;
                 } else {
-                    line.word = def.address - line.word;
+                    lineUse.word = lineDef.word - lineUse.word;
                 }
             }
         }
