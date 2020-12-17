@@ -83,6 +83,7 @@ public class Processor {
         }
 
         if (pc > memory.size() || pc < 0) {
+            stop.onFail();
             throw new RuntimeException("Program counter out of memory bounds");
         }
 
