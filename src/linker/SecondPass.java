@@ -44,7 +44,6 @@ public class SecondPass {
                 }
 
                 Line lineUse = lines.get(use.locationCounter);
-                //Line lineDef = lines.get(def.address);
 
                 if (use.opsign == '+') {
                     lineUse.word = def.address + lineUse.word;
