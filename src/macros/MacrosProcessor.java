@@ -67,9 +67,9 @@ public class MacrosProcessor {
     private void error(String message) {//throws RuntimeException {
         // Adiciona informações de onde o erro ocorreu
         if (expansionData == null)
-            message = "no arquivo principal, linha " + lineNumber + ": " + message;
+            message = "on the main file, line " + lineNumber + ": " + message;
         else
-            message = "ao expandir a macro " + expansionData.getMacroName() + ", linha " + expansionData.getLineNumber() + ": " + message;
+            message = "when expanding macro " + expansionData.getMacroName() + ", line " + expansionData.getLineNumber() + ": " + message;
 
         throw new RuntimeException(message);
     }
@@ -96,13 +96,13 @@ public class MacrosProcessor {
 
     private int processMacro() {
         int insideMacro = 0;
-        String macroDefinitionLine = getNextLineOrError("Não encontrou a linha com a definição da macro");
+        String macroDefinitionLine = getNextLineOrError("Macro definition line not found");
 
         String []macroParts = macroDefinitionLine.split(" ");
         int startParametersIndex = 1;
 
         if (macroParts.length == 0)
-            error("Esperava ao menos o nome da macro a criar");
+            error("At least the macro name was expected to create");
 
         String name = macroParts[0];
         String labelParameter = null;
@@ -112,7 +112,7 @@ public class MacrosProcessor {
             labelParameter = name;
 
             if (macroParts.length == 1)
-                error("Apenas o r�tulo da macro foi especificado em " + macroDefinitionLine);
+                error("Only the macro's label parameter was specified in " + macroDefinitionLine);
 
             labelParameter = name;
             name = macroParts[1];
@@ -127,7 +127,7 @@ public class MacrosProcessor {
 
             for (String parameter: parameters) {
                 if (!parameter.startsWith("&"))
-                    error("Parâmetro " + parameter + " deve começar com &");
+                    error(parameter + " parameter must start with an & sign");
 
                 checkIfParameterNameIsValidOrError(parameter);
             }
@@ -140,7 +140,7 @@ public class MacrosProcessor {
 
         String line;
 
-        while ((line = getNextLineOrError("Esperava o MEND para terminar a macro " + name)) != null) {
+        while ((line = getNextLineOrError("MEND expected to finish macro " + name)) != null) {
             // Processa macros aninhadas
             if (line.toUpperCase().equals("MEND")) {
                 if (insideMacro > 0) {
@@ -180,7 +180,7 @@ public class MacrosProcessor {
             current = macros.get(current.getMacroName()).getWhereWasDefined();
         }
 
-        error("Parâmetro não existe: " + parameter );
+        error("Parameter not found: " + parameter );
         return null;
     }
 
@@ -194,7 +194,7 @@ public class MacrosProcessor {
 
     private void checkIfParameterNameIsValidOrError(String parameter) throws RuntimeException {
         if (!isParameterNameValid(parameter))
-            error("Nome de parâmetro inválido: " + parameter);
+            error("Invalid parameter name: " + parameter);
     }
 
     // Substitui os parâmetros com os passados na macro. Retorna a string modificada.
@@ -261,7 +261,7 @@ public class MacrosProcessor {
 
             if (hasLabel) {
                 if (space == -1)
-                    error("Rótulo sem instrução");
+                    error("Label without instructions");
 
                 label = line.substring(0, space);
                 macroLine = line.substring(space + 1); // Tira o nome da label do nome da macro
@@ -307,7 +307,7 @@ public class MacrosProcessor {
             parameters = new String[0];
 
         if (parameters.length != m.getParameters().length)
-            error("Número de parâmetros inválidos na chamada da macro " + macroName + ": " + parameters.length + " passados e " + m.getParameters().length + " requeridos.");
+            error("Invalid number of parameters on call to expand macro " + macroName + ": " + parameters.length + " passed and " + m.getParameters().length + " required");
 
         // Cria novos dados de expansão na pilha, ligando-os ao anterior
         expansionData = new MacrosExpansionData(macroName, m.getCode(), 0, expansionData);
