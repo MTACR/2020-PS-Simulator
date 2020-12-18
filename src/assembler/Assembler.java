@@ -32,7 +32,7 @@ public class Assembler {
         }
 
         if (!hasStart)
-            throw new RuntimeException("START not defined in any file");
+            throw new RuntimeException("START is not defined in any file");
 
         return Linker.link(files2Link);
     }
