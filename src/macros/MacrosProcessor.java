@@ -299,7 +299,12 @@ public class MacrosProcessor {
 
         Macro m = (Macro)macros.get(macroName);
 
-        String []parameters = line.split(",");
+        String []parameters;
+
+        if (!line.isEmpty())
+            parameters = line.split(",");
+        else
+            parameters = new String[0];
 
         if (parameters.length != m.getParameters().length)
             error("Número de parâmetros inválidos na chamada da macro " + macroName + ": " + parameters.length + " passados e " + m.getParameters().length + " requeridos.");
