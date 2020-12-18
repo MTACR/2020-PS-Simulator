@@ -252,25 +252,23 @@ public class MacrosProcessor {
             }
 
             boolean hasLabel = line.startsWith("&");
-
-            line = replaceParameters(line);
-
             int space = line.indexOf(" ");
-            String macroLine = line; // Tenta identificar a macro a partir da linha original
             String label = null;
 
             if (hasLabel) {
                 if (space == -1)
                     error("Label without instructions");
 
-                label = line.substring(0, space);
-                macroLine = line.substring(space + 1); // Tira o nome da label do nome da macro
+                label = line.substring(1, space); // Corta o &
+                line = line.substring(space + 1); // Tira o nome da label do nome da macro
             }
 
+            line = replaceParameters(line);
+
             for (String macroName: macros.keySet()) {
-                if (macroLine.startsWith(macroName + " ") || macroLine.equals(macroName)) {
+                if (line.startsWith(macroName + " ") || line.equals(macroName)) {
                     writeLineToFile = false;
-                    expandMacro(macroName, macroLine, label);
+                    expandMacro(macroName, line, label);
                     break;
                 }
             }
