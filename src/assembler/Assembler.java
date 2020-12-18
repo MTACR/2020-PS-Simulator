@@ -1,5 +1,6 @@
 package assembler;
 
+import javafx.util.Pair;
 import linker.Linker;
 import macros.MacrosProcessor;
 import simulator.Interface;
@@ -11,13 +12,27 @@ public class Assembler {
 
     public static File assemble(List<File> files) throws RuntimeException {
         List<File> files2Link = new ArrayList<>();
+        boolean hasStart = false;
 
         Interface.instance().printMessage("Assembling...");
 
         for (File file : files) {
             Interface.instance().printMessage("Assembling file " + file.getName());
-            files2Link.add(SecondPass.pass(new MacrosProcessor().process(file)));
+            Pair<File, Boolean> result = SecondPass.pass(new MacrosProcessor().process(file));
+
+            if (result.getValue()) {
+                if (!hasStart) {
+                    hasStart = true;
+                    files2Link.add(0, result.getKey());
+
+                } else throw new RuntimeException("START redefined in " + result.getKey().getName());
+            } else {
+                files2Link.add(result.getKey());
+            }
         }
+
+        if (!hasStart)
+            throw new RuntimeException("START not defined in any file");
 
         return Linker.link(files2Link);
     }

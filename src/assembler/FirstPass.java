@@ -78,6 +78,9 @@ public class FirstPass {
                                 else
                                     hasEnd = true;
 
+                                symbols.add(new Symbol(line, address, "", "STOP", "", ""));
+                                address += 1;
+
                                 break;
                             }
 
@@ -233,11 +236,13 @@ public class FirstPass {
             e.printStackTrace();
         }
 
-        if (!hasStart)
-            throw new RuntimeException("Module has no START defined" + " in " + file.getName());
+        if (hasStart || hasEnd) {
+            if (!hasStart)
+                throw new RuntimeException("Module has no START defined" + " in " + file.getName());
 
-        if (!hasEnd)
-            throw new RuntimeException("Module has no END defined" + " in " + file.getName());
+            if (!hasEnd)
+                throw new RuntimeException("Module has no END defined" + " in " + file.getName());
+        }
 
         // Lista de labels, que são na verdade variáveis, para serem alocadas na memória
         List<Symbol> labels2Alloc = new ArrayList<>();
@@ -350,7 +355,7 @@ public class FirstPass {
             e.printStackTrace();
         }
 
-        return new SymbolsTable(symbols, labels, name);
+        return new SymbolsTable(symbols, labels, name, hasStart && hasEnd);
     }
 
     /*public static void main(String[] args) {

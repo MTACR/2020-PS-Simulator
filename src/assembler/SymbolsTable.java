@@ -9,11 +9,13 @@ public class SymbolsTable {
     public List<Symbol> symbols;
     public Map<String, Pair<Integer, Character>> labels;
     public String name;
+    public boolean isStart;
 
-    public SymbolsTable(List<Symbol> symbols, Map<String, Pair<Integer, Character>> labels, String name) {
+    public SymbolsTable(List<Symbol> symbols, Map<String, Pair<Integer, Character>> labels, String name, boolean isStart) {
         this.symbols = symbols;
         this.labels = labels;
         this.name = name;
+        this.isStart = isStart;
     }
 
     public static final List<String> table = Arrays.asList(

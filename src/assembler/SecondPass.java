@@ -20,7 +20,7 @@ public class SecondPass {
         DIRETO, INDIRETO, IMEDIATO
     }
 
-    public static File pass(File file) throws RuntimeException {
+    public static Pair<File, Boolean> pass(File file) throws RuntimeException {
         // Informações do passo 1
         SymbolsTable data = getSymbolsTable(file);
         // Lista símbolos (que deverão ser convertidos em código objeto nesse passo)
@@ -254,7 +254,7 @@ public class SecondPass {
 
         objects.forEach(objectCode -> System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.printWords()));
 
-        return obj;
+        return new Pair<>(obj, data.isStart);
     }
 
     private static ADDRMODE getAddrMode(String opd) {
