@@ -29,7 +29,7 @@ public class FirstPass {
         int line = 1;
         String name = "";
 
-        Interface.instance().printMessage("Pass 1/2");
+        Interface.instance().printMessage("Pass 1/2 for " + file.getName());
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -39,7 +39,7 @@ public class FirstPass {
                 string = string.toUpperCase().replaceAll("\\s+"," ").trim();
 
                 if (string.length() > 80)
-                    throw new RuntimeException("Too long line at " + line);
+                    throw new RuntimeException("Too long line at " + line + " in " + file.getName());
 
                 if (string.contains("*"))
                     string = string.substring(0, string.indexOf("*"));
@@ -74,20 +74,23 @@ public class FirstPass {
 
                             if (lineArr[0].equals("END")) {
                                 if (hasEnd)
-                                    throw new RuntimeException("Redefined END at " + line);
+                                    throw new RuntimeException("Redefined END at " + line + " in " + file.getName());
                                 else
                                     hasEnd = true;
+
+                                symbols.add(new Symbol(line, address, "", "STOP", "", ""));
+                                address += 1;
 
                                 break;
                             }
 
                             if (lineArr[0].equals("EXTR"))
-                                throw new RuntimeException("Instruction requires a label at " + line);
+                                throw new RuntimeException("Instruction requires a label at " + line + " in " + file.getName());
 
                             symbols.add(new Symbol(line, address, "", lineArr[0], "", ""));
                             address += 1;
 
-                        } else throw new RuntimeException("Invalid instruction at " + line);
+                        } else throw new RuntimeException("Invalid instruction at " + line + " in " + file.getName());
 
                         break;
 
@@ -102,12 +105,12 @@ public class FirstPass {
                                     labels.put(lineArr[0], new Pair<>(0, 'r'));
                                 }
 
-                                else throw new RuntimeException("Redefined symbol: " + lineArr[0] + " at " + line);
+                                else throw new RuntimeException("Redefined symbol: " + lineArr[0] + " at " + line + " in " + file.getName());
 
                             } else {
 
                                 if (table.contains(lineArr[0]))
-                                    throw new RuntimeException("Invalid label at " + line);
+                                    throw new RuntimeException("Invalid label at " + line + " in " + file.getName());
 
                                 symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], "", ""));
 
@@ -115,7 +118,7 @@ public class FirstPass {
                                 if (!labels.containsKey(lineArr[0]))
                                     labels.put(lineArr[0], new Pair<>(address, 'r'));
 
-                                else throw new RuntimeException("Redefined symbol: " + lineArr[0] + " at " + line);
+                                else throw new RuntimeException("Redefined symbol: " + lineArr[0] + " at " + line + " in " + file.getName());
 
                                 address += 1;
                             }
@@ -125,11 +128,16 @@ public class FirstPass {
 
                             if (lineArr[0].equals("START")) {
                                 if (hasStart)
-                                    throw new RuntimeException("Redefined START at " + line);
+                                    throw new RuntimeException("Redefined START at " + line + " in " + file.getName());
                                 else
                                     hasStart = true;
 
-                                name = lineArr[1];
+                                //if (!labels.containsKey(lineArr[1])) {
+                                    name = lineArr[1];
+                                    //labels.put(lineArr[1],  new Pair<>(address, 'r'));
+                                //}
+
+                                //else throw new RuntimeException("Redefined START at " + line + " in " + file.getName());
 
                                 break;
                             }
@@ -140,16 +148,16 @@ public class FirstPass {
                                 if (!extdefLabels.contains(lineArr[1]))
                                     extdefLabels.add(lineArr[1]);
 
-                                else throw new RuntimeException("Redefined symbol: " + lineArr[1] + " at " + line);
+                                else throw new RuntimeException("Redefined symbol: " + lineArr[1] + " at " + line + " in " + file.getName());
 
                             } else if (lineArr[0].equals("STACK")) {
                                 if (hasStack)
-                                    throw new RuntimeException("Redefined STACK size at " + line);
+                                    throw new RuntimeException("Redefined STACK size at " + line + " in " + file.getName());
                                 else
                                     hasStack = true;
 
                                 if (Integer.parseInt(lineArr[1]) > 10 || Integer.parseInt(lineArr[1]) < 0)
-                                    throw new RuntimeException("Invalid STACK size at " + line);
+                                    throw new RuntimeException("Invalid STACK size at " + line + " in " + file.getName());
 
                                 symbols.add(0, new Symbol(line, -1, "", lineArr[0], lineArr[1], ""));
 
@@ -159,7 +167,7 @@ public class FirstPass {
                             }
                         }
 
-                        else throw new RuntimeException("Invalid instruction at " + line);
+                        else throw new RuntimeException("Invalid instruction at " + line + " in " + file.getName());
 
                         break;
 
@@ -168,7 +176,7 @@ public class FirstPass {
                         if (table1.contains(lineArr[1])) {
 
                             if (table.contains(lineArr[0]) || table.contains(lineArr[2]))
-                                throw new RuntimeException("Invalid label at " + line);
+                                throw new RuntimeException("Invalid label at " + line + " in " + file.getName());
 
                             symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], ""));
 
@@ -176,7 +184,7 @@ public class FirstPass {
                             if (!labels.containsKey(lineArr[0]))
                                 labels.put(lineArr[0], new Pair<>(address, 'r'));
 
-                            else throw new RuntimeException("Redefined symbol: " + lineArr[0] + " at " + line);
+                            else throw new RuntimeException("Redefined symbol: " + lineArr[0] + " at " + line + " in " + file.getName());
 
                             // Se token 2 for CONST, soma apenas 1 endereço
                             if (lineArr[1].equals("CONST"))
@@ -191,7 +199,7 @@ public class FirstPass {
                             address += 3;
                         }
 
-                        else throw new RuntimeException("Invalid instruction at " + line);
+                        else throw new RuntimeException("Invalid instruction at " + line + " in " + file.getName());
 
                         break;
 
@@ -200,7 +208,7 @@ public class FirstPass {
                         if (table2.contains(lineArr[1])) {
 
                             if (table.contains(lineArr[0]) || table.contains(lineArr[2]) || table.contains(lineArr[3]))
-                                throw new RuntimeException("Invalid label at " + line);
+                                throw new RuntimeException("Invalid label at " + line + " in " + file.getName());
 
                             symbols.add(new Symbol(line, address, lineArr[0], lineArr[1], lineArr[2], lineArr[3]));
 
@@ -208,16 +216,16 @@ public class FirstPass {
                             if (!labels.containsKey(lineArr[0]))
                                 labels.put(lineArr[0], new Pair<>(address, 'r'));
 
-                            else throw new RuntimeException("Redefined symbol: " + lineArr[0] + " at " + line);
+                            else throw new RuntimeException("Redefined symbol: " + lineArr[0] + " at " + line + " in " + file.getName());
 
                             address += 3;
                         }
 
-                        else throw new RuntimeException("Invalid instruction at " + line);
+                        else throw new RuntimeException("Invalid instruction at " + line + " in " + file.getName());
 
                         break;
 
-                    default: throw new RuntimeException("Syntax error at " + line);
+                    default: throw new RuntimeException("Syntax error at " + line + " in " + file.getName());
                 }
 
                 line++;
@@ -228,11 +236,13 @@ public class FirstPass {
             e.printStackTrace();
         }
 
-        if (!hasStart)
-            throw new RuntimeException("Module has no START defined");
+        if (hasStart || hasEnd) {
+            if (!hasStart)
+                throw new RuntimeException("Module has no START defined" + " in " + file.getName());
 
-        if (!hasEnd)
-            throw new RuntimeException("Module has no END defined");
+            if (!hasEnd)
+                throw new RuntimeException("Module has no END defined" + " in " + file.getName());
+        }
 
         // Lista de labels, que são na verdade variáveis, para serem alocadas na memória
         List<Symbol> labels2Alloc = new ArrayList<>();
@@ -328,7 +338,7 @@ public class FirstPass {
 
         // Caso ainda haja algum símbolo, significa que ele não foi usado
         if (!extdefLabels.isEmpty())
-            throw new RuntimeException("Undefined global symbol: " + extdefLabels);
+            throw new RuntimeException("Undefined global symbol: " + extdefLabels + " in " + file.getName());
 
         File tbl = new File("output/" + name + ".tbl");
 
@@ -345,7 +355,7 @@ public class FirstPass {
             e.printStackTrace();
         }
 
-        return new SymbolsTable(symbols, labels, name);
+        return new SymbolsTable(symbols, labels, name, hasStart && hasEnd);
     }
 
     /*public static void main(String[] args) {

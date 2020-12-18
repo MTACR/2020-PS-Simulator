@@ -20,7 +20,7 @@ public class SecondPass {
         DIRETO, INDIRETO, IMEDIATO
     }
 
-    public static File pass(File file) throws RuntimeException {
+    public static Pair<File, Boolean> pass(File file) throws RuntimeException {
         // Informações do passo 1
         SymbolsTable data = getSymbolsTable(file);
         // Lista símbolos (que deverão ser convertidos em código objeto nesse passo)
@@ -32,7 +32,7 @@ public class SecondPass {
         // Lista de código objeto
         List<ObjectCode> objects = new ArrayList<>();
 
-        Interface.instance().printMessage("Pass 2/2");
+        Interface.instance().printMessage("Pass 2/2 for " + file.getName());
 
         for (Symbol symbol : symbols) {
             String operator = symbol.operator;
@@ -55,7 +55,7 @@ public class SecondPass {
                 ADDRMODE a = getAddrMode(opd1);
 
                 if (a == IMEDIATO && !table.contains(operator))
-                    throw new RuntimeException("Invalid addressing mode in: " + operator + " " + opd1);
+                    throw new RuntimeException("Invalid addressing mode in: " + operator + " " + opd1 + " in " + file.getName());
 
                 if (a != null) {
 
@@ -75,7 +75,7 @@ public class SecondPass {
                     modeOpd1 = a;
                 }
 
-                else throw new RuntimeException("Undefined label: " + opd1);
+                else throw new RuntimeException("Undefined label: " + opd1 + " in " + file.getName());
 
                 size++;
             }
@@ -89,7 +89,7 @@ public class SecondPass {
                 ADDRMODE a = getAddrMode(opd2);
 
                 if (a == IMEDIATO && !operator.equals("COPY"))
-                    throw new RuntimeException("Invalid addressing mode in: " + operator + " " + opd2);
+                    throw new RuntimeException("Invalid addressing mode in: " + operator + " " + opd2 + " in " + file.getName());
 
                 if (a != null) {
 
@@ -109,7 +109,7 @@ public class SecondPass {
                     modeOpd2 = a;
                 }
 
-                else throw new RuntimeException("Undefined label: " + opd2);
+                else throw new RuntimeException("Undefined label: " + opd2 + " in " + file.getName());
 
                 size++;
             }
@@ -141,7 +141,7 @@ public class SecondPass {
 
                         break;
 
-                    default: throw new RuntimeException("Invalid instruction: " + operator);
+                    default: throw new RuntimeException("Invalid instruction: " + operator + " in " + file.getName());
                 }
 
             // Se for instrução, gera código objeto
@@ -254,7 +254,7 @@ public class SecondPass {
 
         objects.forEach(objectCode -> System.out.printf("%-10s %-10s %-10s\n", objectCode.address, objectCode.size, objectCode.printWords()));
 
-        return obj;
+        return new Pair<>(obj, data.isStart);
     }
 
     private static ADDRMODE getAddrMode(String opd) {

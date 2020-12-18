@@ -25,7 +25,7 @@ public class CustomDocumentFilter extends DocumentFilter {
     private final static AttributeSet opcodeAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, new Color(22, 84, 248));
     private final static AttributeSet labels1AttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, new Color(246, 80, 170));
     private final static AttributeSet labels2AttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, new Color(111, 22, 158));
-    private final static AttributeSet commonAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
+    public final static AttributeSet commonAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
     private final static AttributeSet commentsAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, new Color(27, 175, 89));
     private final static AttributeSet symbolsAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, new Color(243, 153, 22));
     //private final AttributeSet numbersAttrSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, new Color(210, 30, 80));

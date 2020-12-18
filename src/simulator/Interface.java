@@ -1067,6 +1067,10 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
     private void openFile(File file) throws IOException {
         String content = new String(Files.readAllBytes(file.toPath()));
         JScrollPane tab = newTab(content);
+        if (codePaneTabs.getTabCount() == 1 &&
+            ((JEditorPane) (((JViewport) ((JScrollPane) codePaneTabs.getComponent(0)).getComponents()[0]).getComponents()[0])).getText().isEmpty()) {
+            codePaneTabs.remove(0);
+        }
         codePaneTabs.add(file.getName(), tab);
         codePaneTabs.setSelectedIndex(codePaneTabs.indexOfComponent(tab));
         undoManagerList.add(codePaneTabs.getSelectedIndex(), new UndoManager());
@@ -1076,7 +1080,9 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
         JScrollPane tab = new JScrollPane();
         JTextPane text = new JTextPane();
         text.setFont(new java.awt.Font("Consolas", 0, 14));
-        text.setText(content);
+        try {
+            text.getDocument().insertString(0, content, CustomDocumentFilter.commonAttrSet);
+        } catch (BadLocationException ignored) {}
         JLabel lines = new JLabel();
         lines.setText("<html><p style='margin: 2px 20px 0 5px;'>1</p>");
         lines.setFocusable(false);
@@ -1086,10 +1092,8 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
         lines.setForeground(new Color(80, 80, 80));
         lines.setHorizontalAlignment(JLabel.LEFT);
         lines.setVerticalAlignment(JLabel.TOP);
-//        StyledDocument style = lines.getStyledDocument();
         SimpleAttributeSet align = new SimpleAttributeSet();
         StyleConstants.setAlignment(align, StyleConstants.ALIGN_RIGHT);
-//        style.setParagraphAttributes(0, style.getLength(), align, false);
 
         text.getDocument().addDocumentListener(new DocumentListener() {
             public String getText() {
