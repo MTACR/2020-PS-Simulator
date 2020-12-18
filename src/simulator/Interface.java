@@ -1043,7 +1043,9 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
     private List<File> buildFiles() {
         List<File> files = new ArrayList<>();
         File tmp = new File("tmp");
+        File output = new File("output");
         tmp.mkdir();
+        output.mkdir();
 
         for (int i = 0; i < codePaneTabs.getTabCount(); i++) {
             String code = ((JEditorPane) (((JViewport) ((JScrollPane) codePaneTabs.getComponent(i)).getComponents()[0]).getComponents()[0])).getText();
