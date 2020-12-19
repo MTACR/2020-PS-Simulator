@@ -40,18 +40,22 @@ public class MacrosProcessor {
 // Pega a próxima linha do arquivo
 
     private String getNextLine() {
-        if (expansionData != null) {
-            return expansionData.getNextLine();
-        } else {
-            lineNumber ++;
-            try {
-                return reader.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
+        String line;
+        do {
+            if (expansionData != null) {
+                line = expansionData.getNextLine();
+            } else {
+                lineNumber ++;
+                try {
+                    line = reader.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
-        }
+        } while (line != null && line.isEmpty());
 
-        return null;
+        return line;
     }
 
     private int getLineNumber() {
