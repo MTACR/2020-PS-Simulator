@@ -1004,18 +1004,17 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
     }//GEN-LAST:event_stepButtonActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        if (timer.isRunning()) {
+        if (timer.isRunning())
             timer.stop();
 
-            try {
-                processor = new Processor(exec, this);
-            } catch (RuntimeException e) {
-                printError(e.getMessage());
-            }
-
-            updateGUI();
-            printMessage("Execution resetted");
+        try {
+            processor = new Processor(exec, this);
+        } catch (RuntimeException e) {
+            printError(e.getMessage());
         }
+
+        updateGUI();
+        printMessage("Execution resetted");
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
