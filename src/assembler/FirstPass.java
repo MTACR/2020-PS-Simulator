@@ -27,7 +27,7 @@ public class FirstPass {
         boolean hasStack = false;
         int address = 0;
         int line = 1;
-        String name = "";
+        //String name = "";
 
         Interface.instance().printMessage("Pass 1/2 for " + file.getName());
 
@@ -52,7 +52,6 @@ public class FirstPass {
                 String[] lineArr = string.split(" ");
                 for (int i = 0; i < lineArr.length; i++)
                     lineArr[i] = lineArr[i].trim();
-
 
                 // até aqui foram verificações de formatação da string
 
@@ -131,13 +130,6 @@ public class FirstPass {
                                     throw new RuntimeException("Redefined START at " + line + " in " + file.getName());
                                 else
                                     hasStart = true;
-
-                                //if (!labels.containsKey(lineArr[1])) {
-                                    name = lineArr[1];
-                                    //labels.put(lineArr[1],  new Pair<>(address, 'r'));
-                                //}
-
-                                //else throw new RuntimeException("Redefined START at " + line + " in " + file.getName());
 
                                 break;
                             }
@@ -340,7 +332,7 @@ public class FirstPass {
         if (!extdefLabels.isEmpty())
             throw new RuntimeException("Undefined global symbol: " + extdefLabels + " in " + file.getName());
 
-        File tbl = new File("output/" + name + ".tbl");
+        File tbl = new File("output/" + file.getName().substring(0, file.getName().indexOf(".")) + ".tbl");
 
         try {
             FileWriter out = new FileWriter(tbl);
@@ -355,7 +347,7 @@ public class FirstPass {
             e.printStackTrace();
         }
 
-        return new SymbolsTable(symbols, labels, name, hasStart && hasEnd);
+        return new SymbolsTable(symbols, labels,hasStart && hasEnd);
     }
 
     /*public static void main(String[] args) {

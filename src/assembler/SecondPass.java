@@ -191,7 +191,6 @@ public class SecondPass {
                             words[1] = new Pair<>(addrOpd1, 'a');
 
                         } else {
-                            //TODO verificar modos de endereçamento se está ok
                             switch (modeOpd1) {
                                 case DIRETO:
                                 case INDIRETO:
@@ -211,7 +210,6 @@ public class SecondPass {
                         words[2] = new Pair<>(addrOpd2, 'r');
 
                     } else {
-                        //TODO verificar modos de endereçamento se está ok
                         if (symbol.ext2) {
                             words[2] = new Pair<>(addrOpd1, 'a');
 
@@ -237,7 +235,7 @@ public class SecondPass {
         // Para cada variável alocada, gera um espaço de memória com seu devido endereço e modo
         vars.forEach((addr, pair) -> objects.add(new ObjectCode(addr, 1, new Pair<>(pair.getKey(), pair.getValue()))));
 
-        File obj = new File("output/" + data.name + ".obj");
+        File obj = new File("output/" + file.getName().substring(0, file.getName().indexOf(".")) + ".obj");
 
         try {
             FileWriter outObj = new FileWriter(obj);

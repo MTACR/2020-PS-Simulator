@@ -346,6 +346,7 @@ public class MacrosProcessor {
             doProcess(null);
 
             writer.close();
+            reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
