@@ -884,8 +884,8 @@ public class Interface extends javax.swing.JFrame implements Processor.OnStop {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     fileName = fileChooser.getSelectedFile().getName();
                     path = fileChooser.getCurrentDirectory().toString();
-                    System.out.println(path + "\\" + fileName);
-                    File f = new File(path + "\\" + fileName);
+                    System.out.println(path + File.separator  + fileName);
+                    File f = new File(path + File.separator + fileName);
                     writer = new FileWriter(f);
                     writer.write(content);
                     writer.close();
