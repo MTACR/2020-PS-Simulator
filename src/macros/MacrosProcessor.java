@@ -8,18 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-/*class RuntimeException extends Exception {
-    public RuntimeException(String message) {
-        super(message);
-    }
-}*/
-
-/* Classe que armazena os dados de uma expansão.
-    * Ela internamente se comporta como uma pilha, o elemento que estiver em
-    * expansionData é o atualmente processado e os anteriores a ele se comportam
-    * como uma pilha. Isso é necessário, dentre outras coisas,  para o processador de macros saber para qual linha / código voltar
-    * após terminar uma expansão. */
-
 public class MacrosProcessor {
     protected Map <String, Macro> macros; // Mapa que armazenará as macros já definidas
     private BufferedReader reader;

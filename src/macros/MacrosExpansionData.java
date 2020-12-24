@@ -3,6 +3,12 @@ package macros;
 import java.util.HashMap;
 import java.util.Map;
 
+/* Classe que armazena os dados de uma expansão.
+    * Ela internamente se comporta como uma pilha, o elemento que estiver em
+    * expansionData é o atualmente processado e os anteriores a ele se comportam
+    * como uma pilha. Isso é necessário, dentre outras coisas,  para o processador de macros saber para qual linha / código voltar
+    * após terminar uma expansão. */
+
 class MacrosExpansionData {
     private String macroName;
     private Map<String, String> parameters;
