@@ -11,7 +11,7 @@ import java.util.List;
 
 import static linker.FirstPass.*;
 import static linker.SecondPass.*;
-import static linker.Output.*;
+import loader.Loader;
 
 public class Linker {
 
@@ -77,28 +77,8 @@ public class Linker {
 			System.out.println(l);
 		}
 		
-		String binOutput = "";
-		binOutput += createStart(getStackSum(segments));
-
-		for (int i = offset; i < lines.size(); i++) {
-			Line l = lines.get(i);
-			if (l.reallocMode == 'a') binOutput += opcodeToBin(l.word) + "\n";
-			else if (l.reallocMode == 'r') binOutput += opdToBin(l.word) + "\n";
-		}
+		String outputFile = files.get(0).getName().substring(0, files.get(0).getName().indexOf("."));
 		
-		File fileOutput = new File("output/" + files.get(0).getName().substring(0, files.get(0).getName().indexOf(".")) + ".hpx");
-
-        try {
-            FileWriter writer = new FileWriter(fileOutput);
-			
-			writer.write(binOutput);
-			
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-		
-        return fileOutput;
+        return Loader.load(lines, offset, outputFile);
     }
-
 }

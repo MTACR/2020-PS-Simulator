@@ -1,4 +1,4 @@
-package linker;
+package loader;
 
 public class Output {
 	public static String createStart(int stackSize) {
@@ -14,11 +14,7 @@ public class Output {
 		return output;
 	}
 	
-	public static String opcodeToBin(int word) {
-		return fillBinary(Integer.toString(word, 2), 16);
-	}
-	
-	public static String opdToBin(int word) {	
+	public static String opToBin(int word) {
 		return fillBinary(Integer.toString(word, 2), 16);
 	}
 	
